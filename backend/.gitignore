@@ -1,0 +1,11 @@
+node_modules/
+.mongo-data/
+uploads/*
+!uploads/.gitkeep
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store

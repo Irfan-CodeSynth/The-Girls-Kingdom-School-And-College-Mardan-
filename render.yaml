@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: the-girls-kingdom-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 15m
+      - key: JWT_REFRESH_EXPIRE
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@girlskingdom.edu
+      - key: ADMIN_PASSWORD
+        value: Admin@123456
+      - key: ADMIN_NAME
+        value: System Administrator
