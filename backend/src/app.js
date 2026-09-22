@@ -27,8 +27,25 @@ if (env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+const connectDB = require('./config/db');
+
 app.use(generalLimiter);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Ensure database connection is ready for API requests (especially on Serverless/Vercel)
+app.use('/api', async (req, res, next) => {
+  if (req.path === '/health') return next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection error on API request:', err.message);
+    return res.status(503).json({
+      status: 'error',
+      message: 'Database connection failed. Please verify MONGO_URI in Vercel Environment Variables and ensure MongoDB Atlas Network Access is set to 0.0.0.0/0.'
+    });
+  }
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/classes', classRoutes);

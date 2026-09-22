@@ -12,19 +12,21 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
-  if (!env.MONGO_URI) {
-    console.warn('⚠️ MONGO_URI environment variable is not defined.');
+  const mongoUri = process.env.MONGO_URI || env.MONGO_URI;
+  if (!mongoUri) {
+    console.warn('⚠️ MONGO_URI is not defined in environment variables.');
   }
 
   try {
-    const conn = await mongoose.connect(env.MONGO_URI || 'mongodb://localhost:27017/girls-kingdom-college', {
-      serverSelectionTimeoutMS: 8000,
+    const conn = await mongoose.connect(mongoUri || 'mongodb://localhost:27017/girls-kingdom-college', {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
     if ((env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production') && !process.env.VERCEL) {
-      console.warn(`Local MongoDB at ${env.MONGO_URI} not detected. Starting embedded MongoDB engine...`);
+      console.warn(`Local MongoDB at ${mongoUri} not detected. Starting embedded MongoDB engine...`);
       try {
         const { MongoMemoryServer } = require('mongodb-memory-server');
         if (isTestEnv) {
@@ -53,6 +55,7 @@ const connectDB = async () => {
     if (!process.env.VERCEL) {
       process.exit(1);
     }
+    throw error;
   }
 };
 
