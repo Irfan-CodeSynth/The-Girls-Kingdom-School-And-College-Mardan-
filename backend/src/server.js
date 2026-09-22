@@ -12,6 +12,11 @@ process.on('uncaughtException', err => {
 const User = require('./modules/users/user.model');
 const { ROLES } = require('./utils/constants');
 
+const PORT = process.env.PORT || env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running in ${env.NODE_ENV} mode on port ${PORT}`);
+});
+
 connectDB().then(async () => {
   // Ensure default admin exists for immediate access
   try {
@@ -35,16 +40,18 @@ connectDB().then(async () => {
   } catch (seedErr) {
     console.warn('Auto-seed check notice:', seedErr.message);
   }
+}).catch(err => {
+  console.warn('Database initialization deferred:', err.message);
+});
 
-  const server = app.listen(env.PORT, () => {
-    console.log(`Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
-  });
-
-  process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION! 💥', err.name, err.message);
+  if (!process.env.VERCEL) {
     server.close(() => {
       process.exit(1);
     });
-  });
+  }
 });
+
+module.exports = app;
+module.exports.server = server;
