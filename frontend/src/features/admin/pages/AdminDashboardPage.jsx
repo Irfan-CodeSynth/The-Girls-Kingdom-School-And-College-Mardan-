@@ -23,7 +23,7 @@ import {
 // ─── Stat Card ────────────────────────────────────────────────
 const StatCard = ({ label, value, icon: Icon, color, loading, to }) => {
   const content = (
-    <Card hover className="flex items-center gap-4">
+    <Card hover bodyClassName="flex items-center gap-4">
       <div
         className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}
       >

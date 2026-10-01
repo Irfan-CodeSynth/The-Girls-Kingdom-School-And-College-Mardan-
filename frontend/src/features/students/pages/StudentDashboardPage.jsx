@@ -36,7 +36,7 @@ const attemptLabel = (attempt) => {
 
 // ─── Stat Card ────────────────────────────────────────────────
 const StatCard = ({ label, value, icon: Icon, color, loading }) => (
-  <Card className="flex items-center gap-4">
+  <Card bodyClassName="flex items-center gap-4">
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
       <Icon className="w-6 h-6" />
     </div>

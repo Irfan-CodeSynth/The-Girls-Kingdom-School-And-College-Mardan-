@@ -21,7 +21,7 @@ import {
 
 // ─── Stat Card ────────────────────────────────────────────────
 const StatCard = ({ label, value, icon: Icon, color, loading }) => (
-  <Card className="flex items-center gap-4">
+  <Card bodyClassName="flex items-center gap-4">
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
       <Icon className="w-6 h-6" />
     </div>
@@ -159,24 +159,26 @@ export const TeacherDashboardPage = () => {
           ) : (
             <div className="space-y-3">
               {classes.map((cls) => (
-                <Link key={cls._id} to={`/teacher/classes/${cls._id}`}>
-                  <Card hover className="flex items-center gap-4 !py-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <Link key={cls._id} to={`/teacher/classes/${cls._id}`} className="block">
+                  <Card hover bodyClassName="!p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">
+                          {cls.name}
+                        </p>
+                        <p className="text-xs text-surface-400 mt-0.5">
+                          {cls.code} · {cls.academicYear}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-surface-400 flex-shrink-0">
+                        <Users className="w-3.5 h-3.5" />
+                        <span>{cls.studentCount ?? 0}</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-surface-300 flex-shrink-0" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">
-                        {cls.name}
-                      </p>
-                      <p className="text-xs text-surface-400 mt-0.5">
-                        {cls.code} · {cls.academicYear}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-surface-400 flex-shrink-0">
-                      <Users className="w-3.5 h-3.5" />
-                      {cls.studentCount ?? 0}
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-surface-300 flex-shrink-0" />
                   </Card>
                 </Link>
               ))}

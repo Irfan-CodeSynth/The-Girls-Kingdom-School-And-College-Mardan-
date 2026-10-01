@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 export const Card = ({
   children,
   className = '',
+  bodyClassName = '',
   hover = false,
   header,
   footer,
@@ -26,7 +27,7 @@ export const Card = ({
           {header}
         </div>
       )}
-      <div className="p-6">{children}</div>
+      <div className={`p-6 ${bodyClassName}`}>{children}</div>
       {footer && (
         <div className="px-6 py-4 bg-surface-50 dark:bg-surface-900/40 border-t border-surface-200 dark:border-surface-700">
           {footer}

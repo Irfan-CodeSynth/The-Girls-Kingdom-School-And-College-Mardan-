@@ -2,6 +2,7 @@ const Class = require('./class.model');
 const Enrollment = require('./enrollment.model');
 const TeacherAssignment = require('./teacherAssignment.model');
 const User = require('../users/user.model');
+const StudentProfile = require('../users/studentProfile.model');
 const ApiError = require('../../utils/ApiError');
 const notificationService = require('../notifications/notification.service');
 const { ROLES, ENROLLMENT_STATUS, CLASS_STATUS } = require('../../utils/constants');
@@ -161,7 +162,7 @@ const removeStudentEnrollment = async (enrollmentId) => {
 };
 
 const getClassStudents = async (classId) => {
-  return await Enrollment.find({
+  const enrollments = await Enrollment.find({
     class: classId,
     status: ENROLLMENT_STATUS.ACTIVE
   })
@@ -170,6 +171,18 @@ const getClassStudents = async (classId) => {
       select: 'fullName email phone profilePhoto isActive'
     })
     .sort({ enrolledAt: -1 });
+
+  const studentUserIds = enrollments.map(e => e.student?._id).filter(Boolean);
+  const profiles = await StudentProfile.find({ user: { $in: studentUserIds } });
+  const profileMap = Object.fromEntries(profiles.map(p => [p.user.toString(), p.studentId]));
+
+  return enrollments.map(e => {
+    const obj = e.toObject();
+    if (obj.student) {
+      obj.student.studentId = profileMap[obj.student._id.toString()] || 'N/A';
+    }
+    return obj;
+  });
 };
 
 const getStudentEnrollment = async (studentId) => {
