@@ -5,6 +5,27 @@ module.exports = {
   QUESTION_TYPES: { MCQ: 'mcq', TRUE_FALSE: 'true_false', COMPREHENSIVE: 'comprehensive' },
   ENROLLMENT_STATUS: { ACTIVE: 'active', REMOVED: 'removed', TRANSFERRED: 'transferred' },
   CLASS_STATUS: { ACTIVE: 'active', ARCHIVED: 'archived' },
-  NOTIFICATION_TYPES: { QUIZ_PUBLISHED: 'quiz_published', QUIZ_DEADLINE: 'quiz_deadline', QUIZ_GRADED: 'quiz_graded', RESULT_AVAILABLE: 'result_available', ENROLLMENT: 'enrollment', GENERAL: 'general' },
-  RESULT_VISIBILITY: { IMMEDIATELY: 'submission', AFTER_GRADING: 'manual_grading', HIDDEN: 'hidden' }
+  NOTIFICATION_TYPES: {
+    QUIZ_PUBLISHED: 'quiz_published',
+    QUIZ_DEADLINE: 'quiz_deadline',
+    QUIZ_GRADED: 'quiz_graded',
+    RESULT_AVAILABLE: 'result_available',
+    ENROLLMENT: 'enrollment',
+    NEW_MATERIAL: 'new_material',
+    GENERAL: 'general'
+  },
+  RESULT_VISIBILITY: { IMMEDIATELY: 'submission', AFTER_GRADING: 'manual_grading', HIDDEN: 'hidden' },
+  MATERIAL_CATEGORIES: {
+    LECTURE_VIDEO: 'lecture_video',
+    LECTURE_NOTES: 'lecture_notes',
+    SYLLABUS: 'syllabus',
+    ASSIGNMENT: 'assignment',
+    PAST_PAPER: 'past_paper',
+    OTHER: 'other'
+  },
+  VIDEO_PROVIDERS: {
+    YOUTUBE: 'youtube',
+    CLOUDFLARE: 'cloudflare',
+    VIMEO: 'vimeo'
+  }
 };

@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import classApi from '../api/classApi';
 import studentApi from '../../students/api/studentApi';
 import teacherApi from '../../teachers/api/teacherApi';
+import { MaterialsSection } from '../components/MaterialsSection';
 import {
   Card,
   Table,
@@ -24,6 +25,7 @@ import {
   UserPlus,
   Trash2,
   BookOpen,
+  PlayCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -314,25 +316,34 @@ export const ClassDetailPage = () => {
               icon: <GraduationCap className="w-4 h-4" />,
               count: teachers.length,
             },
+            {
+              id: 'materials',
+              label: 'Course Materials',
+              icon: <PlayCircle className="w-4 h-4" />,
+            },
           ]}
           activeTab={activeTab}
           onChange={setActiveTab}
         />
 
-        {activeTab === 'students' ? (
+        {activeTab === 'students' && (
           <Table
             columns={studentColumns}
             data={students}
             emptyTitle="No Students Enrolled"
             emptyMessage="No students are currently enrolled in this class cohort."
           />
-        ) : (
+        )}
+        {activeTab === 'teachers' && (
           <Table
             columns={teacherColumns}
             data={teachers}
             emptyTitle="No Faculty Assigned"
             emptyMessage="No teachers are currently assigned to teach this class."
           />
+        )}
+        {activeTab === 'materials' && (
+          <MaterialsSection classId={id} userRole="admin" canManage={true} />
         )}
       </div>
 

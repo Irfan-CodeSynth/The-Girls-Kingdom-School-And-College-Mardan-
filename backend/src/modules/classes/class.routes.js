@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const classController = require('./class.controller');
+const materialController = require('./material.controller');
 const protect = require('../../middleware/auth');
 const authorize = require('../../middleware/authorize');
 const validate = require('../../middleware/validate');
@@ -11,6 +12,7 @@ const {
   enrollStudentSchema,
   assignTeacherSchema
 } = require('./class.validator');
+const { createMaterialSchema, updateMaterialSchema } = require('./material.validator');
 
 // Protected for all authenticated users
 router.use(protect);
@@ -36,4 +38,29 @@ router.delete('/enroll/:id', authorize(ROLES.ADMIN), classController.removeStude
 router.post('/assign-teacher', authorize(ROLES.ADMIN), validate(assignTeacherSchema), classController.assignTeacher);
 router.delete('/assign-teacher/:id', authorize(ROLES.ADMIN), classController.removeTeacherAssignment);
 
+// ── Stage 7: Course Materials ─────────────────────────────────────────────────
+// GET  /classes/:id/materials         — Teacher (own), Admin (all), Student (published)
+// POST /classes/:id/materials         — Teacher or Admin creates material
+// PATCH /classes/:id/materials/:mid   — Teacher (own) or Admin updates
+// DELETE /classes/:id/materials/:mid  — Teacher (own) or Admin deletes
+router.get('/:id/materials',
+  authorize(ROLES.ADMIN, ROLES.TEACHER, ROLES.STUDENT),
+  materialController.getClassMaterials
+);
+router.post('/:id/materials',
+  authorize(ROLES.ADMIN, ROLES.TEACHER),
+  validate(createMaterialSchema),
+  materialController.createMaterial
+);
+router.patch('/:id/materials/:materialId',
+  authorize(ROLES.ADMIN, ROLES.TEACHER),
+  validate(updateMaterialSchema),
+  materialController.updateMaterial
+);
+router.delete('/:id/materials/:materialId',
+  authorize(ROLES.ADMIN, ROLES.TEACHER),
+  materialController.deleteMaterial
+);
+
 module.exports = router;
+

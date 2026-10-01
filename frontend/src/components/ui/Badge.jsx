@@ -2,6 +2,7 @@ import React from 'react';
 
 const variantStyles = {
   default: 'bg-surface-100 text-surface-800 dark:bg-surface-700 dark:text-surface-200',
+  secondary: 'bg-surface-200 text-surface-600 dark:bg-surface-600 dark:text-surface-300',
   primary: 'bg-primary-50 text-primary-700 dark:bg-primary-950/60 dark:text-primary-300 border border-primary-200 dark:border-primary-800/40',
   success: 'bg-success-50 text-success-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40',
   warning: 'bg-warning-50 text-warning-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40',

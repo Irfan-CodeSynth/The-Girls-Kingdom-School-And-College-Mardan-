@@ -89,6 +89,24 @@ const notifyQuizSubmitted = async (attempt) => {
   });
 };
 
+/**
+ * Notify enrolled students when a new course material is published.
+ * @param {ObjectId} classId     - the class the material belongs to
+ * @param {string}   materialTitle - title of the new material
+ * @param {Array}    studentIds  - array of student ObjectIds
+ */
+const notifyNewMaterial = async (classId, materialTitle, studentIds) => {
+  if (!studentIds || !studentIds.length) return;
+  const notifications = studentIds.map((studentId) => ({
+    recipient: studentId,
+    type: NOTIFICATION_TYPES.NEW_MATERIAL,
+    title: 'New Course Material Available',
+    message: `"${materialTitle}" has been added to your class. Check it out in the Materials section.`,
+    data: { classId },
+  }));
+  await createMany(notifications);
+};
+
 // ─────────────────────────────────────────────────────────────
 //  CRUD — used by the notification API routes
 // ─────────────────────────────────────────────────────────────
@@ -179,6 +197,7 @@ module.exports = {
   notifyQuizGraded,
   notifyEnrollment,
   notifyQuizSubmitted,
+  notifyNewMaterial,
   // API CRUD
   getMyNotifications,
   markAsRead,

@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { classApi } from '../../classes/api/classApi';
-import { Card, Badge, Skeleton, Table, EmptyState } from '../../../components/ui';
+import { MaterialsSection } from '../../classes/components/MaterialsSection';
+import { Card, Badge, Skeleton, Table, EmptyState, Tabs } from '../../../components/ui';
 import {
   ArrowLeft,
   BookOpen,
   Users,
   Calendar,
   Hash,
+  PlayCircle,
 } from 'lucide-react';
 
 export const TeacherClassDetailPage = () => {
   const { id } = useParams();
+  const [activeTab, setActiveTab] = useState('students');
 
   const { data: classData, isPending } = useQuery({
     queryKey: ['class', id],
@@ -122,11 +125,18 @@ export const TeacherClassDetailPage = () => {
         </div>
       </Card>
 
-      {/* Students List */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-          Enrolled Students
-        </h3>
+      {/* Tabs */}
+      <Tabs
+        tabs={[
+          { id: 'students', label: 'Enrolled Students', icon: <Users className="w-4 h-4" />, count: students.length },
+          { id: 'materials', label: 'Materials & Lectures', icon: <PlayCircle className="w-4 h-4" /> },
+        ]}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
+
+      {/* Tab Content */}
+      {activeTab === 'students' && (
         <Table
           columns={studentColumns}
           data={students}
@@ -134,7 +144,11 @@ export const TeacherClassDetailPage = () => {
           emptyTitle="No Students Enrolled"
           emptyMessage="No students are currently enrolled in this class."
         />
-      </div>
+      )}
+
+      {activeTab === 'materials' && (
+        <MaterialsSection classId={id} userRole="teacher" canManage={true} />
+      )}
     </div>
   );
 };
