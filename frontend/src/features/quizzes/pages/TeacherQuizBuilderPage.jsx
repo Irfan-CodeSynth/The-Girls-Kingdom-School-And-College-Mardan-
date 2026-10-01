@@ -266,16 +266,87 @@ export const TeacherQuizBuilderPage = () => {
 
   const handleSave = async (andPublish = false) => {
     if (!title.trim()) return toast.error('Quiz title is required.');
+    if (title.trim().length < 3) return toast.error('Quiz title must be at least 3 characters.');
     if (!classId) return toast.error('Please select a class.');
     if (duration < 1) return toast.error('Duration must be at least 1 minute.');
 
+    if (andPublish && questions.length === 0) {
+      return toast.error('At least one question is required to publish a quiz.');
+    }
+
+    // Validate each question
+    const cleanQuestions = [];
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      const qNum = i + 1;
+
+      if (!q.questionText || !q.questionText.trim()) {
+        return toast.error(`Question ${qNum}: Question text cannot be empty.`);
+      }
+
+      const qMarks = Number(q.marks) || 1;
+      if (qMarks < 0.5) {
+        return toast.error(`Question ${qNum}: Marks must be at least 0.5.`);
+      }
+
+      if (q.type === 'mcq') {
+        const validOptions = (q.options || [])
+          .filter((o) => o.text && o.text.trim())
+          .map((o) => ({
+            text: o.text.trim(),
+            isCorrect: Boolean(o.isCorrect),
+          }));
+
+        if (validOptions.length < 2) {
+          return toast.error(`Question ${qNum} (MCQ): Requires at least 2 non-empty options.`);
+        }
+
+        const correctCount = validOptions.filter((o) => o.isCorrect).length;
+        if (correctCount !== 1) {
+          return toast.error(`Question ${qNum} (MCQ): Please select exactly one correct answer option.`);
+        }
+
+        cleanQuestions.push({
+          type: 'mcq',
+          questionText: q.questionText.trim(),
+          marks: qMarks,
+          options: validOptions,
+          order: i,
+        });
+      } else if (q.type === 'true_false') {
+        cleanQuestions.push({
+          type: 'true_false',
+          questionText: q.questionText.trim(),
+          marks: qMarks,
+          correctAnswer: q.correctAnswer === 'false' ? 'false' : 'true',
+          order: i,
+        });
+      } else if (q.type === 'comprehensive') {
+        cleanQuestions.push({
+          type: 'comprehensive',
+          questionText: q.questionText.trim(),
+          marks: qMarks,
+          modelAnswer: q.modelAnswer?.trim() || undefined,
+          order: i,
+        });
+      }
+    }
+
+    const totalMarks = cleanQuestions.reduce((s, q) => s + (Number(q.marks) || 0), 0);
+    const parsedPassingMarks = Number(passingMarks) || 0;
+    if (parsedPassingMarks > totalMarks && totalMarks > 0) {
+      return toast.error(
+        `Passing marks (${parsedPassingMarks}) cannot be greater than total quiz marks (${totalMarks}). Please adjust passing marks.`
+      );
+    }
+
     const payload = {
       title: title.trim(),
-      description: description.trim(),
+      description: description.trim() || undefined,
       classId,
       duration: Number(duration),
-      passingMarks: Number(passingMarks),
-      maxAttempts: Number(maxAttempts),
+      passingMarks: parsedPassingMarks,
+      maxAttempts: Number(maxAttempts) || 1,
       shuffleQuestions,
     };
 
@@ -290,8 +361,7 @@ export const TeacherQuizBuilderPage = () => {
       }
 
       // Save questions
-      if (questions.length > 0) {
-        const cleanQuestions = questions.map(({ _localId, ...rest }) => rest);
+      if (cleanQuestions.length > 0) {
         await quizApi.setQuestions(savedQuizId, cleanQuestions);
       }
 
@@ -305,7 +375,13 @@ export const TeacherQuizBuilderPage = () => {
       queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
       navigate('/teacher/quizzes');
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Save failed.');
+      const fieldErrors = err?.response?.data?.errors;
+      if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+        const detail = fieldErrors.map((e) => `${e.field}: ${e.message}`).join(', ');
+        toast.error(`Validation Error: ${detail}`);
+      } else {
+        toast.error(err?.response?.data?.message || 'Save failed.');
+      }
     }
   };
 
