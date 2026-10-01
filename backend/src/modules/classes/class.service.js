@@ -80,7 +80,11 @@ const getClassById = async (id) => {
   ]);
 
   return {
-    class: cls,
+    class: {
+      ...cls.toObject(),
+      studentCount: students.length,
+      teacherCount: teachers.length
+    },
     students,
     teachers
   };
@@ -239,7 +243,21 @@ const getTeacherAssignedClasses = async (teacherId) => {
     status: 'active'
   }).populate('class');
 
-  return assignments.map(a => a.class).filter(Boolean);
+  const classes = assignments.map(a => a.class).filter(Boolean);
+  if (!classes.length) return [];
+
+  const classIds = classes.map(c => c._id);
+  const enrollmentCounts = await Enrollment.aggregate([
+    { $match: { class: { $in: classIds }, status: ENROLLMENT_STATUS.ACTIVE } },
+    { $group: { _id: '$class', count: { $sum: 1 } } }
+  ]);
+
+  const studentCountMap = Object.fromEntries(enrollmentCounts.map(e => [e._id.toString(), e.count]));
+
+  return classes.map(c => ({
+    ...c.toObject(),
+    studentCount: studentCountMap[c._id.toString()] || 0
+  }));
 };
 
 // Check if a teacher has authorization for a given class
