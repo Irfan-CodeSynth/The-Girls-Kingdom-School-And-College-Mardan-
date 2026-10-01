@@ -1,5 +1,6 @@
 const Notification = require('./notification.model');
 const { NOTIFICATION_TYPES } = require('../../utils/constants');
+const ApiError = require('../../utils/ApiError');
 
 // ─────────────────────────────────────────────────────────────
 //  Internal helper — fire-and-forget notification creator
@@ -133,7 +134,6 @@ const markAsRead = async (notificationId, userId) => {
     { new: true }
   );
   if (!notification) {
-    const { default: ApiError } = await import('../../utils/ApiError.js');
     throw ApiError.notFound('Notification not found.');
   }
   return { notification };

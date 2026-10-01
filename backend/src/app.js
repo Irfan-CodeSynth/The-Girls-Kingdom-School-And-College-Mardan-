@@ -32,11 +32,37 @@ const connectDB = require('./config/db');
 app.use(generalLimiter);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+let isSeeded = false;
+
 // Ensure database connection is ready for API requests (especially on Serverless/Vercel)
 app.use('/api', async (req, res, next) => {
   if (req.path === '/health') return next();
   try {
     await connectDB();
+    if (!isSeeded) {
+      isSeeded = true;
+      try {
+        const User = require('./modules/users/user.model');
+        const { ROLES } = require('./utils/constants');
+        const adminExists = await User.findOne({ role: ROLES.ADMIN });
+        if (!adminExists) {
+          const adminEmail = process.env.ADMIN_EMAIL || 'admin@girlskingdom.edu';
+          const adminPass = process.env.ADMIN_PASSWORD || 'Admin@123456';
+          await User.create({
+            fullName: process.env.ADMIN_NAME || 'System Administrator',
+            email: adminEmail,
+            password: adminPass,
+            role: ROLES.ADMIN,
+            isActive: true
+          });
+          console.log(`Default administrator seeded: ${adminEmail} / ${adminPass}`);
+        }
+        const seedInitialDataIfEmpty = require('../seeds/initialSeed');
+        await seedInitialDataIfEmpty();
+      } catch (seedErr) {
+        console.warn('Auto-seed check notice:', seedErr.message);
+      }
+    }
     next();
   } catch (err) {
     console.error('Database connection error on API request:', err.message);
