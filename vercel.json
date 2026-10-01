@@ -7,36 +7,33 @@
     },
     "frontend": {
       "root": "frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     }
   },
   "rewrites": [
     {
-      "source": "/api/:match*",
+      "source": "/api/(.*)",
       "destination": {
         "service": "backend"
       }
     },
     {
-      "source": "/assets/:match*",
+      "source": "/api",
       "destination": {
-        "service": "frontend",
-        "path": "/assets/:match*"
-      }
-    },
-    {
-      "source": "/favicon.png",
-      "destination": {
-        "service": "frontend",
-        "path": "/favicon.png"
+        "service": "backend"
       }
     },
     {
       "source": "/(.*)",
       "destination": {
-        "service": "frontend",
-        "path": "/index.html"
+        "service": "frontend"
       }
     }
   ]
-}
+}
