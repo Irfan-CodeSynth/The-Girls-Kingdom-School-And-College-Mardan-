@@ -22,6 +22,7 @@ import {
   Globe,
   Lock,
   Archive,
+  RotateCcw,
   Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -33,12 +34,12 @@ const STATUS_CONFIG = {
   archived: { label: 'Archived', variant: 'secondary' },
 };
 
-const QuizCard = ({ quiz, onPublish, onClose, onArchive, onDelete }) => {
+const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const cfg = STATUS_CONFIG[quiz.status] || STATUS_CONFIG.draft;
 
   return (
-    <Card className="flex flex-col gap-3 hover:shadow-md transition-shadow relative">
+    <Card className="flex flex-col gap-3 hover:shadow-md transition-shadow relative overflow-visible z-10">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -61,56 +62,104 @@ const QuizCard = ({ quiz, onPublish, onClose, onArchive, onDelete }) => {
             {menuOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-10"
+                  className="fixed inset-0 z-40"
                   onClick={() => setMenuOpen(false)}
                 />
-                <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl shadow-lg z-20 py-1 text-sm">
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl shadow-xl z-50 py-1.5 text-sm">
                   <Link
                     to={`/teacher/quizzes/${quiz._id}/edit`}
-                    className="flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300"
+                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200"
                     onClick={() => setMenuOpen(false)}
                   >
-                    <Pencil className="w-3.5 h-3.5" /> Edit Quiz
+                    <Pencil className="w-3.5 h-3.5 text-primary-500" />
+                    <span>Edit Quiz</span>
                   </Link>
                   <Link
                     to={`/teacher/quizzes/${quiz._id}/attempts`}
-                    className="flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300"
+                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200"
                     onClick={() => setMenuOpen(false)}
                   >
-                    <Eye className="w-3.5 h-3.5" /> View Attempts
+                    <Eye className="w-3.5 h-3.5 text-blue-500" />
+                    <span>View Attempts</span>
                   </Link>
+
+                  <div className="my-1 border-t border-surface-100 dark:border-surface-700" />
+
+                  {/* Status Change Options */}
                   {quiz.status === 'draft' && (
                     <button
                       onClick={() => { setMenuOpen(false); onPublish(quiz._id); }}
-                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-green-600 dark:text-green-400"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-emerald-600 dark:text-emerald-400 font-medium"
                     >
-                      <Globe className="w-3.5 h-3.5" /> Publish
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Publish Quiz</span>
                     </button>
                   )}
                   {quiz.status === 'published' && (
-                    <button
-                      onClick={() => { setMenuOpen(false); onClose(quiz._id); }}
-                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-amber-600 dark:text-amber-400"
-                    >
-                      <Lock className="w-3.5 h-3.5" /> Close Quiz
-                    </button>
+                    <>
+                      <button
+                        onClick={() => { setMenuOpen(false); onClose(quiz._id); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-amber-600 dark:text-amber-400"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Close Quiz</span>
+                      </button>
+                      <button
+                        onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Revert to Draft</span>
+                      </button>
+                    </>
                   )}
-                  {(quiz.status === 'draft' || quiz.status === 'closed') && (
+                  {quiz.status === 'closed' && (
+                    <>
+                      <button
+                        onClick={() => { setMenuOpen(false); onPublish(quiz._id); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                      >
+                        <Globe className="w-3.5 h-3.5" />
+                        <span>Re-Publish Quiz</span>
+                      </button>
+                      <button
+                        onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Revert to Draft</span>
+                      </button>
+                    </>
+                  )}
+                  {quiz.status !== 'archived' && (
                     <button
                       onClick={() => { setMenuOpen(false); onArchive(quiz._id); }}
-                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-500"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-500 dark:text-surface-400"
                     >
-                      <Archive className="w-3.5 h-3.5" /> Archive
+                      <Archive className="w-3.5 h-3.5" />
+                      <span>Archive</span>
                     </button>
                   )}
-                  {(quiz.status === 'draft' || quiz.status === 'archived') && (
+                  {quiz.status === 'archived' && (
                     <button
-                      onClick={() => { setMenuOpen(false); onDelete(quiz); }}
-                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-red-500 dark:text-red-400"
+                      onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-300"
                     >
-                      <Trash2 className="w-3.5 h-3.5" /> Delete
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Restore to Draft</span>
                     </button>
                   )}
+
+                  <div className="my-1 border-t border-surface-100 dark:border-surface-700" />
+
+                  {/* Delete option */}
+                  <button
+                    onClick={() => { setMenuOpen(false); onDelete(quiz); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-danger-600 dark:text-danger-400"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Quiz</span>
+                  </button>
                 </div>
               </>
             )}
@@ -197,6 +246,15 @@ export const TeacherQuizListPage = () => {
       queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
     },
     onError: (e) => toast.error(e?.response?.data?.message || 'Delete failed'),
+  });
+
+  const unpublishMut = useMutation({
+    mutationFn: quizApi.unpublishQuiz,
+    onSuccess: () => {
+      toast.success('Quiz reverted to draft.');
+      queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
+    },
+    onError: (e) => toast.error(e?.response?.data?.message || 'Revert failed'),
   });
 
   const quizzes = data?.quizzes || [];
@@ -286,6 +344,7 @@ export const TeacherQuizListPage = () => {
                 key={quiz._id}
                 quiz={quiz}
                 onPublish={(id) => publishMut.mutate(id)}
+                onUnpublish={(id) => unpublishMut.mutate(id)}
                 onClose={(id) => closeMut.mutate(id)}
                 onArchive={(id) => archiveMut.mutate(id)}
                 onDelete={setQuizToDelete}

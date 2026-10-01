@@ -66,6 +66,13 @@ router.post(
 );
 
 router.post(
+  '/:id/unpublish',
+  authorize(ROLES.TEACHER, ROLES.ADMIN),
+  validate(publishQuizSchema),
+  quizController.unpublishQuiz
+);
+
+router.post(
   '/:id/close',
   authorize(ROLES.TEACHER, ROLES.ADMIN),
   validate(publishQuizSchema), // same id-only param shape

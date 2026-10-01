@@ -33,6 +33,11 @@ const publishQuiz = async (req, res) => {
   return ApiResponse.success(res, result, 'Quiz published successfully');
 };
 
+const unpublishQuiz = async (req, res) => {
+  const result = await quizService.unpublishQuiz(req.params.id, req.user.id, req.user.role);
+  return ApiResponse.success(res, result, 'Quiz reverted to draft');
+};
+
 const closeQuiz = async (req, res) => {
   const result = await quizService.closeQuiz(req.params.id, req.user.id, req.user.role);
   return ApiResponse.success(res, result, 'Quiz closed successfully');
@@ -105,6 +110,7 @@ module.exports = {
   updateQuiz,
   setQuestions,
   publishQuiz,
+  unpublishQuiz,
   closeQuiz,
   archiveQuiz,
   deleteQuiz,

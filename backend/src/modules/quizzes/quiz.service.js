@@ -316,7 +316,23 @@ const archiveQuiz = async (quizId, userId, userRole) => {
 };
 
 /**
- * Delete a draft quiz permanently.
+ * Unpublish or revert a quiz back to draft status.
+ */
+const unpublishQuiz = async (quizId, userId, userRole) => {
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) throw ApiError.notFound('Quiz not found.');
+
+  if (userRole === ROLES.TEACHER && String(quiz.teacher) !== String(userId)) {
+    throw ApiError.forbidden('You can only edit your own quizzes.');
+  }
+
+  quiz.status = QUIZ_STATUS.DRAFT;
+  await quiz.save();
+  return { quiz };
+};
+
+/**
+ * Delete a quiz permanently along with any attempts.
  */
 const deleteQuiz = async (quizId, userId, userRole) => {
   const quiz = await Quiz.findById(quizId);
@@ -324,9 +340,6 @@ const deleteQuiz = async (quizId, userId, userRole) => {
 
   if (userRole === ROLES.TEACHER && String(quiz.teacher) !== String(userId)) {
     throw ApiError.forbidden('You can only delete your own quizzes.');
-  }
-  if (quiz.status !== QUIZ_STATUS.DRAFT && quiz.status !== QUIZ_STATUS.ARCHIVED) {
-    throw ApiError.badRequest('Only draft or archived quizzes can be deleted.');
   }
 
   await Attempt.deleteMany({ quiz: quizId });
@@ -754,6 +767,7 @@ module.exports = {
   updateQuiz,
   setQuestions,
   publishQuiz,
+  unpublishQuiz,
   closeQuiz,
   archiveQuiz,
   deleteQuiz,

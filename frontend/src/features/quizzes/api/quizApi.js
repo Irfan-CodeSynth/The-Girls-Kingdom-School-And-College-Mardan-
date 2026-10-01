@@ -32,6 +32,11 @@ const quizApi = {
     return res.data?.data || res.data;
   },
 
+  unpublishQuiz: async (id) => {
+    const res = await api.post(`/quizzes/${id}/unpublish`);
+    return res.data?.data || res.data;
+  },
+
   closeQuiz: async (id) => {
     const res = await api.post(`/quizzes/${id}/close`);
     return res.data?.data || res.data;
