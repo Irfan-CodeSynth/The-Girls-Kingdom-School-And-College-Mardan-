@@ -174,7 +174,7 @@ export const TeacherDashboardPage = () => {
                     </div>
                     <div className="flex items-center gap-1 text-xs text-surface-400 flex-shrink-0">
                       <Users className="w-3.5 h-3.5" />
-                      {cls.enrollmentCount ?? '—'}
+                      {cls.studentCount ?? 0}
                     </div>
                     <ChevronRight className="w-4 h-4 text-surface-300 flex-shrink-0" />
                   </Card>

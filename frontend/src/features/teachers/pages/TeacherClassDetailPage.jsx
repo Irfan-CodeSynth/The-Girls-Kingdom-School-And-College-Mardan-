@@ -42,21 +42,23 @@ export const TeacherClassDetailPage = () => {
 
   const studentColumns = [
     {
-      key: 'fullName',
+      key: 'student',
       label: 'Student',
-      render: (val, row) => (
+      render: (val) => (
         <div>
-          <p className="font-medium text-surface-900 dark:text-white text-sm">{val}</p>
-          <p className="text-xs text-surface-500">{row.email}</p>
+          <p className="font-medium text-surface-900 dark:text-white text-sm">
+            {val?.fullName || <span className="text-surface-400 italic">Unknown</span>}
+          </p>
+          <p className="text-xs text-surface-500">{val?.email}</p>
         </div>
       ),
     },
     {
-      key: 'studentId',
+      key: 'student',
       label: 'Reg #',
       render: (val) => (
         <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700">
-          {val || 'N/A'}
+          {val?.studentId || 'N/A'}
         </span>
       ),
     },
@@ -105,7 +107,7 @@ export const TeacherClassDetailPage = () => {
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-primary-500" />
             <span>
-              <strong className="text-surface-900 dark:text-white">{cls?.studentCount ?? 0}</strong> students enrolled
+              <strong className="text-surface-900 dark:text-white">{students.length}</strong> students enrolled
             </span>
           </div>
           <div className="flex items-center gap-2">
