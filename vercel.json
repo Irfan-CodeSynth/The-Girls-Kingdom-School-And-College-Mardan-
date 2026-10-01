@@ -12,13 +12,26 @@
   },
   "rewrites": [
     {
-      "source": "/api/:match*",
+      "source": "/api/(.*)",
       "destination": {
         "service": "backend"
       }
     },
     {
-      "source": "/:path*",
+      "source": "/api",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*\\.[a-zA-Z0-9]+)",
+      "destination": {
+        "service": "frontend",
+        "path": "/$1"
+      }
+    },
+    {
+      "source": "/((?!api).*)",
       "destination": {
         "service": "frontend",
         "path": "/index.html"
