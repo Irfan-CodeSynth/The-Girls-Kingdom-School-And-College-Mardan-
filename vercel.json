@@ -12,21 +12,30 @@
   },
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:match*",
       "destination": {
         "service": "backend"
       }
     },
     {
-      "source": "/api",
+      "source": "/assets/:match*",
       "destination": {
-        "service": "backend"
+        "service": "frontend",
+        "path": "/assets/:match*"
+      }
+    },
+    {
+      "source": "/favicon.png",
+      "destination": {
+        "service": "frontend",
+        "path": "/favicon.png"
       }
     },
     {
       "source": "/(.*)",
       "destination": {
-        "service": "frontend"
+        "service": "frontend",
+        "path": "/index.html"
       }
     }
   ]
