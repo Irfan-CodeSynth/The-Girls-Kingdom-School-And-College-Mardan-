@@ -10,3 +10,5 @@ const authorize = (...roles) => {
 };
 
 module.exports = authorize;
+module.exports.authorize = authorize;
+module.exports.default = authorize;

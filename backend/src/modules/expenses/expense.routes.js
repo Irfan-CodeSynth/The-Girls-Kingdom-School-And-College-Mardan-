@@ -1,6 +1,6 @@
 const express = require('express');
-const { protect } = require('../../middleware/auth');
-const { authorize } = require('../../middleware/authorize');
+const protect = require('../../middleware/auth');
+const authorize = require('../../middleware/authorize');
 const validate = require('../../middleware/validate');
 const { ROLES } = require('../../utils/constants');
 const controller = require('./expense.controller');

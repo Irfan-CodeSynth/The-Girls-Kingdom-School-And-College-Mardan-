@@ -23,3 +23,5 @@ const protect = (req, res, next) => {
 };
 
 module.exports = protect;
+module.exports.protect = protect;
+module.exports.default = protect;
