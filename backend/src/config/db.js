@@ -14,48 +14,51 @@ const connectDB = async () => {
 
   const mongoUri = process.env.MONGO_URI || env.MONGO_URI;
   if (!mongoUri) {
-    console.warn('⚠️ MONGO_URI is not defined in environment variables.');
+    console.warn('⚠️ MONGO_URI is not defined. Will attempt embedded MongoDB fallback...');
   }
 
+  // Try to connect to the configured MongoDB URI first
+  if (mongoUri) {
+    try {
+      const conn = await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 15000,
+        connectTimeoutMS: 15000,
+      });
+      console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+      return conn;
+    } catch (error) {
+      console.error(`❌ MongoDB connection failed: ${error.message}`);
+      console.warn('⚡ Falling back to embedded MongoDB...');
+    }
+  }
+
+  // Fallback: embedded MongoMemoryServer (works on any environment including Vercel)
   try {
-    const conn = await mongoose.connect(mongoUri || 'mongodb://localhost:27017/girls-kingdom-college', {
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000,
-    });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-    return conn;
-  } catch (error) {
-    if ((env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production') && !process.env.VERCEL) {
-      console.warn(`Local MongoDB at ${mongoUri} not detected. Starting embedded MongoDB engine...`);
-      try {
-        const { MongoMemoryServer } = require('mongodb-memory-server');
-        if (isTestEnv) {
-          mongoMemoryServer = await MongoMemoryServer.create();
-        } else {
-          const dbPath = path.resolve(__dirname, '../../.mongo-data');
-          if (!fs.existsSync(dbPath)) {
-            fs.mkdirSync(dbPath, { recursive: true });
-          }
-          mongoMemoryServer = await MongoMemoryServer.create({
-            instance: {
-              dbPath,
-              storageEngine: 'wiredTiger'
-            }
-          });
+    console.warn('🔄 Starting embedded MongoDB (in-memory)...');
+    const { MongoMemoryServer } = require('mongodb-memory-server');
+    if (!mongoMemoryServer) {
+      if (!isTestEnv && (env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'production')) {
+        // Persistent storage in dev
+        const dbPath = path.resolve(__dirname, '../../.mongo-data');
+        if (!fs.existsSync(dbPath)) {
+          fs.mkdirSync(dbPath, { recursive: true });
         }
-        const memoryUri = mongoMemoryServer.getUri();
-        const conn = await mongoose.connect(memoryUri);
-        console.log(`Embedded Development MongoDB Connected: ${conn.connection.host} (Persistent: ${!isTestEnv})`);
-        return conn;
-      } catch (innerError) {
-        console.error('Failed to launch embedded MongoDB:', innerError.message);
+        mongoMemoryServer = await MongoMemoryServer.create({
+          instance: { dbPath, storageEngine: 'wiredTiger' }
+        });
+      } else {
+        mongoMemoryServer = await MongoMemoryServer.create();
       }
     }
-    console.error(`MongoDB Connection Error: ${error.message}`);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
-    throw error;
+    const memoryUri = mongoMemoryServer.getUri();
+    const conn = await mongoose.connect(memoryUri);
+    console.log(`✅ Embedded MongoDB Connected: ${conn.connection.host}`);
+    console.warn('⚠️  NOTE: Using in-memory MongoDB — data will NOT persist between restarts!');
+    console.warn('⚠️  Set MONGO_URI in Vercel Environment Variables for persistent storage.');
+    return conn;
+  } catch (innerError) {
+    console.error('❌ Failed to launch embedded MongoDB:', innerError.message);
+    throw innerError;
   }
 };
 
