@@ -7,58 +7,36 @@ let mongoMemoryServer = null;
 
 const isTestEnv = process.env.NODE_ENV === 'test' || process.argv.some(a => a.includes('test'));
 
+let cachedPromise = null;
+
 const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) {
+  if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
+  }
+
+  if (mongoose.connection.readyState === 2 && cachedPromise) {
+    return cachedPromise;
   }
 
   const mongoUri = process.env.MONGO_URI || env.MONGO_URI;
   if (!mongoUri) {
-    console.warn('⚠️ MONGO_URI is not defined. Will attempt embedded MongoDB fallback...');
+    console.warn('⚠️ MONGO_URI is not defined.');
+    throw new Error('MONGO_URI environment variable is missing.');
   }
 
-  // Try to connect to the configured MongoDB URI first
-  if (mongoUri) {
-    try {
-      const conn = await mongoose.connect(mongoUri, {
-        serverSelectionTimeoutMS: 6000,
-        connectTimeoutMS: 6000,
-      });
-      console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-      return conn;
-    } catch (error) {
-      console.error(`❌ MongoDB connection failed: ${error.message}`);
-      if (process.env.VERCEL) {
-        throw new Error(`MongoDB connection failed (${error.message}). Please check that Atlas Network Access allows 0.0.0.0/0.`);
-      }
-    }
+  try {
+    cachedPromise = mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 8000,
+      connectTimeoutMS: 8000,
+    });
+    const conn = await cachedPromise;
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    return conn;
+  } catch (error) {
+    cachedPromise = null;
+    console.error(`❌ MongoDB connection failed: ${error.message}`);
+    throw error;
   }
-
-  // Fallback: embedded MongoMemoryServer (development only, not suitable for Vercel/serverless)
-  if (!process.env.VERCEL) {
-    try {
-      console.warn('🔄 Starting embedded MongoDB (in-memory dev fallback)...');
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      if (!mongoMemoryServer) {
-        const dbPath = path.resolve(__dirname, '../../.mongo-data');
-        if (!fs.existsSync(dbPath)) {
-          fs.mkdirSync(dbPath, { recursive: true });
-        }
-        mongoMemoryServer = await MongoMemoryServer.create({
-          instance: { dbPath, storageEngine: 'wiredTiger' }
-        });
-      }
-      const memoryUri = mongoMemoryServer.getUri();
-      const conn = await mongoose.connect(memoryUri);
-      console.log(`✅ Embedded MongoDB Connected: ${conn.connection.host}`);
-      return conn;
-    } catch (innerError) {
-      console.error('❌ Failed to launch embedded MongoDB:', innerError.message);
-      throw innerError;
-    }
-  }
-
-  throw new Error('MONGO_URI is missing or unreachable on Vercel.');
 };
 
 mongoose.connection.on('connected', () => {

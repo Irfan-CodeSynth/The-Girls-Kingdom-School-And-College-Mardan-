@@ -85,7 +85,8 @@ app.use('/api', async (req, res, next) => {
     console.error('Database connection error on API request:', err.message);
     return res.status(503).json({
       status: 'error',
-      message: 'Database connection failed. Please verify MONGO_URI in Vercel Environment Variables and ensure MongoDB Atlas Network Access is set to 0.0.0.0/0.'
+      message: err.message,
+      detail: err.name
     });
   }
 });
