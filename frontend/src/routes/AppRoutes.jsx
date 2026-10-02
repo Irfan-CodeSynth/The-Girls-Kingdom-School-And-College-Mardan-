@@ -70,6 +70,9 @@ import StudentFeesPage from '../features/fees/pages/StudentFeesPage';
 import AdminSalaryPage from '../features/salary/pages/AdminSalaryPage';
 import TeacherSalaryPage from '../features/salary/pages/TeacherSalaryPage';
 
+// Stage 11 — Expense Management
+import AdminExpensesPage from '../features/expenses/pages/AdminExpensesPage';
+
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -127,6 +130,9 @@ export const AppRoutes = () => {
 
             {/* Salary (Payroll) Management */}
             <Route path="/admin/salary" element={<AdminSalaryPage />} />
+
+            {/* Expenses & OpEx Management */}
+            <Route path="/admin/expenses" element={<AdminExpensesPage />} />
           </Route>
 
           {/* ─── Teacher Routes ─── */}

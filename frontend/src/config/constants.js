@@ -33,6 +33,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Quizzes', path: '/admin/quizzes', icon: 'FileQuestion' },
     { name: 'Fee Management', path: '/admin/fees', icon: 'Wallet' },
     { name: 'Staff Payroll', path: '/admin/salary', icon: 'Banknote' },
+    { name: 'Expenses & OpEx', path: '/admin/expenses', icon: 'Receipt' },
   ],
   [ROLES.TEACHER]: [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: 'LayoutDashboard' },

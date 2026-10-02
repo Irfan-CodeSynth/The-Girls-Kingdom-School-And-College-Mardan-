@@ -16,6 +16,7 @@ const quizRoutes = require('./modules/quizzes/quiz.routes');
 const notificationRoutes = require('./modules/notifications/notification.routes');
 const feeRoutes = require('./modules/fees/fee.routes');
 const salaryRoutes = require('./modules/salary/salary.routes');
+const expenseRoutes = require('./modules/expenses/expense.routes');
 const ApiError = require('./utils/ApiError');
 
 const app = express();
@@ -83,6 +84,7 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/fees', feeRoutes);
 app.use('/api/salary', salaryRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });

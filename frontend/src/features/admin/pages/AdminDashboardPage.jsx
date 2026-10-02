@@ -20,6 +20,7 @@ import {
   RefreshCw,
   Wallet,
   Banknote,
+  Receipt,
 } from 'lucide-react';
 
 // ─── Modern Responsive Stat Card ─────────────────────────────
@@ -213,6 +214,14 @@ export const AdminDashboardPage = () => {
           icon={Banknote}
           color="bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400"
           to="/admin/salary"
+        />
+        <StatCard
+          label="Expenses & OpEx"
+          value="Vouchers"
+          isAction
+          icon={Receipt}
+          color="bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400"
+          to="/admin/expenses"
         />
       </div>
 
