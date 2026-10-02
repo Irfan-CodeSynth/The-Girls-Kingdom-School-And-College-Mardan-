@@ -99,6 +99,40 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
+app.get('/api/system-status', async (req, res) => {
+  const mongoose = require('mongoose');
+  const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown';
+  let dbError = null;
+  let counts = { admin: 0, teacher: 0, student: 0 };
+  
+  try {
+    const connectDB = require('./config/db');
+    await connectDB();
+    const User = require('./modules/users/user.model');
+    const { ROLES } = require('./utils/constants');
+    const [adminCount, teacherCount, studentCount] = await Promise.all([
+      User.countDocuments({ role: ROLES.ADMIN }),
+      User.countDocuments({ role: ROLES.TEACHER }),
+      User.countDocuments({ role: ROLES.STUDENT })
+    ]);
+    counts = { admin: adminCount, teacher: teacherCount, student: studentCount };
+  } catch (err) {
+    dbError = err.message;
+  }
+
+  return res.json({
+    status: 'ok',
+    database: {
+      state: dbStatus,
+      host: mongoose.connection.host || null,
+      error: dbError,
+      hasMongoUri: Boolean(process.env.MONGO_URI || require('./config/env').MONGO_URI)
+    },
+    users: counts,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use((req, res, next) => {
   next(ApiError.notFound(`Can't find ${req.originalUrl} on this server!`));
 });
