@@ -16,9 +16,12 @@ const videoSchema = z.object({
 }).optional();
 
 const documentSchema = z.object({
-  fileUrl: z.string().url('Must be a valid URL'),
+  fileUrl: z.string().min(1, 'Document URL or file content is required'),
   fileName: z.string().min(1).max(200).optional(),
-  fileType: z.string().max(20).optional(),
+  fileType: z.string().max(50).optional(),
+  fileSize: z.number().optional(),
+  fileSizeFormatted: z.string().max(50).optional(),
+  isExternal: z.boolean().optional(),
 }).optional();
 
 const createMaterialSchema = z.object({

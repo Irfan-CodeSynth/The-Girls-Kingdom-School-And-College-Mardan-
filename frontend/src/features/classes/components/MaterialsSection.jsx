@@ -6,7 +6,7 @@ import { MaterialUploadModal } from './MaterialUploadModal';
 import { VideoPlayerModal } from './VideoPlayerModal';
 import {
   Plus, PlayCircle, FileText, Trash2, Pencil, Eye, EyeOff,
-  Youtube, Cloud, BookOpen
+  Youtube, Cloud, BookOpen, Download, ExternalLink
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -79,7 +79,16 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
     if (mat.category === 'lecture_video' && mat.video) {
       setPlayerMaterial(mat);
     } else if (mat.document?.fileUrl) {
-      window.open(mat.document.fileUrl, '_blank', 'noopener,noreferrer');
+      if (mat.document.fileUrl.startsWith('data:')) {
+        const a = document.createElement('a');
+        a.href = mat.document.fileUrl;
+        a.download = mat.document.fileName || `${mat.title || 'document'}.${mat.document.fileType || 'pdf'}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        window.open(mat.document.fileUrl, '_blank', 'noopener,noreferrer');
+      }
     }
   };
 
@@ -169,10 +178,53 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
                   {mat.description && (
                     <p className="text-xs text-surface-500 mt-0.5 truncate">{mat.description}</p>
                   )}
+                  {!isVideo && mat.document && (
+                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs text-surface-400">
+                      {mat.document.fileName && (
+                        <span className="font-mono text-surface-600 dark:text-surface-300 truncate max-w-[200px] sm:max-w-xs">
+                          {mat.document.fileName}
+                        </span>
+                      )}
+                      {mat.document.fileSizeFormatted && (
+                        <span>• {mat.document.fileSizeFormatted}</span>
+                      )}
+                      {mat.document.fileType && (
+                        <Badge variant="secondary" size="xs" className="uppercase font-mono text-[10px]">
+                          {mat.document.fileType}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                   {isVideo && mat.video?.durationMinutes && (
                     <p className="text-xs text-surface-400 mt-0.5">{mat.video.durationMinutes} min</p>
                   )}
                 </button>
+
+                {/* Document Direct Download / Open Button */}
+                {!isVideo && mat.document?.fileUrl && (
+                  <Button
+                    variant="secondary"
+                    size="xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMaterialClick(mat);
+                    }}
+                    title={mat.document.fileUrl.startsWith('data:') ? 'Download Document' : 'Open Document Link'}
+                    className="shrink-0 text-xs gap-1.5"
+                  >
+                    {mat.document.fileUrl.startsWith('data:') ? (
+                      <>
+                        <Download className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                        <span className="hidden sm:inline">Download</span>
+                      </>
+                    ) : (
+                      <>
+                        <ExternalLink className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                        <span className="hidden sm:inline">Open</span>
+                      </>
+                    )}
+                  </Button>
+                )}
 
                 {/* Teacher: By */}
                 {mat.teacher?.fullName && userRole === 'admin' && (

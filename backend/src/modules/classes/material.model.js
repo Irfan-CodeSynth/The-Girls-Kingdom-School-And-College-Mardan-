@@ -61,9 +61,11 @@ const materialSchema = new mongoose.Schema(
 
     // ── Document-specific fields ───────────────────────────────────
     document: {
-      fileUrl: { type: String, trim: true },    // Google Drive / OneDrive share link
+      fileUrl: { type: String, trim: true },    // Google Drive / OneDrive share link or base64 data url / upload url
       fileName: { type: String, trim: true },
       fileType: { type: String, trim: true },   // pdf, docx, pptx, etc.
+      fileSize: { type: Number },               // size in bytes
+      fileSizeFormatted: { type: String, trim: true }, // e.g. "2.4 MB"
       isExternal: { type: Boolean, default: true },
     },
 

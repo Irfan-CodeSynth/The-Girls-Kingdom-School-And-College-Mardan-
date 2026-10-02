@@ -78,11 +78,14 @@ const createMaterial = async (classId, data, userId, userRole) => {
 
   // ── Document payload ───────────────────────────────────────
   if (data.document) {
+    const isDataUri = typeof data.document.fileUrl === 'string' && data.document.fileUrl.startsWith('data:');
     payload.document = {
       fileUrl: data.document.fileUrl,
       fileName: data.document.fileName,
       fileType: data.document.fileType,
-      isExternal: true,
+      fileSize: data.document.fileSize,
+      fileSizeFormatted: data.document.fileSizeFormatted,
+      isExternal: data.document.isExternal !== undefined ? Boolean(data.document.isExternal) : !isDataUri,
     };
   }
 
@@ -175,9 +178,16 @@ const updateMaterial = async (classId, materialId, data, userId, userRole) => {
 
   if (data.document) {
     if (!material.document) material.document = {};
-    material.document.fileUrl = data.document.fileUrl ?? material.document.fileUrl;
-    material.document.fileName = data.document.fileName ?? material.document.fileName;
-    material.document.fileType = data.document.fileType ?? material.document.fileType;
+    if (data.document.fileUrl !== undefined) material.document.fileUrl = data.document.fileUrl;
+    if (data.document.fileName !== undefined) material.document.fileName = data.document.fileName;
+    if (data.document.fileType !== undefined) material.document.fileType = data.document.fileType;
+    if (data.document.fileSize !== undefined) material.document.fileSize = data.document.fileSize;
+    if (data.document.fileSizeFormatted !== undefined) material.document.fileSizeFormatted = data.document.fileSizeFormatted;
+    if (data.document.isExternal !== undefined) {
+      material.document.isExternal = Boolean(data.document.isExternal);
+    } else if (data.document.fileUrl) {
+      material.document.isExternal = !data.document.fileUrl.startsWith('data:');
+    }
   }
 
   await material.save();
