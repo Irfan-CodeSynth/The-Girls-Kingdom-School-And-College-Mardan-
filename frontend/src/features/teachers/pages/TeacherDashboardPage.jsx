@@ -25,43 +25,41 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-// ─── Compact Responsive Stat Card ─────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext }) => {
+// ─── Modern Responsive Stat Card ─────────────────────────────
+const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext, isAction }) => {
   const content = (
     <Card
       hover={Boolean(to)}
-      className="p-3.5 sm:p-4 flex items-center gap-3 transition-all duration-200 h-full border border-surface-200 dark:border-surface-700/80 hover:border-primary-400 dark:hover:border-primary-500 shadow-xs hover:shadow-md"
+      className="p-3.5 sm:p-4 flex flex-col justify-between h-full border border-surface-200 dark:border-white/10 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 group"
     >
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
-        <Icon className="w-5 h-5" />
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <span className="text-xs font-semibold text-surface-600 dark:text-surface-300 tracking-wide leading-tight">
+          {label}
+        </span>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="w-4 h-4" />
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
+
+      <div className="flex items-baseline justify-between gap-2 mt-auto">
         {loading ? (
-          <>
-            <Skeleton className="h-5 w-14 mb-1" />
-            <Skeleton className="h-3 w-20" />
-          </>
+          <Skeleton className="h-7 w-16" />
+        ) : isAction ? (
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
+            <span>{value}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </span>
         ) : (
-          <>
-            <div className="flex items-baseline gap-1.5">
-              <p className="text-lg sm:text-xl font-extrabold text-surface-900 dark:text-white leading-tight truncate">
-                {value}
-              </p>
-              {subtext && (
-                <span className="text-[10px] text-surface-400 font-medium truncate">
-                  {subtext}
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-surface-500 dark:text-surface-400 truncate mt-0.5 font-medium">
-              {label}
-            </p>
-          </>
+          <p className="text-xl sm:text-2xl font-black text-surface-900 dark:text-white tracking-tight">
+            {value}
+          </p>
+        )}
+        {subtext && (
+          <span className="text-[11px] text-surface-400 dark:text-surface-400 font-medium">
+            {subtext}
+          </span>
         )}
       </div>
-      {to && (
-        <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-primary-500 transition-colors shrink-0" />
-      )}
     </Card>
   );
 
@@ -196,7 +194,8 @@ export const TeacherDashboardPage = () => {
         />
         <StatCard
           label="Attendance"
-          value="Daily Roll"
+          value="Roll-Call Hub"
+          isAction
           icon={CheckCircle2}
           color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
           to="/teacher/attendance"

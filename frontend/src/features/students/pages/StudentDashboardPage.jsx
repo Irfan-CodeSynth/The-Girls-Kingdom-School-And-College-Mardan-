@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { classApi } from '../../classes/api/classApi';
 import quizApi from '../../quizzes/api/quizApi';
+import feeApi from '../../fees/api/feeApi';
 import { useAuth } from '../../../hooks/useAuth';
 import { Card, Badge, Skeleton, EmptyState } from '../../../components/ui';
 import {
@@ -26,41 +27,44 @@ import {
 } from 'lucide-react';
 
 // ─── Stat Card Component ──────────────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading, to }) => {
+const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext, isAction }) => {
   const content = (
     <Card
       hover={Boolean(to)}
-      className="p-4 sm:p-5 flex items-center gap-3.5 sm:gap-4 transition-all duration-200"
+      className="p-3.5 sm:p-4 flex flex-col justify-between h-full border border-surface-200 dark:border-white/10 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 group"
     >
-      <div
-        className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}
-      >
-        <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <span className="text-xs font-semibold text-surface-600 dark:text-surface-300 tracking-wide leading-tight">
+          {label}
+        </span>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="w-4 h-4" />
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
+
+      <div className="flex items-baseline justify-between gap-2 mt-auto">
         {loading ? (
-          <>
-            <Skeleton className="h-6 w-12 mb-1" />
-            <Skeleton className="h-3.5 w-24" />
-          </>
+          <Skeleton className="h-7 w-16" />
+        ) : isAction ? (
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
+            <span>{value}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </span>
         ) : (
-          <>
-            <p className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-white leading-tight">
-              {value ?? 0}
-            </p>
-            <p className="text-xs sm:text-sm text-surface-500 dark:text-surface-400 truncate mt-0.5">
-              {label}
-            </p>
-          </>
+          <p className="text-xl sm:text-2xl font-black text-surface-900 dark:text-white tracking-tight">
+            {value ?? 0}
+          </p>
+        )}
+        {subtext && (
+          <span className="text-[11px] text-surface-400 dark:text-surface-400 font-medium">
+            {subtext}
+          </span>
         )}
       </div>
-      {to && (
-        <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 shrink-0" />
-      )}
     </Card>
   );
 
-  return to ? <Link to={to} className="block group">{content}</Link> : content;
+  return to ? <Link to={to} className="block group h-full">{content}</Link> : content;
 };
 
 // ─── Section Header ───────────────────────────────────────────
@@ -104,9 +108,17 @@ export const StudentDashboardPage = () => {
     queryFn: () => quizApi.getQuizzes(),
   });
 
+  const { data: feeData, isPending: loadingFees } = useQuery({
+    queryKey: ['studentDash-fees'],
+    queryFn: () => feeApi.getMyChallans(),
+    retry: false,
+  });
+
   const myClass = classData?.class || null;
   const enrollment = classData?.enrollment || null;
   const quizzes = quizzesData?.quizzes || [];
+  const feeSummary = feeData?.summary;
+  const outstandingAmount = feeSummary?.totalOutstandingAmount ?? 0;
 
   const available = quizzes.filter((q) => q.status === 'published');
   const attempted = quizzes.filter((q) =>
@@ -170,10 +182,11 @@ export const StudentDashboardPage = () => {
       </div>
 
       {/* ── Stat Cards Grid (Mobile 2-col, Desktop 5-col) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <StatCard
           label="Available Quizzes"
           value={available.length}
+          subtext="Active"
           icon={ClipboardList}
           color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
           loading={loadingQuizzes}
@@ -182,6 +195,7 @@ export const StudentDashboardPage = () => {
         <StatCard
           label="Completed"
           value={completed}
+          subtext="Submitted"
           icon={CheckCircle2}
           color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
           loading={loadingQuizzes}
@@ -190,23 +204,28 @@ export const StudentDashboardPage = () => {
         <StatCard
           label="Avg. Score"
           value={avgScore !== null ? `${avgScore}%` : '—'}
+          subtext="Graded"
           icon={Star}
           color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingQuizzes}
           to="/student/results"
         />
         <StatCard
-          label="Attendance Record"
-          value="View Log"
+          label="Attendance Log"
+          value="Roll Record"
+          isAction
           icon={CalendarCheck}
           color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
           to="/student/attendance"
         />
         <StatCard
-          label="My Fee Account"
-          value="View"
+          label="Fee Account"
+          value={outstandingAmount > 0 ? `PKR ${(outstandingAmount / 1000).toFixed(1)}k` : (feeSummary ? 'Clear' : 'Vouchers')}
+          subtext={outstandingAmount > 0 ? 'Dues' : (feeSummary ? 'Paid' : '')}
+          isAction={!outstandingAmount && !feeSummary}
           icon={Wallet}
           color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+          loading={loadingFees}
           to="/student/fees"
         />
       </div>

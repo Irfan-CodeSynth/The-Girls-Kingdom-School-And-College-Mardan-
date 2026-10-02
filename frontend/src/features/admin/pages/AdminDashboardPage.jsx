@@ -22,32 +22,45 @@ import {
   Banknote,
 } from 'lucide-react';
 
-// ─── Stat Card ────────────────────────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading, to }) => {
+// ─── Modern Responsive Stat Card ─────────────────────────────
+const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext, isAction }) => {
   const content = (
-    <Card hover bodyClassName="flex items-center gap-4">
-      <div
-        className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}
-      >
-        <Icon className="w-6 h-6" />
+    <Card
+      hover={Boolean(to)}
+      className="p-4 flex flex-col justify-between h-full border border-surface-200 dark:border-white/10 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 group"
+    >
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <span className="text-xs font-semibold text-surface-600 dark:text-surface-300 tracking-wide leading-tight">
+          {label}
+        </span>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="w-4 h-4" />
+        </div>
       </div>
-      <div className="min-w-0">
+
+      <div className="flex items-baseline justify-between gap-2 mt-auto">
         {loading ? (
-          <>
-            <Skeleton className="h-7 w-16 mb-1" />
-            <Skeleton className="h-4 w-24" />
-          </>
+          <Skeleton className="h-7 w-16" />
+        ) : isAction ? (
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
+            <span>{value}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </span>
         ) : (
-          <>
-            <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? '—'}</p>
-            <p className="text-sm text-surface-500 dark:text-surface-400 truncate">{label}</p>
-          </>
+          <p className="text-2xl font-black text-surface-900 dark:text-white tracking-tight">
+            {value ?? '—'}
+          </p>
+        )}
+        {subtext && (
+          <span className="text-[11px] text-surface-400 dark:text-surface-400 font-medium">
+            {subtext}
+          </span>
         )}
       </div>
     </Card>
   );
 
-  return to ? <Link to={to}>{content}</Link> : content;
+  return to ? <Link to={to} className="block h-full">{content}</Link> : content;
 };
 
 // ─── Section Header ───────────────────────────────────────────
@@ -140,10 +153,11 @@ export const AdminDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
         <StatCard
           label="Registered Students"
           value={totalStudents}
+          subtext="Students"
           icon={Users}
           color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingStudents}
@@ -152,6 +166,7 @@ export const AdminDashboardPage = () => {
         <StatCard
           label="Faculty Members"
           value={totalTeachers}
+          subtext="Teachers"
           icon={GraduationCap}
           color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
           loading={loadingTeachers}
@@ -160,6 +175,7 @@ export const AdminDashboardPage = () => {
         <StatCard
           label="Active Classes"
           value={totalClasses}
+          subtext="Cohorts"
           icon={BookOpen}
           color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
           loading={loadingClasses}
@@ -168,6 +184,7 @@ export const AdminDashboardPage = () => {
         <StatCard
           label="Live Quizzes"
           value={activeQuizzes}
+          subtext="Published"
           icon={ClipboardList}
           color="bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400"
           loading={loadingQuizzes}
@@ -175,21 +192,24 @@ export const AdminDashboardPage = () => {
         />
         <StatCard
           label="Attendance Audit"
-          value="Manage"
+          value="Roll-Call Hub"
+          isAction
           icon={CheckCircle2}
           color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
           to="/admin/attendance"
         />
         <StatCard
           label="Fee Management"
-          value="Manage"
+          value="Fee Challans"
+          isAction
           icon={Wallet}
           color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
           to="/admin/fees"
         />
         <StatCard
           label="Staff Payroll"
-          value="Manage"
+          value="Salary Hub"
+          isAction
           icon={Banknote}
           color="bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400"
           to="/admin/salary"
