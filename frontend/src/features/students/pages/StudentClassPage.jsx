@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { classApi } from '../../classes/api/classApi';
 import { MaterialsSection } from '../../classes/components/MaterialsSection';
+import { StudentAttendance } from './StudentAttendance';
 import { Card, Badge, Skeleton, EmptyState, Tabs } from '../../../components/ui';
-import { BookOpen, Users, Calendar, GraduationCap, PlayCircle } from 'lucide-react';
+import { BookOpen, Users, Calendar, GraduationCap, PlayCircle, ClipboardCheck } from 'lucide-react';
 
 export const StudentClassPage = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -48,6 +49,7 @@ export const StudentClassPage = () => {
             tabs={[
               { id: 'overview', label: 'Class Overview', icon: <BookOpen className="w-4 h-4" /> },
               { id: 'materials', label: 'Lectures & Study Materials', icon: <PlayCircle className="w-4 h-4" /> },
+              { id: 'attendance', label: 'Attendance Record', icon: <ClipboardCheck className="w-4 h-4" /> },
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
@@ -106,6 +108,11 @@ export const StudentClassPage = () => {
               userRole="student"
               canManage={false}
             />
+          )}
+
+          {/* Attendance */}
+          {activeTab === 'attendance' && (
+            <StudentAttendance />
           )}
         </>
       )}

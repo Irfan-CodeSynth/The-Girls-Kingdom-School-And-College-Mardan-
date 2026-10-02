@@ -40,6 +40,7 @@ export const SIDEBAR_ITEMS = {
   [ROLES.STUDENT]: [
     { name: 'Dashboard', path: '/student/dashboard', icon: 'LayoutDashboard' },
     { name: 'My Class', path: '/student/classes', icon: 'BookOpen' },
+    { name: 'Attendance', path: '/student/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/student/quizzes', icon: 'FileQuestion' },
     { name: 'Results', path: '/student/results', icon: 'Award' },
     { name: 'Notifications', path: '/student/notifications', icon: 'Bell' },

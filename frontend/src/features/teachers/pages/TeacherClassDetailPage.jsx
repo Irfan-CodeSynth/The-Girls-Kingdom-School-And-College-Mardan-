@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { classApi } from '../../classes/api/classApi';
 import { MaterialsSection } from '../../classes/components/MaterialsSection';
+import { AttendanceTab } from '../../classes/components/AttendanceTab';
 import { Card, Badge, Skeleton, Table, EmptyState, Tabs } from '../../../components/ui';
 import {
   ArrowLeft,
@@ -11,6 +12,7 @@ import {
   Calendar,
   Hash,
   PlayCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 
 export const TeacherClassDetailPage = () => {
@@ -132,6 +134,7 @@ export const TeacherClassDetailPage = () => {
         tabs={[
           { id: 'students', label: 'Enrolled Students', icon: <Users className="w-4 h-4" />, count: students.length },
           { id: 'materials', label: 'Materials & Lectures', icon: <PlayCircle className="w-4 h-4" /> },
+          { id: 'attendance', label: 'Daily Attendance', icon: <ClipboardCheck className="w-4 h-4" /> },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
@@ -150,6 +153,10 @@ export const TeacherClassDetailPage = () => {
 
       {activeTab === 'materials' && (
         <MaterialsSection classId={id} userRole="teacher" canManage={true} />
+      )}
+
+      {activeTab === 'attendance' && (
+        <AttendanceTab classId={id} canManage={true} />
       )}
     </div>
   );

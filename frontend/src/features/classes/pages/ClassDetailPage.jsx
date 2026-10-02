@@ -5,6 +5,7 @@ import classApi from '../api/classApi';
 import studentApi from '../../students/api/studentApi';
 import teacherApi from '../../teachers/api/teacherApi';
 import { MaterialsSection } from '../components/MaterialsSection';
+import { AttendanceTab } from '../components/AttendanceTab';
 import {
   Card,
   Table,
@@ -26,6 +27,7 @@ import {
   Trash2,
   BookOpen,
   PlayCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -321,6 +323,11 @@ export const ClassDetailPage = () => {
               label: 'Course Materials',
               icon: <PlayCircle className="w-4 h-4" />,
             },
+            {
+              id: 'attendance',
+              label: 'Attendance Audit',
+              icon: <ClipboardCheck className="w-4 h-4" />,
+            },
           ]}
           activeTab={activeTab}
           onChange={setActiveTab}
@@ -344,6 +351,9 @@ export const ClassDetailPage = () => {
         )}
         {activeTab === 'materials' && (
           <MaterialsSection classId={id} userRole="admin" canManage={true} />
+        )}
+        {activeTab === 'attendance' && (
+          <AttendanceTab classId={id} canManage={true} />
         )}
       </div>
 

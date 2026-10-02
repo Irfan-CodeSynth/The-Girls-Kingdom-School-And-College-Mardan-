@@ -60,6 +60,26 @@ export const classApi = {
     const res = await api.get(`/classes/${classId}/teachers`);
     return res.data?.data || res.data;
   },
+
+  getAttendanceByDate: async (classId, date) => {
+    const res = await api.get(`/classes/${classId}/attendance`, { params: { date } });
+    return res.data?.data || res.data;
+  },
+
+  saveAttendance: async (classId, payload) => {
+    const res = await api.post(`/classes/${classId}/attendance`, payload);
+    return res.data?.data || res.data;
+  },
+
+  getClassAttendanceSummary: async (classId) => {
+    const res = await api.get(`/classes/${classId}/attendance/summary`);
+    return res.data?.data || res.data;
+  },
+
+  getMyClassAttendance: async (classId) => {
+    const res = await api.get(`/classes/${classId}/attendance/my-attendance`);
+    return res.data?.data || res.data;
+  },
 };
 
 export default classApi;

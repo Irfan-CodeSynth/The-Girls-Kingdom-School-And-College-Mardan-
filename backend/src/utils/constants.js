@@ -5,6 +5,7 @@ module.exports = {
   QUESTION_TYPES: { MCQ: 'mcq', TRUE_FALSE: 'true_false', COMPREHENSIVE: 'comprehensive' },
   ENROLLMENT_STATUS: { ACTIVE: 'active', REMOVED: 'removed', TRANSFERRED: 'transferred' },
   CLASS_STATUS: { ACTIVE: 'active', ARCHIVED: 'archived' },
+  ATTENDANCE_STATUS: { PRESENT: 'present', ABSENT: 'absent', LATE: 'late', EXCUSED: 'excused' },
   NOTIFICATION_TYPES: {
     QUIZ_PUBLISHED: 'quiz_published',
     QUIZ_DEADLINE: 'quiz_deadline',

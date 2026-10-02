@@ -62,5 +62,8 @@ router.delete('/:id/materials/:materialId',
   materialController.deleteMaterial
 );
 
+const attendanceRoutes = require('./attendance.routes');
+router.use('/:id/attendance', attendanceRoutes);
+
 module.exports = router;
 

@@ -58,6 +58,7 @@ import QuizPreviewPage from '../features/quizzes/pages/QuizPreviewPage';
 import QuizTakePage from '../features/quizzes/pages/QuizTakePage';
 import GradesTranscriptPage from '../features/quizzes/pages/GradesTranscriptPage';
 import NotificationsPage from '../features/notifications/pages/NotificationsPage';
+import StudentAttendance from '../features/students/pages/StudentAttendance';
 
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
@@ -150,6 +151,10 @@ export const AppRoutes = () => {
             <Route
               path="/student/results"
               element={<GradesTranscriptPage />}
+            />
+            <Route
+              path="/student/attendance"
+              element={<StudentAttendance />}
             />
           </Route>
         </Route>
