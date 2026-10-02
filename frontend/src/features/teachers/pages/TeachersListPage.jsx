@@ -10,8 +10,9 @@ import {
   Avatar,
   ConfirmDialog,
 } from '../../../components/ui';
-import { Search, UserX, UserCheck, Eye, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Search, UserX, UserCheck, Eye, AlertTriangle, RefreshCw, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import AddTeacherModal from '../components/AddTeacherModal';
 
 export const TeachersListPage = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export const TeachersListPage = () => {
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState('');
   const [confirmToggle, setConfirmToggle] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['teachers', search, department],
@@ -139,6 +141,13 @@ export const TeachersListPage = () => {
             {data?.pagination?.total ?? 0} registered teachers
           </p>
         </div>
+        <Button
+          variant="primary"
+          leftIcon={<Plus className="w-4 h-4" />}
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          Add Faculty
+        </Button>
       </div>
 
       {/* Search / Filter */}
@@ -224,6 +233,11 @@ export const TeachersListPage = () => {
             isActive: confirmToggle.isActive,
           })
         }
+      />
+
+      <AddTeacherModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
       />
     </div>
   );

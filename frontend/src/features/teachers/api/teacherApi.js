@@ -15,6 +15,16 @@ export const teacherApi = {
     const res = await api.patch(`/teachers/${id}`, data);
     return res.data?.data || res.data;
   },
+
+  createTeacher: async (data) => {
+    const res = await api.post('/teachers', data);
+    return res.data?.data || res.data;
+  },
+
+  resetPassword: async (id, newPassword) => {
+    const res = await api.post(`/teachers/${id}/reset-password`, { newPassword });
+    return res.data?.data || res.data;
+  },
 };
 
 export default teacherApi;

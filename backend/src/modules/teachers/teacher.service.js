@@ -106,8 +106,47 @@ const updateTeacher = async (id, data) => {
   return await getTeacherById(id);
 };
 
+const createTeacher = async (data) => {
+  const email = (data.email || '').trim().toLowerCase();
+  const existingUser = await User.findOne({ email });
+  if (existingUser) throw ApiError.conflict('Email already in use');
+
+  const teacherId = (data.teacherId || '').trim();
+  const existingProfile = await TeacherProfile.findOne({ teacherId });
+  if (existingProfile) throw ApiError.conflict('Teacher ID already in use');
+
+  const user = await User.create({
+    fullName: data.fullName.trim(),
+    email,
+    password: data.password || 'Teacher@123456',
+    role: ROLES.TEACHER,
+    phone: data.phone || '',
+    isActive: true
+  });
+
+  await TeacherProfile.create({
+    user: user._id,
+    teacherId,
+    department: data.department || 'General'
+  });
+
+  return await getTeacherById(user._id);
+};
+
+const resetTeacherPassword = async (id, newPassword) => {
+  const user = await User.findOne({ _id: id, role: ROLES.TEACHER });
+  if (!user) throw ApiError.notFound('Teacher not found.');
+
+  user.password = newPassword || 'Teacher@123456';
+  user.passwordChangedAt = Date.now();
+  await user.save();
+  return { message: 'Password reset successfully' };
+};
+
 module.exports = {
   getTeachers,
   getTeacherById,
-  updateTeacher
+  updateTeacher,
+  createTeacher,
+  resetTeacherPassword
 };

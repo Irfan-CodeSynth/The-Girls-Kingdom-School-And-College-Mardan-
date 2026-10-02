@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { teacherApi } from '../api/teacherApi';
-import { Card, Badge, Avatar, Skeleton, Table } from '../../../components/ui';
+import { Card, Badge, Avatar, Skeleton, Table, Button } from '../../../components/ui';
 import {
   ArrowLeft,
   Mail,
@@ -11,7 +11,9 @@ import {
   Calendar,
   IdCard,
   Building2,
+  KeyRound,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const InfoRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-start gap-3 py-3 border-b border-surface-100 dark:border-surface-700/60 last:border-0">
@@ -35,6 +37,16 @@ export const TeacherDetailPage = () => {
   const { data, isPending } = useQuery({
     queryKey: ['teacher', id],
     queryFn: () => teacherApi.getTeacherById(id),
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: () => teacherApi.resetPassword(id, 'Teacher@123456'),
+    onSuccess: () => {
+      toast.success('Password successfully reset to default: Teacher@123456');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to reset password.');
+    },
   });
 
   if (isPending) {
@@ -127,6 +139,23 @@ export const TeacherDetailPage = () => {
                   : 'N/A'
               }
             />
+          </div>
+
+          <div className="w-full pt-3 border-t border-surface-200 dark:border-surface-700">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+              leftIcon={<KeyRound className="w-4 h-4 text-amber-600" />}
+              loading={resetPasswordMutation.isPending}
+              onClick={() => {
+                if (window.confirm(`Reset password for ${teacher?.fullName} to default (Teacher@123456)?`)) {
+                  resetPasswordMutation.mutate();
+                }
+              }}
+            >
+              Reset Password (Teacher@123456)
+            </Button>
           </div>
         </Card>
 

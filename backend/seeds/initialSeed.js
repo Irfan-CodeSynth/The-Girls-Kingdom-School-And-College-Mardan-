@@ -9,53 +9,65 @@ const { ROLES, ENROLLMENT_STATUS, QUIZ_STATUS, QUESTION_TYPES } = require('../sr
 
 const seedInitialDataIfEmpty = async () => {
   try {
-    const studentCount = await User.countDocuments({ role: ROLES.STUDENT });
-    const teacherCount = await User.countDocuments({ role: ROLES.TEACHER });
-    const classCount = await Class.countDocuments();
-
-    if (studentCount > 0 && teacherCount > 0 && classCount > 0) {
-      return; // Already populated
-    }
-
-    console.log('Seeding initial demo data (Faculty, Student, Class, Quiz)...');
+    console.log('Verifying & seeding demo credentials (Faculty, Student, Class, Quiz)...');
 
     // 1. Teacher
-    let teacher = await User.findOne({ role: ROLES.TEACHER });
+    const teacherEmail = 'teacher@girlskingdom.edu';
+    const teacherPass = 'Teacher@123456';
+    let teacher = await User.findOne({ email: teacherEmail }).select('+password');
     if (!teacher) {
       teacher = await User.create({
         fullName: 'Sir Tariq Mehmood',
-        email: 'teacher@girlskingdom.edu',
-        password: 'Teacher@123456',
+        email: teacherEmail,
+        password: teacherPass,
         role: ROLES.TEACHER,
         phone: '+92-301-9876543',
         isActive: true
       });
-      await TeacherProfile.findOneAndUpdate(
-        { user: teacher._id },
-        { user: teacher._id, teacherId: 'TCH-001', department: 'Computer Science' },
-        { upsert: true }
-      );
       console.log('  ✓ Seeded Faculty: Sir Tariq Mehmood (teacher@girlskingdom.edu / Teacher@123456)');
+    } else {
+      const match = await teacher.comparePassword(teacherPass);
+      if (!match || !teacher.isActive) {
+        teacher.password = teacherPass;
+        teacher.isActive = true;
+        await teacher.save();
+        console.log('  ✓ Resynced Teacher password & active state: teacher@girlskingdom.edu');
+      }
     }
+    await TeacherProfile.findOneAndUpdate(
+      { user: teacher._id },
+      { user: teacher._id, teacherId: 'TCH-001', department: 'Computer Science' },
+      { upsert: true }
+    );
 
     // 2. Student
-    let student = await User.findOne({ role: ROLES.STUDENT });
+    const studentEmail = 'ayesha@girlskingdom.edu';
+    const studentPass = 'Student@123456';
+    let student = await User.findOne({ email: studentEmail }).select('+password');
     if (!student) {
       student = await User.create({
         fullName: 'Ayesha Khan',
-        email: 'ayesha@girlskingdom.edu',
-        password: 'Student@123456',
+        email: studentEmail,
+        password: studentPass,
         role: ROLES.STUDENT,
         phone: '+92-300-1234567',
         isActive: true
       });
-      await StudentProfile.findOneAndUpdate(
-        { user: student._id },
-        { user: student._id, studentId: 'GKC-2026-001' },
-        { upsert: true }
-      );
       console.log('  ✓ Seeded Student: Ayesha Khan (ayesha@girlskingdom.edu / Student@123456)');
+    } else {
+      const match = await student.comparePassword(studentPass);
+      if (!match || !student.isActive) {
+        student.password = studentPass;
+        student.isActive = true;
+        await student.save();
+        console.log('  ✓ Resynced Student password & active state: ayesha@girlskingdom.edu');
+      }
     }
+    await StudentProfile.findOneAndUpdate(
+      { user: student._id },
+      { user: student._id, studentId: 'GKC-2026-001' },
+      { upsert: true }
+    );
 
     // 3. Class
     let classObj = await Class.findOne({ code: 'CS-101' });

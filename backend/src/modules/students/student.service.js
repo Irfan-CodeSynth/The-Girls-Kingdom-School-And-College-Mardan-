@@ -100,8 +100,54 @@ const updateStudent = async (id, data) => {
   return await getStudentById(id);
 };
 
+const createStudent = async (data) => {
+  const email = (data.email || '').trim().toLowerCase();
+  const existingUser = await User.findOne({ email });
+  if (existingUser) throw ApiError.conflict('Email already in use');
+
+  const studentId = (data.studentId || '').trim();
+  const existingProfile = await StudentProfile.findOne({ studentId });
+  if (existingProfile) throw ApiError.conflict('Student ID already in use');
+
+  const user = await User.create({
+    fullName: data.fullName.trim(),
+    email,
+    password: data.password || 'Student@123456',
+    role: ROLES.STUDENT,
+    phone: data.phone || '',
+    isActive: true
+  });
+
+  await StudentProfile.create({
+    user: user._id,
+    studentId
+  });
+
+  if (data.classId) {
+    await Enrollment.create({
+      student: user._id,
+      class: data.classId,
+      status: ENROLLMENT_STATUS.ACTIVE
+    });
+  }
+
+  return await getStudentById(user._id);
+};
+
+const resetStudentPassword = async (id, newPassword) => {
+  const user = await User.findOne({ _id: id, role: ROLES.STUDENT });
+  if (!user) throw ApiError.notFound('Student not found.');
+
+  user.password = newPassword || 'Student@123456';
+  user.passwordChangedAt = Date.now();
+  await user.save();
+  return { message: 'Password reset successfully' };
+};
+
 module.exports = {
   getStudents,
   getStudentById,
-  updateStudent
+  updateStudent,
+  createStudent,
+  resetStudentPassword
 };

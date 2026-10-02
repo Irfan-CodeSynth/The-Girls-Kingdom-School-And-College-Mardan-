@@ -14,15 +14,17 @@ const generateToken = (userId, role) => {
 };
 
 const registerStudent = async (data) => {
-  const existingUser = await User.findOne({ email: data.email });
+  const email = (data.email || '').trim().toLowerCase();
+  const existingUser = await User.findOne({ email });
   if (existingUser) throw ApiError.conflict('Email already in use');
 
-  const existingStudent = await StudentProfile.findOne({ studentId: data.studentId });
+  const studentId = (data.studentId || '').trim();
+  const existingStudent = await StudentProfile.findOne({ studentId });
   if (existingStudent) throw ApiError.conflict('Student ID already in use');
 
   const user = await User.create({
-    fullName: data.fullName,
-    email: data.email,
+    fullName: data.fullName.trim(),
+    email,
     password: data.password,
     role: ROLES.STUDENT,
     phone: data.phone,
@@ -31,7 +33,7 @@ const registerStudent = async (data) => {
 
   await StudentProfile.create({
     user: user._id,
-    studentId: data.studentId
+    studentId
   });
 
   const token = generateToken(user._id, user.role);
@@ -39,15 +41,17 @@ const registerStudent = async (data) => {
 };
 
 const registerTeacher = async (data) => {
-  const existingUser = await User.findOne({ email: data.email });
+  const email = (data.email || '').trim().toLowerCase();
+  const existingUser = await User.findOne({ email });
   if (existingUser) throw ApiError.conflict('Email already in use');
 
-  const existingTeacher = await TeacherProfile.findOne({ teacherId: data.teacherId });
+  const teacherId = (data.teacherId || '').trim();
+  const existingTeacher = await TeacherProfile.findOne({ teacherId });
   if (existingTeacher) throw ApiError.conflict('Teacher ID already in use');
 
   const user = await User.create({
-    fullName: data.fullName,
-    email: data.email,
+    fullName: data.fullName.trim(),
+    email,
     password: data.password,
     role: ROLES.TEACHER,
     phone: data.phone
@@ -55,7 +59,7 @@ const registerTeacher = async (data) => {
 
   await TeacherProfile.create({
     user: user._id,
-    teacherId: data.teacherId,
+    teacherId,
     department: data.department
   });
 
@@ -64,7 +68,8 @@ const registerTeacher = async (data) => {
 };
 
 const login = async (email, password) => {
-  const user = await User.findOne({ email }).select('+password');
+  const normalizedEmail = (email || '').trim().toLowerCase();
+  const user = await User.findOne({ email: normalizedEmail }).select('+password');
   if (!user || !(await user.comparePassword(password))) {
     throw ApiError.unauthorized('Invalid email or password');
   }

@@ -47,11 +47,11 @@ app.use('/api', async (req, res, next) => {
       try {
         const User = require('./modules/users/user.model');
         const { ROLES } = require('./utils/constants');
-        const adminExists = await User.findOne({ role: ROLES.ADMIN });
-        if (!adminExists) {
-          const adminEmail = process.env.ADMIN_EMAIL || 'admin@girlskingdom.edu';
-          const adminPass = process.env.ADMIN_PASSWORD || 'Admin@123456';
-          await User.create({
+        const adminEmail = (process.env.ADMIN_EMAIL || 'admin@girlskingdom.edu').trim().toLowerCase();
+        const adminPass = process.env.ADMIN_PASSWORD || 'Admin@123456';
+        let adminUser = await User.findOne({ email: adminEmail }).select('+password');
+        if (!adminUser) {
+          adminUser = await User.create({
             fullName: process.env.ADMIN_NAME || 'System Administrator',
             email: adminEmail,
             password: adminPass,
@@ -59,6 +59,15 @@ app.use('/api', async (req, res, next) => {
             isActive: true
           });
           console.log(`Default administrator seeded: ${adminEmail} / ${adminPass}`);
+        } else {
+          const matches = await adminUser.comparePassword(adminPass);
+          if (!matches || !adminUser.isActive || adminUser.role !== ROLES.ADMIN) {
+            adminUser.password = adminPass;
+            adminUser.isActive = true;
+            adminUser.role = ROLES.ADMIN;
+            await adminUser.save();
+            console.log(`Default administrator credentials synced: ${adminEmail} / ${adminPass}`);
+          }
         }
         const seedInitialDataIfEmpty = require('../seeds/initialSeed');
         await seedInitialDataIfEmpty();

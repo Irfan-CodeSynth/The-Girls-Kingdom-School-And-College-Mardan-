@@ -5,7 +5,7 @@ const protect = require('../../middleware/auth');
 const authorize = require('../../middleware/authorize');
 const validate = require('../../middleware/validate');
 const { ROLES } = require('../../utils/constants');
-const { updateStudentSchema } = require('./student.validator');
+const { updateStudentSchema, createStudentSchema, resetStudentPasswordSchema } = require('./student.validator');
 
 router.use(protect);
 
@@ -24,7 +24,9 @@ router.get('/my-attendance', authorize(ROLES.STUDENT), async (req, res, next) =>
 router.use(authorize(ROLES.ADMIN));
 
 router.get('/', studentController.getStudents);
+router.post('/', validate(createStudentSchema), studentController.createStudent);
 router.get('/:id', studentController.getStudentById);
 router.patch('/:id', validate(updateStudentSchema), studentController.updateStudent);
+router.post('/:id/reset-password', validate(resetStudentPasswordSchema), studentController.resetStudentPassword);
 
 module.exports = router;

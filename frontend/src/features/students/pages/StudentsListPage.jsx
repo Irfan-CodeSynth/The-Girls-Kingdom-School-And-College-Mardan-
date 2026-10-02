@@ -10,14 +10,16 @@ import {
   Avatar,
   ConfirmDialog,
 } from '../../../components/ui';
-import { Search, Users, UserX, UserCheck, Eye, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Search, Users, UserX, UserCheck, Eye, AlertTriangle, RefreshCw, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import AddStudentModal from '../components/AddStudentModal';
 
 export const StudentsListPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [confirmToggle, setConfirmToggle] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['students', search],
     queryFn: () => studentApi.getStudents({ search }),
@@ -142,6 +144,13 @@ export const StudentsListPage = () => {
             {data?.pagination?.total ?? 0} registered students
           </p>
         </div>
+        <Button
+          variant="primary"
+          leftIcon={<Plus className="w-4 h-4" />}
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          Add Student
+        </Button>
       </div>
 
       {/* Search */}
@@ -220,6 +229,11 @@ export const StudentsListPage = () => {
             isActive: confirmToggle.isActive,
           })
         }
+      />
+
+      <AddStudentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
       />
     </div>
   );

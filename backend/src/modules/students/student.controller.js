@@ -16,8 +16,20 @@ const updateStudent = async (req, res) => {
   return ApiResponse.success(res, updated, 'Student updated successfully');
 };
 
+const createStudent = async (req, res) => {
+  const student = await studentService.createStudent(req.body);
+  return ApiResponse.created(res, { student }, 'Student created successfully');
+};
+
+const resetStudentPassword = async (req, res) => {
+  const result = await studentService.resetStudentPassword(req.params.id, req.body.newPassword);
+  return ApiResponse.success(res, result, 'Student password reset successfully');
+};
+
 module.exports = {
   getStudents,
   getStudentById,
-  updateStudent
+  updateStudent,
+  createStudent,
+  resetStudentPassword
 };
