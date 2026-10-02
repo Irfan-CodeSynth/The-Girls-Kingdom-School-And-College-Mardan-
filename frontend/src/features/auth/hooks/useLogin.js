@@ -19,11 +19,13 @@ export const useLogin = () => {
     },
     onError: (error) => {
       console.error('Login error full object:', error);
-      const serverMsg =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        (typeof error.response?.data === 'string' ? error.response?.data : null) ||
-        error.message;
+      const raw = error.response?.data?.message || error.response?.data?.error || error.response?.data || error.message;
+      let serverMsg = '';
+      if (typeof raw === 'string') {
+        serverMsg = raw;
+      } else if (raw && typeof raw === 'object') {
+        serverMsg = raw.message || raw.error || JSON.stringify(raw);
+      }
       const statusText = error.response?.status ? ` [HTTP ${error.response.status}]` : '';
       const msg = `${serverMsg || 'Login failed. Please check your credentials.'}${statusText}`;
       toast.error(msg);

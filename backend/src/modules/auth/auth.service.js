@@ -7,8 +7,10 @@ const env = require('../../config/env');
 const { ROLES } = require('../../utils/constants');
 
 const generateToken = (userId, role) => {
-  return jwt.sign({ id: userId, role }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRE,
+  const secret = env.JWT_SECRET || process.env.JWT_SECRET || 'the-girls-kingdom-school-and-college-mardan-jwt-super-secret-key-2026';
+  const expiresIn = env.JWT_EXPIRE || process.env.JWT_EXPIRE || '30d';
+  return jwt.sign({ id: userId, role }, secret, {
+    expiresIn,
     algorithm: 'HS256'
   });
 };
