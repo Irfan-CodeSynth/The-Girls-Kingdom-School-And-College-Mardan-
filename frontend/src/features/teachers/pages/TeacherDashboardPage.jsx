@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   TrendingUp,
   AlertCircle,
+  Banknote,
 } from 'lucide-react';
 
 // ─── Stat Card ────────────────────────────────────────────────
@@ -111,7 +112,7 @@ export const TeacherDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard
           label="Assigned Classes"
           value={classes.length}
@@ -150,6 +151,13 @@ export const TeacherDashboardPage = () => {
           color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingQuizzes}
           to="/teacher/grading"
+        />
+        <StatCard
+          label="My Salary"
+          value="View Slips"
+          icon={Banknote}
+          color="bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400"
+          to="/teacher/salary"
         />
       </div>
 

@@ -19,6 +19,7 @@ import {
   ArchiveX,
   RefreshCw,
   Wallet,
+  Banknote,
 } from 'lucide-react';
 
 // ─── Stat Card ────────────────────────────────────────────────
@@ -139,7 +140,7 @@ export const AdminDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
         <StatCard
           label="Registered Students"
           value={totalStudents}
@@ -185,6 +186,13 @@ export const AdminDashboardPage = () => {
           icon={Wallet}
           color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
           to="/admin/fees"
+        />
+        <StatCard
+          label="Staff Payroll"
+          value="Manage"
+          icon={Banknote}
+          color="bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400"
+          to="/admin/salary"
         />
       </div>
 
@@ -388,7 +396,9 @@ export const AdminDashboardPage = () => {
               { label: 'Students', to: '/admin/students', icon: Users, color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50' },
               { label: 'Teachers', to: '/admin/teachers', icon: GraduationCap, color: 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50' },
               { label: 'Classes', to: '/admin/classes', icon: BookOpen, color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50' },
-              { label: 'Quizzes', to: '/admin/quizzes', icon: ClipboardList, color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50' },
+              { label: 'Quizzes', to: '/admin/quizzes', icon: ClipboardList, color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50' },
+              { label: 'Fees', to: '/admin/fees', icon: Wallet, color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50' },
+              { label: 'Payroll', to: '/admin/salary', icon: Banknote, color: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50' },
             ].map(({ label, to, icon: Icon, color }) => (
               <Link
                 key={to}
