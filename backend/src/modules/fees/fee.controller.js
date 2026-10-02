@@ -2,10 +2,13 @@ const feeStructureService = require('./feeStructure.service');
 const feeChallanService = require('./feeChallan.service');
 const ApiResponse = require('../../utils/ApiResponse');
 
+// Helper: extract user ID regardless of whether middleware sets id or _id
+const getUserId = (req) => req.user.id || req.user._id;
+
 // ─── Fee Structure Controllers ─────────────────────────────────
 
 const upsertFeeStructure = async (req, res) => {
-  const result = await feeStructureService.upsertFeeStructure(req.body, req.user._id);
+  const result = await feeStructureService.upsertFeeStructure(req.body, getUserId(req));
   return ApiResponse.success(res, result, 'Fee structure saved successfully', 200);
 };
 
@@ -39,7 +42,7 @@ const generateChallans = async (req, res) => {
     req.body.classId,
     req.body.billingMonth,
     req.body.feeStructureId,
-    req.user._id
+    getUserId(req)
   );
   return ApiResponse.success(res, result, result.message, 201);
 };
@@ -55,7 +58,7 @@ const getChallanById = async (req, res) => {
 };
 
 const getMyChallan = async (req, res) => {
-  const result = await feeChallanService.getMyChallan(req.user._id || req.user.id);
+  const result = await feeChallanService.getMyChallan(getUserId(req));
   return ApiResponse.success(res, result, 'Your challans retrieved');
 };
 
@@ -63,7 +66,7 @@ const recordPayment = async (req, res) => {
   const result = await feeChallanService.recordPayment(
     req.params.id,
     req.body,
-    req.user._id
+    getUserId(req)
   );
   return ApiResponse.success(res, result, 'Payment recorded successfully');
 };
@@ -74,7 +77,7 @@ const getFeeSummary = async (req, res) => {
 };
 
 const cancelChallan = async (req, res) => {
-  const result = await feeChallanService.cancelChallan(req.params.id, req.user._id);
+  const result = await feeChallanService.cancelChallan(req.params.id, getUserId(req));
   return ApiResponse.success(res, result, 'Challan cancelled');
 };
 
