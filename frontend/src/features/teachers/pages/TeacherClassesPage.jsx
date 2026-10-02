@@ -65,14 +65,19 @@ export const TeacherClassesPage = () => {
                     {cls.description}
                   </p>
                 )}
-                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700 text-xs text-surface-500">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" />
-                    {cls.studentCount ?? 0} students
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {cls.academicYear}
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-surface-100 dark:border-surface-700 text-xs text-surface-500">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5" />
+                      {cls.studentCount ?? 0}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {cls.academicYear}
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/60 px-2 py-0.5 rounded flex items-center gap-1">
+                    Roll-Call & Attendance →
                   </span>
                 </div>
               </Card>

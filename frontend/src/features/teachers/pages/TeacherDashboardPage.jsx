@@ -20,26 +20,30 @@ import {
 } from 'lucide-react';
 
 // ─── Stat Card ────────────────────────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading }) => (
-  <Card bodyClassName="flex items-center gap-4">
-    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
-      <Icon className="w-6 h-6" />
-    </div>
-    <div>
-      {loading ? (
-        <>
-          <Skeleton className="h-7 w-12 mb-1" />
-          <Skeleton className="h-4 w-28" />
-        </>
-      ) : (
-        <>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? 0}</p>
-          <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
-        </>
-      )}
-    </div>
-  </Card>
-);
+const StatCard = ({ label, value, icon: Icon, color, loading, to }) => {
+  const content = (
+    <Card hover={Boolean(to)} bodyClassName="flex items-center gap-4">
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
+        <Icon className="w-6 h-6" />
+      </div>
+      <div>
+        {loading ? (
+          <>
+            <Skeleton className="h-7 w-12 mb-1" />
+            <Skeleton className="h-4 w-28" />
+          </>
+        ) : (
+          <>
+            <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? 0}</p>
+            <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+
+  return to ? <Link to={to}>{content}</Link> : content;
+};
 
 // ─── Section Header ───────────────────────────────────────────
 const SectionHeader = ({ title, linkTo, linkLabel }) => (
@@ -107,13 +111,21 @@ export const TeacherDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         <StatCard
           label="Assigned Classes"
           value={classes.length}
           icon={BookOpen}
           color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
           loading={loadingClasses}
+          to="/teacher/classes"
+        />
+        <StatCard
+          label="Daily Attendance"
+          value="Roll-Call"
+          icon={CheckCircle2}
+          color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
+          to="/teacher/attendance"
         />
         <StatCard
           label="Total Quizzes"
@@ -121,6 +133,7 @@ export const TeacherDashboardPage = () => {
           icon={ClipboardList}
           color="bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400"
           loading={loadingQuizzes}
+          to="/teacher/quizzes"
         />
         <StatCard
           label="Published & Live"
@@ -128,6 +141,7 @@ export const TeacherDashboardPage = () => {
           icon={TrendingUp}
           color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
           loading={loadingQuizzes}
+          to="/teacher/quizzes"
         />
         <StatCard
           label="Pending Grading"
@@ -135,6 +149,7 @@ export const TeacherDashboardPage = () => {
           icon={AlertCircle}
           color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingQuizzes}
+          to="/teacher/grading"
         />
       </div>
 

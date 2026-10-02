@@ -35,26 +35,30 @@ const attemptLabel = (attempt) => {
 };
 
 // ─── Stat Card ────────────────────────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading }) => (
-  <Card bodyClassName="flex items-center gap-4">
-    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
-      <Icon className="w-6 h-6" />
-    </div>
-    <div>
-      {loading ? (
-        <>
-          <Skeleton className="h-7 w-10 mb-1" />
-          <Skeleton className="h-4 w-28" />
-        </>
-      ) : (
-        <>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? 0}</p>
-          <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
-        </>
-      )}
-    </div>
-  </Card>
-);
+const StatCard = ({ label, value, icon: Icon, color, loading, to }) => {
+  const content = (
+    <Card hover={Boolean(to)} bodyClassName="flex items-center gap-4">
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
+        <Icon className="w-6 h-6" />
+      </div>
+      <div>
+        {loading ? (
+          <>
+            <Skeleton className="h-7 w-10 mb-1" />
+            <Skeleton className="h-4 w-28" />
+          </>
+        ) : (
+          <>
+            <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? 0}</p>
+            <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+
+  return to ? <Link to={to}>{content}</Link> : content;
+};
 
 // ─── Section Header ───────────────────────────────────────────
 const SectionHeader = ({ title, linkTo, linkLabel }) => (
@@ -133,13 +137,14 @@ export const StudentDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Quizzes Available"
           value={available.length}
           icon={ClipboardList}
           color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
           loading={loadingQuizzes}
+          to="/student/quizzes"
         />
         <StatCard
           label="Completed"
@@ -147,6 +152,7 @@ export const StudentDashboardPage = () => {
           icon={CheckCircle2}
           color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
           loading={loadingQuizzes}
+          to="/student/quizzes"
         />
         <StatCard
           label="Avg. Score"
@@ -154,6 +160,14 @@ export const StudentDashboardPage = () => {
           icon={Star}
           color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingQuizzes}
+          to="/student/results"
+        />
+        <StatCard
+          label="Attendance Record"
+          value="View"
+          icon={CheckCircle2}
+          color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
+          to="/student/attendance"
         />
       </div>
 

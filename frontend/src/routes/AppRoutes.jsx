@@ -38,12 +38,14 @@ import TeacherDetailPage from '../features/teachers/pages/TeacherDetailPage';
 import ClassesListPage from '../features/classes/pages/ClassesListPage';
 import ClassDetailPage from '../features/classes/pages/ClassDetailPage';
 
-// Admin — Quizzes
+// Admin — Quizzes & Attendance
 import AdminQuizzesPage from '../features/quizzes/pages/AdminQuizzesPage';
+import AdminAttendancePage from '../features/admin/pages/AdminAttendancePage';
 
 // Teacher Role Pages
 import TeacherClassesPage from '../features/teachers/pages/TeacherClassesPage';
 import TeacherClassDetailPage from '../features/teachers/pages/TeacherClassDetailPage';
+import TeacherAttendancePage from '../features/teachers/pages/TeacherAttendancePage';
 import TeacherQuizListPage from '../features/quizzes/pages/TeacherQuizListPage';
 import TeacherQuizBuilderPage from '../features/quizzes/pages/TeacherQuizBuilderPage';
 import TeacherQuizAttemptsPage from '../features/quizzes/pages/TeacherQuizAttemptsPage';
@@ -108,6 +110,9 @@ export const AppRoutes = () => {
 
             {/* Quiz Governance */}
             <Route path="/admin/quizzes" element={<AdminQuizzesPage />} />
+
+            {/* Attendance Governance */}
+            <Route path="/admin/attendance" element={<AdminAttendancePage />} />
           </Route>
 
           {/* ─── Teacher Routes ─── */}
@@ -116,6 +121,9 @@ export const AppRoutes = () => {
               path="/teacher/dashboard"
               element={<TeacherDashboardPage />}
             />
+
+            {/* Attendance Hub */}
+            <Route path="/teacher/attendance" element={<TeacherAttendancePage />} />
 
             {/* Class pages */}
             <Route path="/teacher/classes" element={<TeacherClassesPage />} />

@@ -29,11 +29,13 @@ export const SIDEBAR_ITEMS = {
     { name: 'Students', path: '/admin/students', icon: 'Users' },
     { name: 'Teachers', path: '/admin/teachers', icon: 'GraduationCap' },
     { name: 'Classes', path: '/admin/classes', icon: 'BookOpen' },
+    { name: 'Attendance', path: '/admin/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/admin/quizzes', icon: 'FileQuestion' },
   ],
   [ROLES.TEACHER]: [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: 'LayoutDashboard' },
     { name: 'My Classes', path: '/teacher/classes', icon: 'BookOpen' },
+    { name: 'Attendance', path: '/teacher/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/teacher/quizzes', icon: 'FileQuestion' },
     { name: 'Grading', path: '/teacher/grading', icon: 'CheckCircle' },
   ],

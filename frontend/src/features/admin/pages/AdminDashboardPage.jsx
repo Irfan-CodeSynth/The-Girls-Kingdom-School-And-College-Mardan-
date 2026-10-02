@@ -138,7 +138,7 @@ export const AdminDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         <StatCard
           label="Registered Students"
           value={totalStudents}
@@ -167,9 +167,16 @@ export const AdminDashboardPage = () => {
           label="Live Quizzes"
           value={activeQuizzes}
           icon={ClipboardList}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
+          color="bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400"
           loading={loadingQuizzes}
           to="/admin/quizzes"
+        />
+        <StatCard
+          label="Attendance Audit"
+          value="Manage"
+          icon={CheckCircle2}
+          color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
+          to="/admin/attendance"
         />
       </div>
 
