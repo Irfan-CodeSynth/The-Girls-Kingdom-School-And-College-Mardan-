@@ -18,6 +18,7 @@ const feeRoutes = require('./modules/fees/fee.routes');
 const salaryRoutes = require('./modules/salary/salary.routes');
 const expenseRoutes = require('./modules/expenses/expense.routes');
 const ApiError = require('./utils/ApiError');
+const connectDB = require('./config/db');
 
 const app = express();
 
