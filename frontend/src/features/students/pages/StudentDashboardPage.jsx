@@ -22,6 +22,7 @@ import {
   ArrowRight,
   FileText,
   CalendarCheck,
+  Wallet,
 } from 'lucide-react';
 
 // ─── Stat Card Component ──────────────────────────────────────
@@ -168,8 +169,8 @@ export const StudentDashboardPage = () => {
         </div>
       </div>
 
-      {/* ── Stat Cards Grid (Mobile 2-col, Desktop 4-col) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* ── Stat Cards Grid (Mobile 2-col, Desktop 5-col) ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <StatCard
           label="Available Quizzes"
           value={available.length}
@@ -200,6 +201,13 @@ export const StudentDashboardPage = () => {
           icon={CalendarCheck}
           color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
           to="/student/attendance"
+        />
+        <StatCard
+          label="My Fee Account"
+          value="View"
+          icon={Wallet}
+          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+          to="/student/fees"
         />
       </div>
 

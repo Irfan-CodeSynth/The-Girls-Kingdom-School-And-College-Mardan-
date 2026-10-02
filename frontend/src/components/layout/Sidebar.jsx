@@ -15,6 +15,7 @@ import {
   Bell,
   LogOut,
   X,
+  Wallet,
 } from 'lucide-react';
 
 const iconMap = {
@@ -26,6 +27,7 @@ const iconMap = {
   CheckCircle,
   Award,
   Bell,
+  Wallet,
 };
 
 export const Sidebar = ({ isOpen, onClose }) => {

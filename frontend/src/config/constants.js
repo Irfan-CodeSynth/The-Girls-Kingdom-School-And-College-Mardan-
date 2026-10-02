@@ -31,6 +31,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Classes', path: '/admin/classes', icon: 'BookOpen' },
     { name: 'Attendance', path: '/admin/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/admin/quizzes', icon: 'FileQuestion' },
+    { name: 'Fee Management', path: '/admin/fees', icon: 'Wallet' },
   ],
   [ROLES.TEACHER]: [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: 'LayoutDashboard' },
@@ -45,6 +46,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Attendance', path: '/student/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/student/quizzes', icon: 'FileQuestion' },
     { name: 'Results', path: '/student/results', icon: 'Award' },
+    { name: 'My Fees', path: '/student/fees', icon: 'Wallet' },
     { name: 'Notifications', path: '/student/notifications', icon: 'Bell' },
   ],
 };

@@ -18,6 +18,7 @@ import {
   Clock,
   ArchiveX,
   RefreshCw,
+  Wallet,
 } from 'lucide-react';
 
 // ─── Stat Card ────────────────────────────────────────────────
@@ -138,7 +139,7 @@ export const AdminDashboardPage = () => {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4">
         <StatCard
           label="Registered Students"
           value={totalStudents}
@@ -177,6 +178,13 @@ export const AdminDashboardPage = () => {
           icon={CheckCircle2}
           color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
           to="/admin/attendance"
+        />
+        <StatCard
+          label="Fee Management"
+          value="Manage"
+          icon={Wallet}
+          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+          to="/admin/fees"
         />
       </div>
 

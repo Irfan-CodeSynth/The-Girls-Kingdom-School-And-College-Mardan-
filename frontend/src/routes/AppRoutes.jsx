@@ -62,6 +62,10 @@ import GradesTranscriptPage from '../features/quizzes/pages/GradesTranscriptPage
 import NotificationsPage from '../features/notifications/pages/NotificationsPage';
 import StudentAttendance from '../features/students/pages/StudentAttendance';
 
+// Stage 9 — Fee Management
+import AdminFeesPage from '../features/fees/pages/AdminFeesPage';
+import StudentFeesPage from '../features/fees/pages/StudentFeesPage';
+
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -113,6 +117,9 @@ export const AppRoutes = () => {
 
             {/* Attendance Governance */}
             <Route path="/admin/attendance" element={<AdminAttendancePage />} />
+
+            {/* Fee Management */}
+            <Route path="/admin/fees" element={<AdminFeesPage />} />
           </Route>
 
           {/* ─── Teacher Routes ─── */}
@@ -164,6 +171,9 @@ export const AppRoutes = () => {
               path="/student/attendance"
               element={<StudentAttendance />}
             />
+
+            {/* Fee Account */}
+            <Route path="/student/fees" element={<StudentFeesPage />} />
           </Route>
         </Route>
 
