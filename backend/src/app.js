@@ -39,7 +39,7 @@ let isSeeded = false;
 
 // Ensure database connection is ready for API requests (especially on Serverless/Vercel)
 app.use('/api', async (req, res, next) => {
-  if (req.path === '/health') return next();
+  if (req.path === '/health' || req.path === '/system-status') return next();
   try {
     await connectDB();
     if (!isSeeded) {

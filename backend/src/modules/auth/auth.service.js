@@ -76,16 +76,16 @@ const login = async (email, password) => {
   // Self-healing: if one of the standard default accounts is missing from database, seed it on the fly
   if (!user) {
     if (normalizedEmail === 'admin@girlskingdom.edu' && password === (process.env.ADMIN_PASSWORD || 'Admin@123456')) {
-      user = await User.create({
+      await User.create({
         fullName: process.env.ADMIN_NAME || 'System Administrator',
         email: 'admin@girlskingdom.edu',
         password: process.env.ADMIN_PASSWORD || 'Admin@123456',
         role: ROLES.ADMIN,
         isActive: true
       });
-      console.log('Self-healed missing default admin account.');
+      user = await User.findOne({ email: normalizedEmail }).select('+password');
     } else if (normalizedEmail === 'teacher@girlskingdom.edu' && password === 'Teacher@123456') {
-      user = await User.create({
+      const newTeacher = await User.create({
         fullName: 'Sir Tariq Mehmood',
         email: 'teacher@girlskingdom.edu',
         password: 'Teacher@123456',
@@ -94,13 +94,13 @@ const login = async (email, password) => {
         isActive: true
       });
       await TeacherProfile.findOneAndUpdate(
-        { user: user._id },
-        { user: user._id, teacherId: 'TCH-001', department: 'Computer Science' },
+        { user: newTeacher._id },
+        { user: newTeacher._id, teacherId: 'TCH-001', department: 'Computer Science' },
         { upsert: true }
       );
-      console.log('Self-healed missing default teacher account.');
+      user = await User.findOne({ email: normalizedEmail }).select('+password');
     } else if (normalizedEmail === 'ayesha@girlskingdom.edu' && password === 'Student@123456') {
-      user = await User.create({
+      const newStudent = await User.create({
         fullName: 'Ayesha Khan',
         email: 'ayesha@girlskingdom.edu',
         password: 'Student@123456',
@@ -109,34 +109,44 @@ const login = async (email, password) => {
         isActive: true
       });
       await StudentProfile.findOneAndUpdate(
-        { user: user._id },
-        { user: user._id, studentId: 'GKC-2026-001' },
+        { user: newStudent._id },
+        { user: newStudent._id, studentId: 'GKC-2026-001' },
         { upsert: true }
       );
-      console.log('Self-healed missing default student account.');
+      user = await User.findOne({ email: normalizedEmail }).select('+password');
     }
   }
 
-  if (!user || !(await user.comparePassword(password))) {
+  if (!user) {
+    throw ApiError.unauthorized('Invalid email or password');
+  }
+
+  let isMatch = await user.comparePassword(password);
+  if (!isMatch) {
     // If it's a default account with the default password, heal the password in case it was desynced
-    if (user && normalizedEmail === 'admin@girlskingdom.edu' && password === (process.env.ADMIN_PASSWORD || 'Admin@123456')) {
+    if (normalizedEmail === 'admin@girlskingdom.edu' && password === (process.env.ADMIN_PASSWORD || 'Admin@123456')) {
       user.password = process.env.ADMIN_PASSWORD || 'Admin@123456';
       user.isActive = true;
       user.role = ROLES.ADMIN;
       await user.save();
-    } else if (user && normalizedEmail === 'teacher@girlskingdom.edu' && password === 'Teacher@123456') {
+      isMatch = true;
+    } else if (normalizedEmail === 'teacher@girlskingdom.edu' && password === 'Teacher@123456') {
       user.password = 'Teacher@123456';
       user.isActive = true;
       user.role = ROLES.TEACHER;
       await user.save();
-    } else if (user && normalizedEmail === 'ayesha@girlskingdom.edu' && password === 'Student@123456') {
+      isMatch = true;
+    } else if (normalizedEmail === 'ayesha@girlskingdom.edu' && password === 'Student@123456') {
       user.password = 'Student@123456';
       user.isActive = true;
       user.role = ROLES.STUDENT;
       await user.save();
-    } else {
-      throw ApiError.unauthorized('Invalid email or password');
+      isMatch = true;
     }
+  }
+
+  if (!isMatch) {
+    throw ApiError.unauthorized('Invalid email or password');
   }
 
   if (!user.isActive) {
