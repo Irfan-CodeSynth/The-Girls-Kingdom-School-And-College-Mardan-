@@ -77,8 +77,16 @@ export const AuthLayout = ({ children, title, subtitle }) => {
       </div>
 
       {/* Right side form container */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-12 py-12">
-        <div className="mx-auto w-full max-w-md">
+      <div className="flex-1 relative flex flex-col justify-center px-4 sm:px-6 lg:px-12 py-12 overflow-hidden">
+        {/* Background Image of students celebrating */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000"
+          style={{ backgroundImage: `url('/login-hero.webp')` }}
+        />
+        {/* Sophisticated gradient overlay with brand maroon & depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-950/95 via-primary-950/80 to-primary-900/65 dark:from-black/95 dark:via-black/85 dark:to-surface-900/75 backdrop-blur-[1px]" />
+
+        <div className="mx-auto w-full max-w-md relative z-10">
           {/* Mobile Header Brand */}
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
             <img
@@ -87,10 +95,10 @@ export const AuthLayout = ({ children, title, subtitle }) => {
               className="h-11 w-11 object-contain rounded-full shadow-md"
             />
             <div className="text-left">
-              <span className="text-lg font-bold text-surface-900 dark:text-white block leading-tight">
+              <span className="text-lg font-bold text-white block leading-tight">
                 The Girls Kingdom
               </span>
-              <span className="text-[11px] font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wider">
+              <span className="text-[11px] font-medium text-primary-200 uppercase tracking-wider">
                 School & College Mardan
               </span>
             </div>
@@ -100,7 +108,7 @@ export const AuthLayout = ({ children, title, subtitle }) => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25 }}
-            className="bg-white dark:bg-surface-900 p-8 rounded-2xl shadow-xl shadow-surface-200/50 dark:shadow-none border border-surface-200/80 dark:border-surface-800"
+            className="bg-white/95 dark:bg-surface-900/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-surface-700/80"
           >
             {(title || subtitle) && (
               <div className="mb-6 text-center">
