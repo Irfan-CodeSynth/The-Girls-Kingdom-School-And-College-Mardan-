@@ -73,6 +73,11 @@ import TeacherSalaryPage from '../features/salary/pages/TeacherSalaryPage';
 // Stage 11 — Expense Management
 import AdminExpensesPage from '../features/expenses/pages/AdminExpensesPage';
 
+// Stage 12 — Timetable & Exam Scheduler
+import AdminSchedulePage from '../features/schedule/pages/AdminSchedulePage';
+import TeacherSchedulePage from '../features/schedule/pages/TeacherSchedulePage';
+import StudentSchedulePage from '../features/schedule/pages/StudentSchedulePage';
+
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -133,6 +138,9 @@ export const AppRoutes = () => {
 
             {/* Expenses & OpEx Management */}
             <Route path="/admin/expenses" element={<AdminExpensesPage />} />
+
+            {/* Timetable & Exam Scheduler */}
+            <Route path="/admin/schedule" element={<AdminSchedulePage />} />
           </Route>
 
           {/* ─── Teacher Routes ─── */}
@@ -147,6 +155,9 @@ export const AppRoutes = () => {
 
             {/* Salary Hub */}
             <Route path="/teacher/salary" element={<TeacherSalaryPage />} />
+
+            {/* Teaching Schedule */}
+            <Route path="/teacher/schedule" element={<TeacherSchedulePage />} />
 
             {/* Class pages */}
             <Route path="/teacher/classes" element={<TeacherClassesPage />} />
@@ -187,6 +198,9 @@ export const AppRoutes = () => {
               path="/student/attendance"
               element={<StudentAttendance />}
             />
+
+            {/* Class Routine & Exam Schedule */}
+            <Route path="/student/schedule" element={<StudentSchedulePage />} />
 
             {/* Fee Account */}
             <Route path="/student/fees" element={<StudentFeesPage />} />

@@ -147,6 +147,56 @@ const seedInitialDataIfEmpty = async () => {
       });
       console.log('  ✓ Seeded Quiz: Define Computer & Fundamentals');
     }
+
+    // 7. Seed Sample Weekly Timetable
+    const Timetable = require('../src/modules/schedule/timetable.model');
+    const existingTimetable = await Timetable.findOne({ class: classObj._id });
+    if (!existingTimetable) {
+      const daysList = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const defaultPeriods = [
+        { periodNumber: 1, startTime: '08:00 AM', endTime: '08:45 AM', subject: 'Computer Science', teacher: teacher._id, room: 'Lab 1', isBreak: false },
+        { periodNumber: 2, startTime: '08:45 AM', endTime: '09:30 AM', subject: 'Mathematics', teacher: null, room: 'Room 101', isBreak: false },
+        { periodNumber: 3, startTime: '09:30 AM', endTime: '10:15 AM', subject: 'English Language', teacher: null, room: 'Room 101', isBreak: false },
+        { periodNumber: 4, startTime: '10:15 AM', endTime: '10:30 AM', subject: 'Morning Assembly & Break', teacher: null, room: 'Courtyard', isBreak: true },
+        { periodNumber: 5, startTime: '10:30 AM', endTime: '11:15 AM', subject: 'Physics', teacher: null, room: 'Physics Lab', isBreak: false },
+        { periodNumber: 6, startTime: '11:15 AM', endTime: '12:00 PM', subject: 'Chemistry', teacher: null, room: 'Chemistry Lab', isBreak: false },
+        { periodNumber: 7, startTime: '12:00 PM', endTime: '12:30 PM', subject: 'Lunch & Prayer Break', teacher: null, room: 'Cafeteria / Mosque', isBreak: true },
+        { periodNumber: 8, startTime: '12:30 PM', endTime: '01:15 PM', subject: 'Pak Studies & Civics', teacher: null, room: 'Room 101', isBreak: false },
+      ];
+
+      await Timetable.create({
+        class: classObj._id,
+        academicYear: '2025-2026',
+        days: daysList.map(d => ({ day: d, periods: defaultPeriods })),
+        isActive: true,
+        notes: 'Standard morning shift schedule for Intermediate Part-I'
+      });
+      console.log('  ✓ Seeded Weekly Timetable: CS-101 (Monday–Saturday, 8 Periods)');
+    }
+
+    // 8. Seed Sample Exam Datesheet
+    const ExamDatesheet = require('../src/modules/schedule/datesheet.model');
+    const existingDatesheet = await ExamDatesheet.findOne({ class: classObj._id });
+    if (!existingDatesheet) {
+      await ExamDatesheet.create({
+        title: 'Mid-Term Examinations — Autumn 2026',
+        examType: 'midterm',
+        class: classObj._id,
+        academicYear: '2025-2026',
+        startDate: new Date('2026-10-15'),
+        endDate: new Date('2026-10-23'),
+        status: 'published',
+        generalInstructions: `1. Students must arrive at the examination hall at least 20 minutes prior to paper commencement.\n2. Official Student ID Card and Roll Number Slip must be displayed on the desk.\n3. Mobile phones, smartwatches, and unauthorized notes are strictly prohibited.\n4. Standard scientific calculators (non-programmable) are allowed for Physics & Mathematics only.`,
+        entries: [
+          { subject: 'Computer Science', examDate: new Date('2026-10-15'), day: 'Thursday', startTime: '09:00 AM', endTime: '12:00 PM', room: 'Computer Lab 1', invigilator: teacher._id, totalMarks: 100, passingMarks: 40, syllabus: 'Units 1-4: Architecture, OS, Algorithms' },
+          { subject: 'Mathematics', examDate: new Date('2026-10-17'), day: 'Saturday', startTime: '09:00 AM', endTime: '12:00 PM', room: 'Main Examination Hall', invigilator: null, totalMarks: 100, passingMarks: 40, syllabus: 'Matrices, Quadratic Equations, Trigonometry' },
+          { subject: 'English Compulsory', examDate: new Date('2026-10-19'), day: 'Monday', startTime: '09:00 AM', endTime: '12:00 PM', room: 'Hall A', invigilator: null, totalMarks: 100, passingMarks: 40, syllabus: 'Essay Writing, Grammar, Comprehension' },
+          { subject: 'Physics', examDate: new Date('2026-10-21'), day: 'Wednesday', startTime: '09:00 AM', endTime: '12:00 PM', room: 'Hall B', invigilator: null, totalMarks: 100, passingMarks: 40, syllabus: 'Mechanics, Vectors, Thermodynamics' },
+          { subject: 'Pakistan Studies', examDate: new Date('2026-10-23'), day: 'Friday', startTime: '09:00 AM', endTime: '11:00 AM', room: 'Room 101', invigilator: null, totalMarks: 50, passingMarks: 20, syllabus: 'Ideology of Pakistan, Constitution 1973' },
+        ]
+      });
+      console.log('  ✓ Seeded Exam Datesheet: Mid-Term Examinations — Autumn 2026');
+    }
   } catch (err) {
     console.warn('Initial seed notice:', err.message);
   }

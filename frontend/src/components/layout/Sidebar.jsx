@@ -18,6 +18,7 @@ import {
   Wallet,
   Banknote,
   Receipt,
+  Calendar,
 } from 'lucide-react';
 
 const iconMap = {
@@ -32,6 +33,7 @@ const iconMap = {
   Wallet,
   Banknote,
   Receipt,
+  Calendar,
 };
 
 export const Sidebar = ({ isOpen, onClose }) => {

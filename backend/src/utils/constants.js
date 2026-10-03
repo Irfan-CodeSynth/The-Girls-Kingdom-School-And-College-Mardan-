@@ -13,6 +13,8 @@ module.exports = {
     RESULT_AVAILABLE: 'result_available',
     ENROLLMENT: 'enrollment',
     NEW_MATERIAL: 'new_material',
+    EXAM_SCHEDULE: 'exam_schedule',
+    TIMETABLE_UPDATED: 'timetable_updated',
     GENERAL: 'general'
   },
   RESULT_VISIBILITY: { IMMEDIATELY: 'submission', AFTER_GRADING: 'manual_grading', HIDDEN: 'hidden' },

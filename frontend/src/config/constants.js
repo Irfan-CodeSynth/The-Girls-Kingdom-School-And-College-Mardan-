@@ -31,6 +31,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Classes', path: '/admin/classes', icon: 'BookOpen' },
     { name: 'Attendance', path: '/admin/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/admin/quizzes', icon: 'FileQuestion' },
+    { name: 'Timetable & Exams', path: '/admin/schedule', icon: 'Calendar' },
     { name: 'Fee Management', path: '/admin/fees', icon: 'Wallet' },
     { name: 'Staff Payroll', path: '/admin/salary', icon: 'Banknote' },
     { name: 'Expenses & OpEx', path: '/admin/expenses', icon: 'Receipt' },
@@ -41,6 +42,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Attendance', path: '/teacher/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/teacher/quizzes', icon: 'FileQuestion' },
     { name: 'Grading', path: '/teacher/grading', icon: 'CheckCircle' },
+    { name: 'My Schedule', path: '/teacher/schedule', icon: 'Calendar' },
     { name: 'My Salary', path: '/teacher/salary', icon: 'Banknote' },
   ],
   [ROLES.STUDENT]: [
@@ -49,6 +51,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Attendance', path: '/student/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/student/quizzes', icon: 'FileQuestion' },
     { name: 'Results', path: '/student/results', icon: 'Award' },
+    { name: 'Class Routine & Exams', path: '/student/schedule', icon: 'Calendar' },
     { name: 'My Fees', path: '/student/fees', icon: 'Wallet' },
     { name: 'Notifications', path: '/student/notifications', icon: 'Bell' },
   ],
