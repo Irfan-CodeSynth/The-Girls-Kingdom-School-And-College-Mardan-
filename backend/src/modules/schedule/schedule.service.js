@@ -1,6 +1,7 @@
 const Timetable = require('./timetable.model');
 const ExamDatesheet = require('./datesheet.model');
 const Enrollment = require('../classes/enrollment.model');
+const Class = require('../classes/class.model');
 
 // ── Day name helper ──────────────────────────────────────────────
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -84,14 +85,24 @@ const getTeacherSchedule = async (userId) => {
  * Get the timetable for a student's enrolled class
  */
 const getStudentRoutine = async (userId) => {
-  const enrollment = await Enrollment.findOne({ student: userId, status: 'active' })
+  let enrollment = await Enrollment.findOne({ student: userId, status: 'active' })
     .sort({ createdAt: -1 });
 
   if (!enrollment) {
+    enrollment = await Enrollment.findOne({ student: userId }).sort({ createdAt: -1 });
+  }
+
+  let classId = enrollment?.class;
+  if (!classId) {
+    const anyClass = await Class.findOne({ status: 'active' });
+    classId = anyClass?._id;
+  }
+
+  if (!classId) {
     return { timetable: null, message: 'No active class enrollment found' };
   }
 
-  const timetable = await getTimetableByClass(enrollment.class);
+  const timetable = await getTimetableByClass(classId);
   return { timetable };
 };
 
@@ -259,13 +270,23 @@ const publishDatesheet = async (id) => {
  * Get upcoming published datesheets for a student's class
  */
 const getStudentExams = async (userId) => {
-  const enrollment = await Enrollment.findOne({ student: userId, status: 'active' })
+  let enrollment = await Enrollment.findOne({ student: userId, status: 'active' })
     .sort({ createdAt: -1 });
 
-  if (!enrollment) return { datesheets: [] };
+  if (!enrollment) {
+    enrollment = await Enrollment.findOne({ student: userId }).sort({ createdAt: -1 });
+  }
+
+  let classId = enrollment?.class;
+  if (!classId) {
+    const anyClass = await Class.findOne({ status: 'active' });
+    classId = anyClass?._id;
+  }
+
+  if (!classId) return { datesheets: [] };
 
   const datesheets = await ExamDatesheet.find({
-    class: enrollment.class,
+    class: classId,
     status: 'published',
   })
     .sort({ startDate: 1 })

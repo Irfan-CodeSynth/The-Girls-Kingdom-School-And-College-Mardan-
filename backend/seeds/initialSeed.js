@@ -98,19 +98,12 @@ const seedInitialDataIfEmpty = async () => {
     }
 
     // 5. Enroll Student into Class
-    const existingEnrollment = await Enrollment.findOne({
-      student: student._id,
-      class: classObj._id,
-      status: ENROLLMENT_STATUS.ACTIVE
-    });
-    if (!existingEnrollment) {
-      await Enrollment.create({
-        student: student._id,
-        class: classObj._id,
-        status: ENROLLMENT_STATUS.ACTIVE
-      });
-      console.log('  ✓ Enrolled Ayesha Khan in CS-101');
-    }
+    await Enrollment.findOneAndUpdate(
+      { student: student._id },
+      { student: student._id, class: classObj._id, status: ENROLLMENT_STATUS.ACTIVE },
+      { upsert: true, new: true }
+    );
+    console.log('  ✓ Enrolled Ayesha Khan in CS-101');
 
     // 6. Quiz
     const existingQuiz = await Quiz.findOne({ class: classObj._id });
