@@ -52,10 +52,12 @@ const getQuizzes = async (query, userId, userRole) => {
   const {
     status,
     classId,
-    page = 1,
-    limit = 20,
     search
   } = query;
+
+  // Cap pagination to prevent OOM/DoS
+  const safePage = Math.max(1, Number(query.page) || 1);
+  const safeLimit = Math.min(Math.max(1, Number(query.limit) || 20), 100);
 
   const filter = {};
 
@@ -67,7 +69,7 @@ const getQuizzes = async (query, userId, userRole) => {
       student: userId,
       status: ENROLLMENT_STATUS.ACTIVE
     });
-    if (!enrollment) return { quizzes: [], pagination: { total: 0, page: 1, limit: Number(limit), pages: 0 } };
+    if (!enrollment) return { quizzes: [], pagination: { total: 0, page: 1, limit: safeLimit, pages: 0 } };
     filter.class = enrollment.class;
     filter.status = QUIZ_STATUS.PUBLISHED;
   }
@@ -75,13 +77,15 @@ const getQuizzes = async (query, userId, userRole) => {
   if (status && userRole !== ROLES.STUDENT) filter.status = status;
   if (classId && userRole === ROLES.ADMIN) filter.class = classId;
   if (search) {
+    // Escape regex special characters to prevent ReDoS
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     filter.$or = [
-      { title: { $regex: search, $options: 'i' } },
-      { description: { $regex: search, $options: 'i' } }
+      { title: { $regex: escaped, $options: 'i' } },
+      { description: { $regex: escaped, $options: 'i' } }
     ];
   }
 
-  const skip = (Number(page) - 1) * Number(limit);
+  const skip = (safePage - 1) * safeLimit;
 
   const [quizzes, total] = await Promise.all([
     Quiz.find(filter)
@@ -90,7 +94,7 @@ const getQuizzes = async (query, userId, userRole) => {
       .populate('teacher', 'fullName email')
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(Number(limit)),
+      .limit(safeLimit),
     Quiz.countDocuments(filter)
   ]);
 
@@ -131,9 +135,9 @@ const getQuizzes = async (query, userId, userRole) => {
     quizzes: quizzesWithMeta,
     pagination: {
       total,
-      page: Number(page),
-      limit: Number(limit),
-      pages: Math.ceil(total / Number(limit))
+      page: safePage,
+      limit: safeLimit,
+      pages: Math.ceil(total / safeLimit)
     }
   };
 };

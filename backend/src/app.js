@@ -20,7 +20,19 @@ const expenseRoutes = require('./modules/expenses/expense.routes');
 const scheduleRoutes = require('./modules/schedule/schedule.routes');
 const ApiError = require('./utils/ApiError');
 const connectDB = require('./config/db');
+const protect = require('./middleware/auth');
+const authorize = require('./middleware/authorize');
+const { ROLES } = require('./utils/constants');
 
+// Fail fast if critical secrets are missing
+if (!env.JWT_SECRET && !process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set. Server cannot start securely.');
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    throw new Error('JWT_SECRET is required in production');
+  } else {
+    console.warn('⚠️ Running without JWT_SECRET — set it before deploying to production');
+  }
+}
 const app = express();
 
 // Trust reverse proxy (Vercel, Render, Nginx) so client IP is accurately extracted
@@ -65,7 +77,7 @@ app.use('/api', async (req, res, next) => {
             role: ROLES.ADMIN,
             isActive: true
           });
-          console.log(`Default administrator seeded: ${adminEmail} / ${adminPass}`);
+          console.log(`Default administrator seeded: ${adminEmail}`);
         } else {
           const matches = await adminUser.comparePassword(adminPass);
           if (!matches || !adminUser.isActive || adminUser.role !== ROLES.ADMIN) {
@@ -73,7 +85,7 @@ app.use('/api', async (req, res, next) => {
             adminUser.isActive = true;
             adminUser.role = ROLES.ADMIN;
             await adminUser.save();
-            console.log(`Default administrator credentials synced: ${adminEmail} / ${adminPass}`);
+            console.log(`Default administrator credentials synced: ${adminEmail}`);
           }
         }
         const seedInitialDataIfEmpty = require('../seeds/initialSeed');
@@ -108,7 +120,7 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
-app.get('/api/system-status', async (req, res) => {
+app.get('/api/system-status', protect, authorize(ROLES.ADMIN), async (req, res) => {
   const mongoose = require('mongoose');
   const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown';
   let dbError = null;

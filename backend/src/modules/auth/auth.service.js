@@ -7,7 +7,7 @@ const env = require('../../config/env');
 const { ROLES } = require('../../utils/constants');
 
 const generateToken = (userId, role) => {
-  const secret = env.JWT_SECRET || process.env.JWT_SECRET || 'the-girls-kingdom-school-and-college-mardan-jwt-super-secret-key-2026';
+  const secret = env.JWT_SECRET || process.env.JWT_SECRET;
   const expiresIn = env.JWT_EXPIRE || process.env.JWT_EXPIRE || '30d';
   return jwt.sign({ id: userId, role }, secret, {
     expiresIn,
@@ -71,80 +71,13 @@ const registerTeacher = async (data) => {
 
 const login = async (email, password) => {
   const normalizedEmail = (email || '').trim().toLowerCase();
-  let user = await User.findOne({ email: normalizedEmail }).select('+password');
-
-  // Self-healing: if one of the standard default accounts is missing from database, seed it on the fly
-  if (!user) {
-    if (normalizedEmail === 'admin@girlskingdom.edu' && password === (process.env.ADMIN_PASSWORD || 'Admin@123456')) {
-      await User.create({
-        fullName: process.env.ADMIN_NAME || 'System Administrator',
-        email: 'admin@girlskingdom.edu',
-        password: process.env.ADMIN_PASSWORD || 'Admin@123456',
-        role: ROLES.ADMIN,
-        isActive: true
-      });
-      user = await User.findOne({ email: normalizedEmail }).select('+password');
-    } else if (normalizedEmail === 'teacher@girlskingdom.edu' && password === 'Teacher@123456') {
-      const newTeacher = await User.create({
-        fullName: 'Sir Tariq Mehmood',
-        email: 'teacher@girlskingdom.edu',
-        password: 'Teacher@123456',
-        role: ROLES.TEACHER,
-        phone: '+92-301-9876543',
-        isActive: true
-      });
-      await TeacherProfile.findOneAndUpdate(
-        { user: newTeacher._id },
-        { user: newTeacher._id, teacherId: 'TCH-001', department: 'Computer Science' },
-        { upsert: true }
-      );
-      user = await User.findOne({ email: normalizedEmail }).select('+password');
-    } else if (normalizedEmail === 'ayesha@girlskingdom.edu' && password === 'Student@123456') {
-      const newStudent = await User.create({
-        fullName: 'Ayesha Khan',
-        email: 'ayesha@girlskingdom.edu',
-        password: 'Student@123456',
-        role: ROLES.STUDENT,
-        phone: '+92-300-1234567',
-        isActive: true
-      });
-      await StudentProfile.findOneAndUpdate(
-        { user: newStudent._id },
-        { user: newStudent._id, studentId: 'GKC-2026-001' },
-        { upsert: true }
-      );
-      user = await User.findOne({ email: normalizedEmail }).select('+password');
-    }
-  }
+  const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
   if (!user) {
     throw ApiError.unauthorized('Invalid email or password');
   }
 
-  let isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    // If it's a default account with the default password, heal the password in case it was desynced
-    if (normalizedEmail === 'admin@girlskingdom.edu' && password === (process.env.ADMIN_PASSWORD || 'Admin@123456')) {
-      user.password = process.env.ADMIN_PASSWORD || 'Admin@123456';
-      user.isActive = true;
-      user.role = ROLES.ADMIN;
-      await user.save();
-      isMatch = true;
-    } else if (normalizedEmail === 'teacher@girlskingdom.edu' && password === 'Teacher@123456') {
-      user.password = 'Teacher@123456';
-      user.isActive = true;
-      user.role = ROLES.TEACHER;
-      await user.save();
-      isMatch = true;
-    } else if (normalizedEmail === 'ayesha@girlskingdom.edu' && password === 'Student@123456') {
-      user.password = 'Student@123456';
-      user.isActive = true;
-      user.role = ROLES.STUDENT;
-      await user.save();
-      isMatch = true;
-    }
-  }
-
+  const isMatch = await user.comparePassword(password);
   if (!isMatch) {
     throw ApiError.unauthorized('Invalid email or password');
   }
@@ -153,8 +86,8 @@ const login = async (email, password) => {
     throw ApiError.unauthorized('Account is deactivated');
   }
 
-  user.lastLogin = Date.now();
-  await user.save({ validateBeforeSave: false });
+  // Update lastLogin without triggering full validation
+  await User.updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } });
 
   const token = generateToken(user._id, user.role);
   return { user, token };

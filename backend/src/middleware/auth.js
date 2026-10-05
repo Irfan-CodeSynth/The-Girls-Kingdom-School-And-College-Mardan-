@@ -13,7 +13,7 @@ const protect = (req, res, next) => {
   }
 
   try {
-    const secret = env.JWT_SECRET || process.env.JWT_SECRET || 'the-girls-kingdom-school-and-college-mardan-jwt-super-secret-key-2026';
+    const secret = env.JWT_SECRET || process.env.JWT_SECRET;
     const decoded = jwt.verify(token, secret, { algorithms: ['HS256'] });
     req.user = { id: decoded.id, role: decoded.role };
     next();

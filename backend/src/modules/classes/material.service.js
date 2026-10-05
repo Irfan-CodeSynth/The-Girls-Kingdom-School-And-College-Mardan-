@@ -116,8 +116,16 @@ const createMaterial = async (classId, data, userId, userRole) => {
 const getClassMaterials = async (classId, userId, userRole, query = {}) => {
   const filter = { class: classId };
 
-  // Students only see published materials
+  // Students only see published materials from their enrolled class
   if (userRole === ROLES.STUDENT) {
+    const enrollment = await Enrollment.findOne({
+      student: userId,
+      class: classId,
+      status: ENROLLMENT_STATUS.ACTIVE
+    });
+    if (!enrollment) {
+      throw ApiError.forbidden('You are not enrolled in this class');
+    }
     filter.isPublished = true;
   }
 

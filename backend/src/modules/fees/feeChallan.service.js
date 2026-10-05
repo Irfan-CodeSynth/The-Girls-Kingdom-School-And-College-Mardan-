@@ -163,7 +163,7 @@ const getChallans = async ({
 /**
  * Get a single challan by ID with full details.
  */
-const getChallanById = async (id) => {
+const getChallanById = async (id, userId, userRole) => {
   const challan = await FeeChallan.findById(id)
     .populate('student', 'fullName email phone')
     .populate('class', 'name code academicYear')
@@ -172,6 +172,11 @@ const getChallanById = async (id) => {
     .populate('markedPaidBy', 'fullName');
 
   if (!challan) throw ApiError.notFound('Challan not found.');
+
+  // Prevent students from viewing other students' challans
+  if (userRole === ROLES.STUDENT && String(challan.student._id) !== String(userId)) {
+    throw ApiError.forbidden('You are not authorized to view this challan');
+  }
 
   // Get payment history
   const payments = await FeePayment.find({ challan: id })

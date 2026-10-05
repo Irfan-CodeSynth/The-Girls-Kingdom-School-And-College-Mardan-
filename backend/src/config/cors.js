@@ -13,7 +13,7 @@ const getAllowedOrigin = () => {
     if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
-    return callback(null, true); // Fallback allow to avoid unexpected blocking in staging/preview
+    return callback(new Error(`CORS: Origin ${origin} is not allowed`), false);
   };
 };
 

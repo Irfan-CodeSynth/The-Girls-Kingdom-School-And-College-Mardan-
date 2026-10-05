@@ -9,8 +9,7 @@ try {
     res.status(500).json({
       success: false,
       error: 'Backend Initialization Failed',
-      message: err.message,
-      stack: err.stack
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
     });
   });
 }

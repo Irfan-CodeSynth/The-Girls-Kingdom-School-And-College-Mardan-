@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 export const Input = React.forwardRef(({
   label,
@@ -6,12 +6,16 @@ export const Input = React.forwardRef(({
   helperText,
   leftIcon,
   className = '',
+  id: providedId,
   ...props
 }, ref) => {
+  const autoId = useId();
+  const inputId = providedId || autoId;
+
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-1">
+        <label htmlFor={inputId} className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-1">
           {label}
         </label>
       )}
@@ -23,6 +27,7 @@ export const Input = React.forwardRef(({
         )}
         <input
           ref={ref}
+          id={inputId}
           className={`
             block w-full rounded-lg border bg-white dark:bg-surface-800 
             text-surface-900 dark:text-white sm:text-sm transition-colors

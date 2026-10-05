@@ -13,7 +13,7 @@ const generalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: isDev ? 1000 : 500, 
+  max: isDev ? 1000 : 15, 
   standardHeaders: true, 
   legacyHeaders: false,
   validate: { xForwardedForHeader: false, default: false },

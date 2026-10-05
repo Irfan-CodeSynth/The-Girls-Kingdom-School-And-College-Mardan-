@@ -2,13 +2,15 @@ const express = require('express');
 const authController = require('./auth.controller');
 const validate = require('../../middleware/validate');
 const protect = require('../../middleware/auth');
+const authorize = require('../../middleware/authorize');
+const { ROLES } = require('../../utils/constants');
 const { authLimiter } = require('../../middleware/rateLimiter');
 const { registerStudentSchema, registerTeacherSchema, loginSchema, changePasswordSchema } = require('./auth.validator');
 
 const router = express.Router();
 
-router.post('/register/student', validate(registerStudentSchema), authController.registerStudent);
-router.post('/register/teacher', validate(registerTeacherSchema), authController.registerTeacher);
+router.post('/register/student', protect, authorize(ROLES.ADMIN), validate(registerStudentSchema), authController.registerStudent);
+router.post('/register/teacher', protect, authorize(ROLES.ADMIN), validate(registerTeacherSchema), authController.registerTeacher);
 router.post('/login', authLimiter, validate(loginSchema), authController.login);
 router.post('/logout', protect, authController.logout);
 router.get('/me', protect, authController.getMe);
