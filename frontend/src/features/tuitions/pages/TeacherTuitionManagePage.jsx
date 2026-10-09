@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, NavLink } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -15,6 +15,11 @@ import {
   X,
   PlusCircle,
   Sparkles,
+  Upload,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
 import { Card, Badge, Skeleton, Button } from '../../../components/ui';
 import tuitionApi from '../api/tuitionApi';
@@ -22,6 +27,7 @@ import tuitionApi from '../api/tuitionApi';
 export const TeacherTuitionManagePage = () => {
   const { courseId } = useParams();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
 
   // Modals state
   const [showSectionModal, setShowSectionModal] = useState(false);
@@ -49,10 +55,19 @@ export const TeacherTuitionManagePage = () => {
     isPublished: true,
   });
 
-  // Current note input
-  const [newNote, setNewNote] = useState({ title: '', fileUrl: '', fileType: 'pdf' });
+  // Notes state
+  const [noteMode, setNoteMode] = useState('upload'); // 'upload' | 'url'
+  const [newNote, setNewNote] = useState({
+    title: '',
+    fileUrl: '',
+    fileType: 'pdf',
+    fileSize: 0,
+  });
+  const [uploadFileName, setUploadFileName] = useState('');
+  const [isReadingFile, setIsReadingFile] = useState(false);
 
-  // Current question input
+  // Quiz state
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState(null);
   const [newQuestion, setNewQuestion] = useState({
     questionText: '',
     type: 'mcq',
@@ -159,7 +174,9 @@ export const TeacherTuitionManagePage = () => {
       },
       isPublished: true,
     });
-    setNewNote({ title: '', fileUrl: '', fileType: 'pdf' });
+    setNewNote({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0 });
+    setUploadFileName('');
+    setEditingQuestionIndex(null);
     setNewQuestion({
       questionText: '',
       type: 'mcq',
@@ -228,17 +245,74 @@ export const TeacherTuitionManagePage = () => {
       },
       isPublished: lec.isPublished !== undefined ? lec.isPublished : true,
     });
-    setNewNote({ title: '', fileUrl: '', fileType: 'pdf' });
+    setNewNote({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0 });
+    setUploadFileName('');
+    setEditingQuestionIndex(null);
     setShowLectureModal(true);
   };
 
+  // ─── File Upload Handler for Notes ───────────────────────────
+  const detectFileType = (fileName = '', mime = '') => {
+    if (mime.startsWith('image/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(fileName)) return 'image';
+    if (/\.pdf$/i.test(fileName)) return 'pdf';
+    if (/\.(docx?)$/i.test(fileName)) return 'doc';
+    if (/\.(pptx?)$/i.test(fileName)) return 'ppt';
+    if (/\.txt$/i.test(fileName)) return 'txt';
+    return 'other';
+  };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+      alert('File size exceeds 15MB. For very large files, please provide a direct URL.');
+      return;
+    }
+
+    setIsReadingFile(true);
+    setUploadFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Data = event.target?.result;
+      const fType = detectFileType(file.name, file.type);
+      const cleanTitle = file.name.replace(/\.[^/.]+$/, '');
+
+      setNewNote({
+        title: newNote.title || cleanTitle,
+        fileUrl: base64Data,
+        fileType: fType,
+        fileSize: file.size,
+      });
+      setIsReadingFile(false);
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
+      setIsReadingFile(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleAddNote = () => {
-    if (!newNote.title || !newNote.fileUrl) return;
+    if (!newNote.title || !newNote.fileUrl) {
+      alert('Please provide a title and either upload a file or enter a URL.');
+      return;
+    }
     setLectureForm((prev) => ({
       ...prev,
       notes: [...prev.notes, { ...newNote }],
     }));
-    setNewNote({ title: '', fileUrl: '', fileType: 'pdf' });
+    setNewNote({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0 });
+    setUploadFileName('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleRemoveNote = (idx) => {
@@ -248,6 +322,7 @@ export const TeacherTuitionManagePage = () => {
     }));
   };
 
+  // ─── Quiz Questions & Options Handlers ────────────────────────
   const handleAddQuestionOption = () => {
     setNewQuestion((prev) => ({
       ...prev,
@@ -255,15 +330,88 @@ export const TeacherTuitionManagePage = () => {
     }));
   };
 
-  const handleAddQuestion = () => {
-    if (!newQuestion.questionText) return;
-    setLectureForm((prev) => ({
-      ...prev,
-      quiz: {
-        ...prev.quiz,
-        questions: [...prev.quiz.questions, { ...newQuestion }],
-      },
-    }));
+  const handleRemoveQuestionOption = (optIndex) => {
+    setNewQuestion((prev) => {
+      const nextOptions = prev.options.filter((_, i) => i !== optIndex);
+      // Ensure at least one option is marked correct
+      const hasCorrect = nextOptions.some((o) => o.isCorrect);
+      if (!hasCorrect && nextOptions.length > 0) {
+        nextOptions[0].isCorrect = true;
+      }
+      return { ...prev, options: nextOptions };
+    });
+  };
+
+  const handleSaveQuestion = () => {
+    if (!newQuestion.questionText.trim()) {
+      alert('Please enter the question text.');
+      return;
+    }
+
+    if (newQuestion.type === 'mcq' || newQuestion.type === 'true_false') {
+      const emptyOpt = newQuestion.options.some((o) => !o.text.trim());
+      if (emptyOpt) {
+        alert('Please fill out text for all options.');
+        return;
+      }
+      const hasCorrect = newQuestion.options.some((o) => o.isCorrect);
+      if (!hasCorrect) {
+        alert('Please select which option is correct.');
+        return;
+      }
+    }
+
+    if (editingQuestionIndex !== null) {
+      // Update existing question
+      setLectureForm((prev) => {
+        const nextQuestions = [...prev.quiz.questions];
+        nextQuestions[editingQuestionIndex] = { ...newQuestion };
+        return {
+          ...prev,
+          quiz: { ...prev.quiz, questions: nextQuestions },
+        };
+      });
+      setEditingQuestionIndex(null);
+    } else {
+      // Add new question
+      setLectureForm((prev) => ({
+        ...prev,
+        quiz: {
+          ...prev.quiz,
+          questions: [...prev.quiz.questions, { ...newQuestion }],
+        },
+      }));
+    }
+
+    // Reset question form ready for the next question!
+    setNewQuestion({
+      questionText: '',
+      type: 'mcq',
+      marks: 1,
+      options: [
+        { text: '', isCorrect: true },
+        { text: '', isCorrect: false },
+      ],
+    });
+  };
+
+  const handleStartEditQuestion = (qIndex) => {
+    const q = lectureForm.quiz.questions[qIndex];
+    if (!q) return;
+    setEditingQuestionIndex(qIndex);
+    setNewQuestion({
+      questionText: q.questionText || '',
+      type: q.type || 'mcq',
+      marks: q.marks || 1,
+      options: (q.options || []).map((o) => ({
+        text: o.text || '',
+        isCorrect: Boolean(o.isCorrect),
+      })),
+    });
+  };
+
+  const handleCancelEditQuestion = () => {
+    setEditingQuestionIndex(null);
     setNewQuestion({
       questionText: '',
       type: 'mcq',
@@ -283,6 +431,9 @@ export const TeacherTuitionManagePage = () => {
         questions: prev.quiz.questions.filter((_, i) => i !== qIdx),
       },
     }));
+    if (editingQuestionIndex === qIdx) {
+      handleCancelEditQuestion();
+    }
   };
 
   const handleSaveSection = () => {
@@ -454,7 +605,7 @@ export const TeacherTuitionManagePage = () => {
                             </div>
                             <div className="flex items-center gap-3 text-xs text-[#6B7280] mt-1">
                               <span>Min Watch: {lec.video?.minWatchPercentage || 90}%</span>
-                              <span>• Notes: {lec.notes?.length || 0}</span>
+                              <span>• Handouts: {lec.notes?.length || 0}</span>
                               <span>
                                 • Quiz:{' '}
                                 {lec.hasQuiz
@@ -580,7 +731,7 @@ export const TeacherTuitionManagePage = () => {
                   {editingLecture ? 'Edit Lecture Lesson' : 'Add Lecture Lesson'}
                 </h3>
                 <p className="text-xs text-[#6B7280]">
-                  Configure video stream, attachments, and gatekeeper quiz
+                  Configure video stream, handouts/notes, and gatekeeper quiz
                 </p>
               </div>
               <button
@@ -595,7 +746,7 @@ export const TeacherTuitionManagePage = () => {
             </div>
 
             <div className="space-y-6 text-xs">
-              {/* 1. General */}
+              {/* 1. General Info */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2">
                   <label className="font-bold text-[#111827] block mb-1">
@@ -693,54 +844,202 @@ export const TeacherTuitionManagePage = () => {
                 </div>
               </div>
 
-              {/* 3. Lecture Notes Attachments */}
+              {/* 3. Attach Lecture Handouts & Notes (Dual: File Upload & URL) */}
               <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE5E0] space-y-3">
-                <h4 className="font-serif text-sm font-bold text-[#111827] flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-[#5A0D1A]" />
-                  Attach Lecture Handouts & Notes
-                </h4>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="font-serif text-sm font-bold text-[#111827] flex items-center gap-1.5">
+                    <FileText className="w-4 h-4 text-[#5A0D1A]" />
+                    Attach Lecture Handouts, Documents & Images
+                  </h4>
 
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="text"
-                    placeholder="Handout Title (e.g. Chapter Summary PDF)"
-                    value={newNote.title}
-                    onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-                    className="flex-1 p-2 rounded-xl border border-[#EFE5E0] bg-white"
-                  />
-                  <input
-                    type="url"
-                    placeholder="Document URL (https://...)"
-                    value={newNote.fileUrl}
-                    onChange={(e) => setNewNote({ ...newNote, fileUrl: e.target.value })}
-                    className="flex-1 p-2 rounded-xl border border-[#EFE5E0] bg-white"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleAddNote}
-                    className="bg-[#5A0D1A] text-white shrink-0"
-                  >
-                    Add Note
-                  </Button>
+                  {/* Mode Selector Tabs */}
+                  <div className="inline-flex rounded-xl bg-white p-1 border border-[#EFE5E0] shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setNoteMode('upload')}
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        noteMode === 'upload'
+                          ? 'bg-[#5A0D1A] text-white shadow-xs'
+                          : 'text-[#6B7280] hover:text-[#111827]'
+                      }`}
+                    >
+                      <Upload className="w-3 h-3" />
+                      Upload File / Image
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNoteMode('url')}
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        noteMode === 'url'
+                          ? 'bg-[#5A0D1A] text-white shadow-xs'
+                          : 'text-[#6B7280] hover:text-[#111827]'
+                      }`}
+                    >
+                      <LinkIcon className="w-3 h-3" />
+                      Direct URL Link
+                    </button>
+                  </div>
                 </div>
 
+                {/* Mode 1: File / Image Upload */}
+                {noteMode === 'upload' && (
+                  <div className="p-3 bg-white rounded-xl border border-[#EFE5E0] space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="font-semibold text-[#111827] block mb-1">
+                          Handout Title
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Chapter 3 Formula Sheet PDF"
+                          value={newNote.title}
+                          onChange={(e) =>
+                            setNewNote({ ...newNote, title: e.target.value })
+                          }
+                          className="w-full p-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5]/30 text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-[#111827] block mb-1">
+                          Select Document or Image File
+                        </label>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.png,.jpg,.jpeg,.gif,.webp"
+                          onChange={handleFileUpload}
+                          className="w-full p-1.5 rounded-xl border border-[#EFE5E0] bg-white text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#FAF8F5] file:text-[#5A0D1A]"
+                        />
+                      </div>
+                    </div>
+
+                    {uploadFileName && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAF8F5] border border-[#EFE5E0] text-[11px]">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <span className="font-bold text-[#111827]">{uploadFileName}</span>
+                          <span className="text-[#6B7280]">
+                            ({formatFileSize(newNote.fileSize)} • {newNote.fileType?.toUpperCase()})
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={handleAddNote}
+                          disabled={isReadingFile || !newNote.fileUrl}
+                          className="bg-[#5A0D1A] text-white text-[11px] h-7 px-3"
+                        >
+                          {isReadingFile ? 'Reading...' : 'Attach to Lecture'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Mode 2: Direct URL */}
+                {noteMode === 'url' && (
+                  <div className="p-3 bg-white rounded-xl border border-[#EFE5E0] space-y-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="sm:col-span-1">
+                        <label className="font-semibold text-[#111827] block mb-1">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Handout Title"
+                          value={newNote.title}
+                          onChange={(e) =>
+                            setNewNote({ ...newNote, title: e.target.value })
+                          }
+                          className="w-full p-2 rounded-xl border border-[#EFE5E0] bg-white text-xs"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-1">
+                        <label className="font-semibold text-[#111827] block mb-1">
+                          Document / Image URL
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="https://..."
+                          value={newNote.fileUrl}
+                          onChange={(e) =>
+                            setNewNote({ ...newNote, fileUrl: e.target.value })
+                          }
+                          className="w-full p-2 rounded-xl border border-[#EFE5E0] bg-white text-xs"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-1">
+                        <label className="font-semibold text-[#111827] block mb-1">
+                          File Type
+                        </label>
+                        <select
+                          value={newNote.fileType}
+                          onChange={(e) =>
+                            setNewNote({ ...newNote, fileType: e.target.value })
+                          }
+                          className="w-full p-2 rounded-xl border border-[#EFE5E0] bg-white text-xs"
+                        >
+                          <option value="pdf">PDF Document</option>
+                          <option value="image">Image (PNG/JPG)</option>
+                          <option value="doc">Word Doc</option>
+                          <option value="ppt">PowerPoint</option>
+                          <option value="txt">Text File</option>
+                          <option value="other">Other Link</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={handleAddNote}
+                        disabled={!newNote.title || !newNote.fileUrl}
+                        className="bg-[#5A0D1A] text-white text-[11px] h-7 px-3"
+                      >
+                        Add URL to Handouts
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* List of Attached Handouts */}
                 {lectureForm.notes.length > 0 && (
-                  <div className="space-y-1.5 pt-2">
+                  <div className="space-y-1.5 pt-1">
+                    <p className="font-bold text-[#111827] text-[11px]">
+                      Attached Handouts ({lectureForm.notes.length}):
+                    </p>
                     {lectureForm.notes.map((note, nIdx) => (
                       <div
                         key={nIdx}
-                        className="flex items-center justify-between p-2 rounded-lg bg-white border border-[#EFE5E0]"
+                        className="flex items-center justify-between p-2.5 rounded-lg bg-white border border-[#EFE5E0]"
                       >
-                        <span className="font-semibold text-[#111827]">
-                          {note.title} ({note.fileUrl})
-                        </span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          {note.fileType === 'image' ? (
+                            <ImageIcon className="w-4 h-4 text-[#5A0D1A] shrink-0" />
+                          ) : (
+                            <FileText className="w-4 h-4 text-[#5A0D1A] shrink-0" />
+                          )}
+                          <div className="min-w-0">
+                            <span className="font-bold text-[#111827] truncate block">
+                              {note.title}
+                            </span>
+                            <span className="text-[10px] text-[#6B7280] uppercase tracking-wider">
+                              {note.fileType || 'PDF'}
+                              {note.fileSize ? ` • ${formatFileSize(note.fileSize)}` : ''}
+                            </span>
+                          </div>
+                        </div>
                         <button
                           type="button"
                           onClick={() => handleRemoveNote(nIdx)}
-                          className="text-rose-600 hover:text-rose-700"
+                          className="p-1 rounded text-rose-600 hover:bg-rose-50 transition-colors ml-2"
+                          title="Remove Handout"
                         >
-                          <X className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}
@@ -748,17 +1047,40 @@ export const TeacherTuitionManagePage = () => {
                 )}
               </div>
 
-              {/* 4. Gatekeeper Quiz Builder */}
+              {/* 4. Gatekeeper Quiz Builder with Multi-Question & Option Remove */}
               <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE5E0] space-y-4">
-                <h4 className="font-serif text-sm font-bold text-[#111827] flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4 text-[#5A0D1A]" />
-                  Lecture Gatekeeper Quiz Assessment
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="font-serif text-sm font-bold text-[#111827] flex items-center gap-1.5">
+                    <HelpCircle className="w-4 h-4 text-[#5A0D1A]" />
+                    Lecture Gatekeeper Quiz Assessment
+                  </h4>
+                  <Badge variant="default" className="text-[10px] bg-white border-[#EFE5E0] text-[#5A0D1A]">
+                    {lectureForm.quiz.questions.length} Question(s) Configured
+                  </Badge>
+                </div>
 
-                <div className="p-3 bg-white rounded-xl border border-[#EFE5E0] space-y-3">
+                {/* Active Question Editor Box */}
+                <div className="p-4 bg-white rounded-xl border border-[#EFE5E0] space-y-3.5 shadow-2xs">
+                  <div className="flex items-center justify-between pb-1 border-b border-[#EFE5E0]">
+                    <span className="font-bold text-[#5A0D1A]">
+                      {editingQuestionIndex !== null
+                        ? `Editing Question #${editingQuestionIndex + 1}`
+                        : `New Question #${lectureForm.quiz.questions.length + 1}`}
+                    </span>
+                    {editingQuestionIndex !== null && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditQuestion}
+                        className="text-[11px] text-gray-500 hover:text-gray-700 underline"
+                      >
+                        Cancel Edit
+                      </button>
+                    )}
+                  </div>
+
                   <div>
                     <label className="font-semibold text-[#111827] block mb-1">
-                      New Question Text
+                      Question Text *
                     </label>
                     <input
                       type="text"
@@ -767,19 +1089,25 @@ export const TeacherTuitionManagePage = () => {
                       onChange={(e) =>
                         setNewQuestion({ ...newQuestion, questionText: e.target.value })
                       }
-                      className="w-full p-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5]/30"
+                      className="w-full p-2.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5]/30 focus:outline-none focus:ring-1 focus:ring-[#5A0D1A]"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="font-semibold text-[#111827] block">
-                      Options & Correct Answer Flag
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="font-semibold text-[#111827] block text-[11px]">
+                        Options & Select Radio for Correct Answer:
+                      </label>
+                      <span className="text-[10px] text-[#6B7280]">
+                        Click radio circle to mark correct answer
+                      </span>
+                    </div>
+
                     {newQuestion.options.map((opt, oIdx) => (
                       <div key={oIdx} className="flex items-center gap-2">
                         <input
                           type="radio"
-                          name="correctOption"
+                          name="correctOptionRadio"
                           checked={opt.isCorrect}
                           onChange={() => {
                             setNewQuestion((prev) => ({
@@ -790,6 +1118,7 @@ export const TeacherTuitionManagePage = () => {
                               })),
                             }));
                           }}
+                          className="w-4 h-4 text-[#5A0D1A] accent-[#5A0D1A] cursor-pointer"
                         />
                         <input
                           type="text"
@@ -804,59 +1133,118 @@ export const TeacherTuitionManagePage = () => {
                               ),
                             }));
                           }}
-                          className="flex-1 p-1.5 rounded-lg border border-[#EFE5E0] bg-white text-xs"
+                          className={`flex-1 p-2 rounded-xl border text-xs ${
+                            opt.isCorrect
+                              ? 'border-emerald-500 bg-emerald-50/20 font-semibold'
+                              : 'border-[#EFE5E0] bg-white'
+                          }`}
                         />
+                        {/* Remove Option Button (available if > 2 options) */}
+                        {newQuestion.options.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveQuestionOption(oIdx)}
+                            className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+                            title="Delete this option"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     ))}
-                    <div className="flex items-center justify-between pt-1">
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#EFE5E0]">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={handleAddQuestionOption}
-                        className="text-[11px] h-7 px-2"
+                        className="text-[11px] h-7.5 px-3 border-[#5A0D1A]/30 text-[#5A0D1A]"
                       >
-                        + Add Option
+                        + Add Another Option
                       </Button>
+
                       <Button
                         type="button"
                         size="sm"
-                        onClick={handleAddQuestion}
-                        className="bg-[#5A0D1A] text-white text-[11px] h-7 px-3"
+                        onClick={handleSaveQuestion}
+                        className="bg-[#5A0D1A] text-white text-[11px] h-7.5 px-3.5 gap-1.5"
                       >
-                        Save Question to Quiz
+                        <Check className="w-3.5 h-3.5" />
+                        {editingQuestionIndex !== null
+                          ? 'Update Question'
+                          : 'Save Question to Quiz'}
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                {/* Questions Preview */}
+                {/* List of Configured Questions with Edit & Remove */}
                 {lectureForm.quiz.questions.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-bold text-[#111827]">
-                      Configured Questions ({lectureForm.quiz.questions.length})
-                    </p>
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-[#111827]">
+                        Quiz Questions ({lectureForm.quiz.questions.length})
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingQuestionIndex(null);
+                          setNewQuestion({
+                            questionText: '',
+                            type: 'mcq',
+                            marks: 1,
+                            options: [
+                              { text: '', isCorrect: true },
+                              { text: '', isCorrect: false },
+                            ],
+                          });
+                        }}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5A0D1A] hover:underline"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        + Add Another Question
+                      </button>
+                    </div>
+
                     {lectureForm.quiz.questions.map((q, qIndex) => (
                       <div
                         key={qIndex}
-                        className="p-3 rounded-xl bg-white border border-[#EFE5E0] flex items-center justify-between"
+                        className="p-3.5 rounded-xl bg-white border border-[#EFE5E0] flex items-center justify-between gap-3 shadow-2xs"
                       >
-                        <div>
-                          <p className="font-semibold text-[#111827]">
-                            Q{qIndex + 1}. {q.questionText}
+                        <div className="min-w-0">
+                          <p className="font-bold text-[#111827] text-xs">
+                            <span className="text-[#5A0D1A] mr-1.5">Q{qIndex + 1}.</span>
+                            {q.questionText}
                           </p>
-                          <p className="text-[11px] text-[#6B7280]">
-                            {q.options?.length || 0} options • Correct:{' '}
-                            {q.options?.find((o) => o.isCorrect)?.text || 'N/A'}
-                          </p>
+                          <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#6B7280] mt-1">
+                            <span>{q.options?.length || 0} options</span>
+                            <span>•</span>
+                            <span className="text-emerald-700 font-semibold">
+                              Correct:{' '}
+                              {q.options?.find((o) => o.isCorrect)?.text || 'Option A'}
+                            </span>
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveQuestion(qIndex)}
-                          className="text-rose-600 hover:text-rose-700"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditQuestion(qIndex)}
+                            className="p-1.5 rounded-lg text-[#5A0D1A] hover:bg-[#FAF8F5] border border-[#EFE5E0] transition-colors"
+                            title="Edit Question"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveQuestion(qIndex)}
+                            className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors"
+                            title="Delete Question"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
