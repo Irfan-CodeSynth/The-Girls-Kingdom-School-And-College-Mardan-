@@ -328,6 +328,50 @@ const seedInitialDataIfEmpty = async () => {
       });
       console.log('  ✓ Enrolled Demo Student Ayesha Khan into PHY-OL-101 Online Tuitions');
     }
+
+    // 10. Seed Demo Parent Account & Link to Student Ayesha Khan
+    const ParentProfile = require('../src/modules/users/parentProfile.model');
+    const parentEmail = 'parent@girlskingdom.edu';
+    const parentPass = 'Parent@123456';
+    let parentUser = await User.findOne({ email: parentEmail }).select('+password');
+    if (!parentUser) {
+      parentUser = await User.create({
+        fullName: 'Muhammad Tariq Khan',
+        email: parentEmail,
+        password: parentPass,
+        role: ROLES.PARENT,
+        phone: '+92-300-9876543',
+        isActive: true,
+      });
+      console.log('  ✓ Seeded Parent: Muhammad Tariq Khan (parent@girlskingdom.edu / Parent@123456)');
+    } else {
+      const match = await parentUser.comparePassword(parentPass);
+      if (!match || !parentUser.isActive) {
+        parentUser.password = parentPass;
+        parentUser.isActive = true;
+        await parentUser.save();
+        console.log('  ✓ Resynced Parent credentials: parent@girlskingdom.edu');
+      }
+    }
+
+    let parentProfile = await ParentProfile.findOne({ user: parentUser._id });
+    if (!parentProfile) {
+      await ParentProfile.create({
+        user: parentUser._id,
+        children: [
+          {
+            student: student._id,
+            relationship: 'father',
+            isPrimaryContact: true,
+          },
+        ],
+        cnic: '16101-1234567-1',
+        occupation: 'Civil Engineer',
+        emergencyContact: '+92-300-9876543',
+        address: 'Sector F, Phase 2, Hayatabad / Mardan Road',
+      });
+      console.log('  ✓ Linked Student Ayesha Khan to Parent Profile');
+    }
   } catch (err) {
     console.warn('Initial seed notice:', err.message);
   }

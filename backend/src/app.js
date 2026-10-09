@@ -19,6 +19,7 @@ const salaryRoutes = require('./modules/salary/salary.routes');
 const expenseRoutes = require('./modules/expenses/expense.routes');
 const scheduleRoutes = require('./modules/schedule/schedule.routes');
 const tuitionRoutes = require('./modules/tuitions/tuition.routes');
+const parentRoutes = require('./modules/parent/parent.routes');
 const ApiError = require('./utils/ApiError');
 const connectDB = require('./config/db');
 const protect = require('./middleware/auth');
@@ -117,6 +118,7 @@ app.use('/api/salary', salaryRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/tuitions', tuitionRoutes);
+app.use('/api/parent', parentRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
@@ -133,12 +135,13 @@ app.get('/api/system-status', protect, authorize(ROLES.ADMIN), async (req, res) 
     await connectDB();
     const User = require('./modules/users/user.model');
     const { ROLES } = require('./utils/constants');
-    const [adminCount, teacherCount, studentCount] = await Promise.all([
+    const [adminCount, teacherCount, studentCount, parentCount] = await Promise.all([
       User.countDocuments({ role: ROLES.ADMIN }),
       User.countDocuments({ role: ROLES.TEACHER }),
-      User.countDocuments({ role: ROLES.STUDENT })
+      User.countDocuments({ role: ROLES.STUDENT }),
+      User.countDocuments({ role: ROLES.PARENT })
     ]);
-    counts = { admin: adminCount, teacher: teacherCount, student: studentCount };
+    counts = { admin: adminCount, teacher: teacherCount, student: studentCount, parent: parentCount };
   } catch (err) {
     dbError = err.message;
   }

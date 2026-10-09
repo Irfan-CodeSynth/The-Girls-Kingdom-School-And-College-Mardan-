@@ -2,6 +2,7 @@ export const ROLES = {
   ADMIN: 'admin',
   TEACHER: 'teacher',
   STUDENT: 'student',
+  PARENT: 'parent',
 };
 
 export const QUIZ_STATUS = {
@@ -57,5 +58,14 @@ export const SIDEBAR_ITEMS = {
     { name: 'Class Routine & Exams', path: '/student/schedule', icon: 'Calendar' },
     { name: 'My Fees', path: '/student/fees', icon: 'Wallet' },
     { name: 'Notifications', path: '/student/notifications', icon: 'Bell' },
+  ],
+  [ROLES.PARENT]: [
+    { name: 'Dashboard', path: '/parent/dashboard', icon: 'LayoutDashboard' },
+    { name: 'Attendance Audit', path: '/parent/attendance', icon: 'CheckCircle' },
+    { name: 'Fee Challans', path: '/parent/fees', icon: 'Wallet' },
+    { name: 'Exam Datesheets', path: '/parent/schedule', icon: 'Calendar' },
+    { name: 'Quizzes & Results', path: '/parent/results', icon: 'Award' },
+    { name: 'Online Tuitions', path: '/parent/tuitions', icon: 'Video' },
+    { name: 'School Notices', path: '/parent/notifications', icon: 'Bell' },
   ],
 };

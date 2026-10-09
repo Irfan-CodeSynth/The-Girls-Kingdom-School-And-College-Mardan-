@@ -1,5 +1,5 @@
 module.exports = {
-  ROLES: { ADMIN: 'admin', TEACHER: 'teacher', STUDENT: 'student' },
+  ROLES: { ADMIN: 'admin', TEACHER: 'teacher', STUDENT: 'student', PARENT: 'parent' },
   QUIZ_STATUS: { DRAFT: 'draft', PUBLISHED: 'published', CLOSED: 'closed', ARCHIVED: 'archived' },
   ATTEMPT_STATUS: { IN_PROGRESS: 'in_progress', SUBMITTED: 'submitted', PENDING_REVIEW: 'pending_review', GRADED: 'graded', EXPIRED: 'expired' },
   QUESTION_TYPES: { MCQ: 'mcq', TRUE_FALSE: 'true_false', COMPREHENSIVE: 'comprehensive' },

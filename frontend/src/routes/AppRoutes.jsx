@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router';
+import { Routes, Route, Navigate, Outlet } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import { ROLES } from '../config/constants';
 
@@ -86,12 +86,22 @@ import TeacherTuitionRosterPage from '../features/tuitions/pages/TeacherTuitionR
 import StudentTuitionsPage from '../features/tuitions/pages/StudentTuitionsPage';
 import StudentTuitionLearnPage from '../features/tuitions/pages/StudentTuitionLearnPage';
 
+// Stage 14 — Parent Portal
+import { ParentChildProvider } from '../features/parent/context/ParentChildContext';
+import ParentDashboardPage from '../features/parent/pages/ParentDashboardPage';
+import ParentAttendancePage from '../features/parent/pages/ParentAttendancePage';
+import ParentFeesPage from '../features/parent/pages/ParentFeesPage';
+import ParentSchedulePage from '../features/parent/pages/ParentSchedulePage';
+import ParentResultsPage from '../features/parent/pages/ParentResultsPage';
+import ParentTuitionsPage from '../features/parent/pages/ParentTuitionsPage';
+
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   if (user.role === ROLES.ADMIN) return <Navigate to="/admin/dashboard" replace />;
   if (user.role === ROLES.TEACHER) return <Navigate to="/teacher/dashboard" replace />;
+  if (user.role === ROLES.PARENT) return <Navigate to="/parent/dashboard" replace />;
   return <Navigate to="/student/dashboard" replace />;
 };
 
@@ -225,6 +235,25 @@ export const AppRoutes = () => {
             {/* Online Tuitions Learning Portal */}
             <Route path="/student/tuitions" element={<StudentTuitionsPage />} />
             <Route path="/student/tuitions/:id" element={<StudentTuitionLearnPage />} />
+          </Route>
+
+          {/* ─── Parent Routes ─── */}
+          <Route element={<RoleRoute allowedRoles={[ROLES.PARENT]} />}>
+            <Route
+              element={
+                <ParentChildProvider>
+                  <Outlet />
+                </ParentChildProvider>
+              }
+            >
+              <Route path="/parent/dashboard" element={<ParentDashboardPage />} />
+              <Route path="/parent/attendance" element={<ParentAttendancePage />} />
+              <Route path="/parent/fees" element={<ParentFeesPage />} />
+              <Route path="/parent/schedule" element={<ParentSchedulePage />} />
+              <Route path="/parent/results" element={<ParentResultsPage />} />
+              <Route path="/parent/tuitions" element={<ParentTuitionsPage />} />
+              <Route path="/parent/notifications" element={<NotificationsPage />} />
+            </Route>
           </Route>
         </Route>
 
