@@ -190,6 +190,144 @@ const seedInitialDataIfEmpty = async () => {
       });
       console.log('  ✓ Seeded Exam Datesheet: Mid-Term Examinations — Autumn 2026');
     }
+
+    // 9. Seed Sample Online Tuitions Course & Curriculum
+    const TuitionCourse = require('../src/modules/tuitions/tuitionCourse.model');
+    const TuitionSection = require('../src/modules/tuitions/tuitionSection.model');
+    const TuitionLecture = require('../src/modules/tuitions/tuitionLecture.model');
+    const TuitionEnrollment = require('../src/modules/tuitions/tuitionEnrollment.model');
+
+    let tuitionCourse = await TuitionCourse.findOne({ code: 'PHY-OL-101' });
+    if (!tuitionCourse) {
+      tuitionCourse = await TuitionCourse.create({
+        title: 'FSc Physics (Part-I) Master Coaching',
+        code: 'PHY-OL-101',
+        description: 'Comprehensive digital tuition series covering syllabus units, animated derivations, problem-solving, and gatekeeper chapter assessments.',
+        thumbnail: 'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=800&q=80',
+        instructor: teacher._id,
+        subject: 'Physics',
+        gradeLevel: '1st Year / Grade 11',
+        academicYear: '2025-2026',
+        status: 'published',
+        isEnrollmentOpen: true,
+        totalLecturesCount: 2,
+      });
+
+      const section1 = await TuitionSection.create({
+        course: tuitionCourse._id,
+        title: 'Module 1: Measurements, Vectors & Equilibrium',
+        description: 'Fundamental units, vector operations, and equilibrium conditions.',
+        order: 1,
+      });
+
+      await TuitionLecture.create({
+        course: tuitionCourse._id,
+        section: section1._id,
+        title: 'Lecture 1: Introduction to Vectors & Scalar Products',
+        description: 'Vector representation, rectangular components, dot products, and cross products with practical examples.',
+        order: 1,
+        video: {
+          provider: 'youtube',
+          videoId: 'MlhU3Z_Uf6U', // Educational physics YouTube video
+          durationSeconds: 720,
+          minWatchPercentage: 90,
+        },
+        notes: [
+          {
+            title: 'Vectors Revision Handout & Formulas (PDF)',
+            fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+            fileType: 'pdf',
+            fileSize: 1048576,
+          },
+        ],
+        quiz: {
+          title: 'Lecture 1 Gatekeeper Quiz: Vector Products',
+          questions: [
+            {
+              questionText: 'What is the scalar (dot) product of two perpendicular vectors?',
+              type: 'mcq',
+              marks: 1,
+              options: [
+                { text: '0 (Zero)', isCorrect: true },
+                { text: '1', isCorrect: false },
+                { text: '-1', isCorrect: false },
+                { text: 'Undefined', isCorrect: false },
+              ],
+            },
+            {
+              questionText: 'Vector quantity possesses both magnitude and direction.',
+              type: 'true_false',
+              marks: 1,
+              options: [
+                { text: 'True', isCorrect: true },
+                { text: 'False', isCorrect: false },
+              ],
+            },
+          ],
+        },
+        hasQuiz: true,
+        isPublished: true,
+      });
+
+      await TuitionLecture.create({
+        course: tuitionCourse._id,
+        section: section1._id,
+        title: 'Lecture 2: Torques & First Condition of Equilibrium',
+        description: 'Principles of moments, center of gravity, and applications of the first and second conditions of equilibrium.',
+        order: 2,
+        video: {
+          provider: 'youtube',
+          videoId: '4pXfH6k6v7g',
+          durationSeconds: 650,
+          minWatchPercentage: 90,
+        },
+        notes: [
+          {
+            title: 'Equilibrium Conditions Numerical Problems',
+            fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+            fileType: 'pdf',
+            fileSize: 524288,
+          },
+        ],
+        quiz: {
+          title: 'Lecture 2 Gatekeeper Quiz: Torque & Equilibrium',
+          questions: [
+            {
+              questionText: 'The turning effect produced in a body by a force is known as:',
+              type: 'mcq',
+              marks: 1,
+              options: [
+                { text: 'Torque (Moment of Force)', isCorrect: true },
+                { text: 'Linear Momentum', isCorrect: false },
+                { text: 'Power', isCorrect: false },
+              ],
+            },
+          ],
+        },
+        hasQuiz: true,
+        isPublished: true,
+      });
+
+      console.log('  ✓ Seeded Online Tuition Course: PHY-OL-101 with 2 Gatekeeper Lectures');
+    }
+
+    // Enroll demo student into tuition course
+    const adminUser = await User.findOne({ role: ROLES.ADMIN });
+    const existingTuitionEnrollment = await TuitionEnrollment.findOne({
+      course: tuitionCourse._id,
+      student: student._id,
+    });
+
+    if (!existingTuitionEnrollment && adminUser) {
+      await TuitionEnrollment.create({
+        course: tuitionCourse._id,
+        student: student._id,
+        enrolledBy: adminUser._id,
+        status: 'active',
+        progressPercentage: 0,
+      });
+      console.log('  ✓ Enrolled Demo Student Ayesha Khan into PHY-OL-101 Online Tuitions');
+    }
   } catch (err) {
     console.warn('Initial seed notice:', err.message);
   }
