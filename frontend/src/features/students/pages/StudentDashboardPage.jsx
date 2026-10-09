@@ -227,7 +227,7 @@ export const StudentDashboardPage = () => {
 
                   <div className="flex items-center gap-2 shrink-0">
                     <Link
-                      to={`/student/quizzes/${primaryQuiz._id}/preview`}
+                      to={`/student/quizzes/${primaryQuiz._id}`}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5A0D1A] hover:bg-[#701422] text-[#EEDAA2] text-xs font-bold transition-colors shadow-xs font-sans"
                     >
                       <span>Take Quiz</span>

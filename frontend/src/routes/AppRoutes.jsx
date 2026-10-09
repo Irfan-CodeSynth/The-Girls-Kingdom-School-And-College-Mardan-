@@ -183,6 +183,7 @@ export const AppRoutes = () => {
             {/* Quiz pages (list + preview + result — inside AppLayout) */}
             <Route path="/student/quizzes" element={<QuizListPage />} />
             <Route path="/student/quizzes/:id" element={<QuizPreviewPage />} />
+            <Route path="/student/quizzes/:id/preview" element={<QuizPreviewPage />} />
             <Route path="/student/quizzes/:id/result/:attemptId" element={<AttemptResultPage />} />
 
             {/* Notifications */}
