@@ -116,36 +116,36 @@ const CreateTimetableModal = ({ onClose, onSuccess, classes, teachers, initialCl
           {/* Day accordions */}
           <div className="space-y-2">
             {DAYS.map((day) => (
-              <div key={day} className="rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+              <div key={day} className="rounded-xl border border-[#EFE5E0] bg-white overflow-hidden shadow-2xs">
                 <button
                   onClick={() => toggleDay(day)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-surface-50 dark:bg-surface-700/50 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-[#FAF8F5] hover:bg-[#F5F3EE] transition-colors cursor-pointer"
                 >
-                  <span className="font-semibold text-sm text-surface-800 dark:text-white">{day}</span>
-                  {expandedDay === day ? <ChevronUp className="w-4 h-4 text-surface-500" /> : <ChevronDown className="w-4 h-4 text-surface-500" />}
+                  <span className="font-serif font-bold text-sm text-[#111827]">{day}</span>
+                  {expandedDay === day ? <ChevronUp className="w-4 h-4 text-[#6B7280]" /> : <ChevronDown className="w-4 h-4 text-[#6B7280]" />}
                 </button>
 
                 {expandedDay === day && (
-                  <div className="p-3 space-y-2">
+                  <div className="p-3 space-y-2 bg-white">
                     {schedule[day].map((period, idx) => (
                       <div
                         key={idx}
-                        className={`rounded-lg border p-3 ${
+                        className={`rounded-xl border p-3.5 ${
                           period.isBreak
-                            ? 'border-amber-200 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20'
-                            : 'border-surface-200 dark:border-surface-700'
+                            ? 'border-amber-200 bg-amber-50/60'
+                            : 'border-[#EFE5E0] bg-[#FAF8F5]'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-bold text-surface-600 dark:text-surface-400 w-16 shrink-0">
+                          <span className="text-xs font-bold text-[#111827] w-16 shrink-0 font-sans">
                             {period.isBreak ? 'Break' : `Period ${period.periodNumber}`}
                           </span>
-                          <label className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 ml-auto cursor-pointer">
+                          <label className="flex items-center gap-1.5 text-xs font-bold text-amber-800 ml-auto cursor-pointer">
                             <input
                               type="checkbox"
                               checked={period.isBreak}
                               onChange={(e) => updatePeriod(day, idx, 'isBreak', e.target.checked)}
-                              className="accent-amber-500 cursor-pointer"
+                              className="accent-[#5A0D1A] cursor-pointer"
                             />
                             Break
                           </label>
@@ -274,22 +274,22 @@ const CreateDatesheetModal = ({ onClose, onSuccess, classes, editDatesheet }) =>
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs font-sans">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-4xl max-h-[95vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5] shrink-0">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-            <h2 className="text-base font-bold text-surface-900 dark:text-white">
+            <BookOpen className="w-5 h-5 text-[#5A0D1A]" />
+            <h2 className="font-serif text-lg font-bold text-[#111827]">
               {isEdit ? 'Edit Datesheet' : 'Create Examination Datesheet'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 cursor-pointer">
+          <button onClick={onClose} className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
           {/* Basic Fields */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="sm:col-span-2 lg:col-span-3">
@@ -336,23 +336,23 @@ const CreateDatesheetModal = ({ onClose, onSuccess, classes, editDatesheet }) =>
           {/* Entries */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-surface-800 dark:text-white">Subject Entries</h3>
-              <button onClick={addEntry} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-xs font-semibold hover:brightness-95 transition-colors cursor-pointer">
+              <h3 className="font-serif text-sm font-bold text-[#111827]">Subject Entries</h3>
+              <button onClick={addEntry} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#5A0D1A] text-xs font-bold hover:bg-white transition-colors cursor-pointer">
                 <Plus className="w-3.5 h-3.5" /> Add Subject
               </button>
             </div>
             <div className="space-y-3">
               {entries.map((e, i) => (
-                <div key={i} className="rounded-xl border border-surface-200 dark:border-surface-700 p-3 bg-surface-50/50 dark:bg-surface-700/20">
+                <div key={i} className="rounded-xl border border-[#EFE5E0] p-4 bg-[#FAF8F5]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-surface-500 dark:text-surface-400">Subject #{i + 1}</span>
+                    <span className="text-xs font-bold text-[#5A0D1A] uppercase tracking-wider">Subject #{i + 1}</span>
                     {entries.length > 1 && (
-                      <button onClick={() => removeEntry(i)} className="p-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-500 cursor-pointer">
+                      <button onClick={() => removeEntry(i)} className="p-1 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                     <div>
                       <label className={labelCls}>Subject</label>
                       <input value={e.subject} onChange={(ev) => setEntry(i, 'subject', ev.target.value)} className={inputCls} placeholder="Mathematics" />
@@ -397,12 +397,12 @@ const CreateDatesheetModal = ({ onClose, onSuccess, classes, editDatesheet }) =>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-5 py-4 border-t border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80 shrink-0">
+        <div className="flex justify-end gap-2.5 px-6 py-4 border-t border-[#EFE5E0] bg-[#FAF8F5] shrink-0">
           <button onClick={onClose} className={btnGhost}>Cancel</button>
           <button
             onClick={() => createMutation.mutate(buildPayload())}
             disabled={createMutation.isPending}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-sm font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-xs font-bold hover:bg-[#FAF8F5] transition-colors cursor-pointer disabled:opacity-60"
           >
             {createMutation.isPending ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
             Save as Draft
@@ -435,28 +435,29 @@ const TimetableGrid = ({ timetable }) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-xs border-collapse">
+      <table className="w-full text-xs border-collapse font-sans">
         <thead>
-          <tr className="bg-primary-600 text-white">
-            <th className="px-3 py-2.5 text-left font-bold text-[11px] uppercase tracking-wider w-28 border-r border-primary-500">Period</th>
+          <tr className="bg-[#5A0D1A] text-white">
+            <th className="px-3.5 py-3 text-left font-bold text-[11px] uppercase tracking-wider w-28 border-r border-[#EFE5E0]/20">Period</th>
             {DAYS.map((d) => (
-              <th key={d} className="px-3 py-2.5 text-center font-bold text-[11px] uppercase tracking-wider border-r border-primary-500 last:border-r-0">
+              <th key={d} className="px-3.5 py-3 text-center font-bold text-[11px] uppercase tracking-wider border-r border-[#EFE5E0]/20 last:border-r-0">
                 {d.slice(0, 3)}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+        <tbody className="divide-y divide-[#EFE5E0]">
           {periods.map((_, pIdx) => {
             const firstCell = byDay[DAYS[0]][pIdx];
             return (
-              <tr key={pIdx} className={firstCell?.isBreak ? 'bg-amber-50 dark:bg-amber-950/20' : 'hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-colors'}>
-                <td className="px-3 py-2.5 font-semibold text-surface-600 dark:text-surface-400 border-r border-surface-200 dark:border-surface-700 whitespace-nowrap">
+              <tr key={pIdx} className={firstCell?.isBreak ? 'bg-amber-50/60' : 'hover:bg-[#FAF8F5]/60 transition-colors'}>
+                <td className="px-3.5 py-2.5 font-bold text-[#111827] bg-[#FAF8F5]/40 border-r border-[#EFE5E0] whitespace-nowrap">
                   {firstCell?.isBreak ? (
-                    <span className="text-amber-700 dark:text-amber-400">{firstCell.subject}</span>
+                    <span className="text-amber-800 font-bold">{firstCell.subject}</span>
                   ) : (
-                    <>P{pIdx + 1}<br />
-                      <span className="text-[10px] font-normal text-surface-400 dark:text-surface-500">
+                    <>
+                      <span className="font-bold text-[#111827]">P{pIdx + 1}</span><br />
+                      <span className="text-[10px] font-semibold text-[#6B7280]">
                         {firstCell?.startTime} – {firstCell?.endTime}
                       </span>
                     </>
@@ -464,24 +465,24 @@ const TimetableGrid = ({ timetable }) => {
                 </td>
                 {DAYS.map((d) => {
                   const cell = byDay[d][pIdx];
-                  if (!cell) return <td key={d} className="px-3 py-2.5 text-center text-surface-300 dark:text-surface-600 border-r border-surface-200 dark:border-surface-700 last:border-r-0">—</td>;
+                  if (!cell) return <td key={d} className="px-3 py-2.5 text-center text-[#9CA3AF] border-r border-[#EFE5E0] last:border-r-0">—</td>;
                   if (cell.isBreak) {
                     return (
-                      <td key={d} className="px-3 py-2.5 text-center border-r border-amber-200 dark:border-amber-800/30 last:border-r-0">
-                        <span className="text-amber-700 dark:text-amber-400 font-semibold">{cell.subject}</span>
+                      <td key={d} className="px-3 py-2.5 text-center border-r border-amber-200 last:border-r-0 bg-amber-50/60">
+                        <span className="text-amber-800 font-bold">{cell.subject}</span>
                       </td>
                     );
                   }
                   return (
-                    <td key={d} className="px-3 py-2.5 border-r border-surface-200 dark:border-surface-700 last:border-r-0">
+                    <td key={d} className="px-3.5 py-2.5 border-r border-[#EFE5E0] last:border-r-0">
                       {cell.subject ? (
                         <>
-                          <p className="font-semibold text-surface-900 dark:text-white leading-tight">{cell.subject}</p>
-                          {cell.teacher?.fullName && <p className="text-[10px] text-surface-500 dark:text-surface-400 mt-0.5">{cell.teacher.fullName}</p>}
-                          {cell.room && <p className="text-[10px] text-surface-400 dark:text-surface-500">{cell.room}</p>}
+                          <p className="font-bold text-[#111827] leading-tight text-xs">{cell.subject}</p>
+                          {cell.teacher?.fullName && <p className="text-[10px] text-[#6B7280] font-semibold mt-0.5">{cell.teacher.fullName}</p>}
+                          {cell.room && <p className="text-[10px] text-[#6B7280]">{cell.room}</p>}
                         </>
                       ) : (
-                        <span className="text-surface-300 dark:text-surface-600">—</span>
+                        <span className="text-[#9CA3AF]">—</span>
                       )}
                     </td>
                   );
@@ -549,6 +550,13 @@ const AdminSchedulePage = () => {
   const teachers = teachersData?.teachers || teachersData || [];
   const timetable = timetableData?.timetable || timetableData;
   const datesheets = datesheetsData?.datesheets || datesheetsData || [];
+
+  // Auto-select first class once loaded if none selected
+  React.useEffect(() => {
+    if (!selectedClassId && classes.length > 0) {
+      setSelectedClassId(classes[0]._id);
+    }
+  }, [classes, selectedClassId]);
 
   const TABS = [
     { id: 'timetables', label: 'Weekly Class Timetables' },
@@ -619,7 +627,7 @@ const AdminSchedulePage = () => {
             <select
               value={selectedClassId}
               onChange={(e) => setSelectedClassId(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+              className="px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] cursor-pointer shadow-2xs"
             >
               <option value="">Select a class to view timetable…</option>
               {classes.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
@@ -635,49 +643,49 @@ const AdminSchedulePage = () => {
           </div>
 
           {!selectedClassId ? (
-            <Card>
-              <div className="flex flex-col items-center justify-center py-16 text-surface-400 dark:text-surface-500">
-                <Calendar className="w-12 h-12 mb-3 opacity-25" />
-                <p className="font-semibold text-surface-600 dark:text-surface-400">Select a class to view its timetable</p>
-                <p className="text-sm mt-1">Choose from the dropdown above</p>
+            <Card className="bg-white border border-[#EFE5E0] shadow-xs">
+              <div className="flex flex-col items-center justify-center py-16 text-[#6B7280]">
+                <Calendar className="w-12 h-12 mb-3 text-[#5A0D1A]/40" />
+                <p className="font-serif font-bold text-base text-[#111827]">Select a class to view its timetable</p>
+                <p className="text-xs text-[#6B7280] mt-1">Choose from the dropdown above</p>
               </div>
             </Card>
           ) : loadingTimetable ? (
-            <Card className="!p-0 overflow-hidden">
+            <Card className="!p-0 overflow-hidden bg-white border border-[#EFE5E0] shadow-xs">
               <div className="p-5 space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-10 w-full" />)}
               </div>
             </Card>
           ) : !timetable ? (
-            <Card>
-              <div className="flex flex-col items-center justify-center py-16 text-surface-400 dark:text-surface-500">
-                <AlertCircle className="w-12 h-12 mb-3 opacity-25" />
-                <p className="font-semibold text-surface-600 dark:text-surface-400">No timetable found for this class</p>
-                <p className="text-sm mt-1">Create one using the button below</p>
+            <Card className="bg-white border border-[#EFE5E0] shadow-xs">
+              <div className="flex flex-col items-center justify-center py-16 text-[#6B7280]">
+                <AlertCircle className="w-12 h-12 mb-3 text-amber-500/60" />
+                <p className="font-serif font-bold text-base text-[#111827]">No timetable found for this class</p>
+                <p className="text-xs text-[#6B7280] mt-1">Setup the weekly lecture schedule using the button below</p>
                 <button
                   onClick={() => { setShowTimetableModal(true); }}
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold cursor-pointer"
+                  className={`${btnPrimary} mt-4`}
                 >
                   <Plus className="w-4 h-4" /> Setup Timetable
                 </button>
               </div>
             </Card>
           ) : (
-            <Card className="!p-0 overflow-hidden" header={
+            <Card className="!p-0 overflow-hidden bg-white border border-[#EFE5E0] shadow-xs" header={
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-surface-900 dark:text-white text-sm">
-                    {classes.find((c) => c._id === selectedClassId)?.name} – Weekly Timetable
+                  <h3 className="font-serif font-bold text-[#111827] text-base">
+                    {classes.find((c) => c._id === selectedClassId)?.name} – Weekly Master Timetable
                   </h3>
                   {timetable.academicYear && (
-                    <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Academic Year: {timetable.academicYear}</p>
+                    <p className="text-xs text-[#6B7280] font-sans mt-0.5">Academic Year: <strong className="text-[#111827]">{timetable.academicYear}</strong></p>
                   )}
                 </div>
                 <button
                   onClick={() => setShowTimetableModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 text-xs font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-xs font-bold hover:bg-[#FAF8F5] transition-colors cursor-pointer shadow-2xs"
                 >
-                  <Pencil className="w-3.5 h-3.5" /> Edit Timetable
+                  <Pencil className="w-3.5 h-3.5 text-[#5A0D1A]" /> Edit Timetable
                 </button>
               </div>
             }>
@@ -695,14 +703,14 @@ const AdminSchedulePage = () => {
               {[1, 2, 3].map((i) => <Skeleton key={i} className="h-44 w-full rounded-2xl" />)}
             </div>
           ) : datesheets.length === 0 ? (
-            <Card>
-              <div className="flex flex-col items-center justify-center py-16 text-surface-400 dark:text-surface-500">
-                <BookOpen className="w-12 h-12 mb-3 opacity-25" />
-                <p className="font-semibold text-surface-600 dark:text-surface-400">No datesheets created yet</p>
-                <p className="text-sm mt-1">Create your first examination datesheet</p>
+            <Card className="bg-white border border-[#EFE5E0] shadow-xs">
+              <div className="flex flex-col items-center justify-center py-16 text-[#6B7280]">
+                <BookOpen className="w-12 h-12 mb-3 text-[#5A0D1A]/40" />
+                <p className="font-serif font-bold text-base text-[#111827]">No datesheets created yet</p>
+                <p className="text-xs text-[#6B7280] mt-1">Publish an examination schedule for your students</p>
                 <button
                   onClick={() => { setEditDatesheet(null); setShowDatesheetModal(true); }}
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold cursor-pointer"
+                  className={`${btnPrimary} mt-4`}
                 >
                   <Plus className="w-4 h-4" /> Create Datesheet
                 </button>
@@ -711,11 +719,11 @@ const AdminSchedulePage = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {datesheets.map((ds) => (
-                <Card key={ds._id} hover className="flex flex-col gap-3">
+                <Card key={ds._id} hover className="flex flex-col gap-3 bg-white border border-[#EFE5E0] shadow-xs hover:border-[#5A0D1A]/30">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="font-bold text-surface-900 dark:text-white text-sm leading-tight truncate">{ds.title}</h3>
-                      <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+                      <h3 className="font-serif font-bold text-[#111827] text-base leading-tight truncate">{ds.title}</h3>
+                      <p className="text-xs text-[#5A0D1A] font-semibold mt-1">
                         {ds.class?.name || ds.className || '—'}
                       </p>
                     </div>
@@ -729,32 +737,32 @@ const AdminSchedulePage = () => {
                     {ds.academicYear && <Badge variant="secondary" size="sm">{ds.academicYear}</Badge>}
                   </div>
 
-                  <div className="text-xs text-surface-600 dark:text-surface-400 space-y-0.5">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 shrink-0" />
+                  <div className="text-xs text-[#6B7280] space-y-1">
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <Clock className="w-3.5 h-3.5 shrink-0 text-[#5A0D1A]" />
                       {fmt(ds.startDate)} – {fmt(ds.endDate)}
                     </div>
-                    <p>{ds.entries?.length ?? 0} subjects scheduled</p>
+                    <p className="font-semibold text-[#111827]">{ds.entries?.length ?? 0} subjects scheduled</p>
                   </div>
 
-                  <div className="flex items-center gap-1.5 pt-1 border-t border-surface-100 dark:border-surface-700">
+                  <div className="flex items-center gap-1.5 pt-2 border-t border-[#EFE5E0]">
                     <button
                       onClick={() => { setEditDatesheet(ds); setShowDatesheetModal(true); }}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-bold text-[#111827] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                     >
                       <Pencil className="w-3.5 h-3.5" /> Edit
                     </button>
                     {ds.status !== 'published' && (
                       <button
                         onClick={() => { if (window.confirm('Publish this datesheet?')) publishMutation.mutate(ds._id); }}
-                        className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                        className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-bold text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
                       >
                         <Send className="w-3.5 h-3.5" /> Publish
                       </button>
                     )}
                     <button
                       onClick={() => { if (window.confirm('Delete this datesheet?')) deleteMutation.mutate(ds._id); }}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>

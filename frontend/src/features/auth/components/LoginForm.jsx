@@ -62,21 +62,21 @@ export const LoginForm = () => {
         Sign In
       </Button>
 
-      <div className="pt-4 border-t border-surface-200 dark:border-surface-700 text-center space-y-2">
-        <p className="text-xs text-surface-500 dark:text-surface-400">
+      <div className="pt-4 border-t border-[#EFE5E0] text-center space-y-2">
+        <p className="text-xs text-[#6B7280]">
           Need an account?
         </p>
         <div className="flex justify-center gap-4 text-xs font-semibold">
           <Link
             to="/register/student"
-            className="text-primary-600 hover:text-primary-700 dark:text-primary-400 hover:underline"
+            className="text-[#5A0D1A] hover:text-[#420812] hover:underline"
           >
             Register as Student
           </Link>
-          <span className="text-surface-300 dark:text-surface-600">|</span>
+          <span className="text-[#D1D5DB]">|</span>
           <Link
             to="/register/teacher"
-            className="text-primary-600 hover:text-primary-700 dark:text-primary-400 hover:underline"
+            className="text-[#5A0D1A] hover:text-[#420812] hover:underline"
           >
             Register as Teacher
           </Link>

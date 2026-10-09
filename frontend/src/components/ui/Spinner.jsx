@@ -14,9 +14,9 @@ export const Spinner = ({
   };
 
   const colorMap = {
-    primary: 'text-primary-600 dark:text-primary-400',
+    primary: 'text-[#5A0D1A]',
     white: 'text-white',
-    gray: 'text-surface-400 dark:text-surface-500',
+    gray: 'text-[#9CA3AF]',
   };
 
   return (

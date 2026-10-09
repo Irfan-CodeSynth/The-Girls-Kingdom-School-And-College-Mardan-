@@ -18,11 +18,11 @@ const fmt = (n) =>
   `Rs. ${Number(n || 0).toLocaleString('en-PK', { minimumFractionDigits: 0 })}`;
 
 const Row = ({ label, value, bold, isDeduction }) => (
-  <tr className="border-b border-surface-200 dark:border-surface-700">
-    <td className={`py-1.5 pr-4 text-xs ${bold ? 'font-bold text-surface-900 dark:text-white' : 'text-surface-600 dark:text-surface-400'}`}>
+  <tr className="border-b border-[#EFE5E0]">
+    <td className={`py-1.5 pr-4 text-xs ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'}`}>
       {label}
     </td>
-    <td className={`py-1.5 text-right text-xs ${bold ? 'font-bold' : 'font-medium'} ${isDeduction ? 'text-rose-600 dark:text-rose-400' : 'text-surface-900 dark:text-white'}`}>
+    <td className={`py-1.5 text-right text-xs ${bold ? 'font-bold' : 'font-medium'} ${isDeduction ? 'text-rose-700' : 'text-[#111827]'}`}>
       {fmt(value)}
     </td>
   </tr>
@@ -435,22 +435,22 @@ const SalarySlipPrintModal = ({ slip, amountInWords, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-3xl max-h-[95vh] flex flex-col overflow-hidden">
         {/* Top Control Bar */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5]">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-full object-contain shadow-xs border border-primary-100" />
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-full object-contain shadow-xs border border-[#EFE5E0]" />
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-bold text-surface-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-bold text-[#111827]">
                   Salary Disbursement Voucher
                 </h2>
-                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold">
+                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold">
                   {slip.slipNumber}
                 </span>
               </div>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 {teacher.fullName} ({structure.designation || 'Faculty'}) · {formatMonth(slip.billingMonth)}
               </p>
             </div>
@@ -458,15 +458,17 @@ const SalarySlipPrintModal = ({ slip, amountInWords, onClose }) => {
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm font-semibold shadow-md transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs sm:text-sm font-bold shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Print Official Voucher</span>
             </button>
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 transition-colors cursor-pointer"
+              className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -474,63 +476,63 @@ const SalarySlipPrintModal = ({ slip, amountInWords, onClose }) => {
         </div>
 
         {/* Modal Body Preview */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-surface-100 dark:bg-surface-900/50">
-          <div className="bg-white dark:bg-surface-800 border-2 border-primary-900/30 dark:border-primary-700/50 rounded-xl overflow-hidden shadow-sm max-w-2xl mx-auto">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#FAF8F5]">
+          <div className="bg-white border border-[#EFE5E0] rounded-xl overflow-hidden shadow-xs max-w-2xl mx-auto">
             {/* Header */}
-            <div className="bg-[#1e3a5f] text-white p-4 sm:p-5 flex items-center gap-4">
+            <div className="bg-[#5A0D1A] text-white p-4 sm:p-5 flex items-center gap-4">
               <img src="/logo.png" alt="College Logo" className="w-14 h-14 rounded-full object-contain bg-white p-0.5 shrink-0" />
               <div>
                 <h3 className="text-base sm:text-lg font-bold leading-tight">{SCHOOL_NAME}</h3>
-                <p className="text-xs text-blue-200 italic mt-0.5">{SCHOOL_TAGLINE}</p>
-                <p className="text-[11px] text-surface-300 mt-0.5">{SCHOOL_ADDRESS}</p>
+                <p className="text-xs text-rose-200 italic mt-0.5">{SCHOOL_TAGLINE}</p>
+                <p className="text-[11px] text-rose-100 mt-0.5">{SCHOOL_ADDRESS}</p>
               </div>
             </div>
 
             {/* Strip */}
-            <div className="bg-surface-50 dark:bg-surface-700/50 border-b border-surface-200 dark:border-surface-700 px-4 py-2 flex justify-between items-center text-xs">
-              <span className="font-bold text-primary-700 dark:text-primary-300 uppercase tracking-wider">
+            <div className="bg-[#FAF8F5] border-b border-[#EFE5E0] px-4 py-2 flex justify-between items-center text-xs">
+              <span className="font-bold text-[#5A0D1A] uppercase tracking-wider">
                 Monthly Salary Slip — {formatMonth(slip.billingMonth)}
               </span>
-              <span className="font-mono text-surface-600 dark:text-surface-300 font-semibold">{slip.slipNumber}</span>
+              <span className="font-mono text-[#6B7280] font-bold">{slip.slipNumber}</span>
             </div>
 
             {/* Meta */}
-            <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-b border-surface-200 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-800">
+            <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-b border-[#EFE5E0] bg-white">
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Employee Name</p>
-                <p className="font-bold text-surface-900 dark:text-white mt-0.5">{teacher.fullName || '—'}</p>
+                <p className="text-[#6B7280]">Employee Name</p>
+                <p className="font-bold text-[#111827] mt-0.5">{teacher.fullName || '—'}</p>
               </div>
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Designation</p>
-                <p className="font-medium text-surface-800 dark:text-surface-200 mt-0.5">{structure.designation || 'Faculty'}</p>
+                <p className="text-[#6B7280]">Designation</p>
+                <p className="font-medium text-[#111827] mt-0.5">{structure.designation || 'Faculty'}</p>
               </div>
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Department</p>
-                <p className="font-medium text-surface-800 dark:text-surface-200 mt-0.5">{structure.department || 'Science'}</p>
+                <p className="text-[#6B7280]">Department</p>
+                <p className="font-medium text-[#111827] mt-0.5">{structure.department || 'Science'}</p>
               </div>
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Payment Status</p>
-                <p className="font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 capitalize">{slip.status}</p>
+                <p className="text-[#6B7280]">Payment Status</p>
+                <p className="font-bold text-emerald-700 mt-0.5 capitalize">{slip.status}</p>
               </div>
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Bank Name</p>
-                <p className="font-medium text-surface-800 dark:text-surface-200 mt-0.5">{slip.bankName || '—'}</p>
+                <p className="text-[#6B7280]">Bank Name</p>
+                <p className="font-medium text-[#111827] mt-0.5">{slip.bankName || '—'}</p>
               </div>
               <div className="sm:col-span-2">
-                <p className="text-surface-500 dark:text-surface-400">IBAN / Account No.</p>
-                <p className="font-mono font-medium text-surface-800 dark:text-surface-200 mt-0.5 truncate">{slip.iban || slip.accountNumber || '—'}</p>
+                <p className="text-[#6B7280]">IBAN / Account No.</p>
+                <p className="font-mono font-medium text-[#111827] mt-0.5 truncate">{slip.iban || slip.accountNumber || '—'}</p>
               </div>
               <div>
-                <p className="text-surface-500 dark:text-surface-400">Payment Method</p>
-                <p className="font-medium text-surface-800 dark:text-surface-200 mt-0.5 capitalize">{slip.paymentMethod?.replace('_', ' ') || 'Bank Transfer'}</p>
+                <p className="text-[#6B7280]">Payment Method</p>
+                <p className="font-medium text-[#111827] mt-0.5 capitalize">{slip.paymentMethod?.replace('_', ' ') || 'Bank Transfer'}</p>
               </div>
             </div>
 
             {/* Earnings & Deductions Tables */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-surface-200 dark:divide-surface-700 p-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#EFE5E0] p-4 gap-4">
               {/* Earnings */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-primary-700 dark:text-primary-300 pb-1 mb-2 border-b border-surface-200 dark:border-surface-700">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#5A0D1A] pb-1 mb-2 border-b border-[#EFE5E0]">
                   Earnings (PKR)
                 </h4>
                 <table className="w-full">
@@ -548,7 +550,7 @@ const SalarySlipPrintModal = ({ slip, amountInWords, onClose }) => {
 
               {/* Deductions */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 pb-1 mb-2 border-b border-surface-200 dark:border-surface-700">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-700 pb-1 mb-2 border-b border-[#EFE5E0]">
                   Deductions (PKR)
                 </h4>
                 <table className="w-full">
@@ -565,36 +567,36 @@ const SalarySlipPrintModal = ({ slip, amountInWords, onClose }) => {
             </div>
 
             {/* Net Salary Highlight */}
-            <div className="bg-[#1e3a5f] text-white p-4 flex justify-between items-center">
+            <div className="bg-[#5A0D1A] text-white p-4 flex justify-between items-center">
               <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Net Salary Payable:</span>
               <span className="text-lg sm:text-xl font-black">Rs. {(slip.netSalary || 0).toLocaleString()}</span>
             </div>
 
             {/* Words & Attendance */}
-            <div className="p-3 bg-surface-50 dark:bg-surface-700/30 text-xs text-surface-600 dark:text-surface-400 border-t border-surface-200 dark:border-surface-700 space-y-1">
+            <div className="p-3 bg-[#FAF8F5] text-xs text-[#4B5563] border-t border-[#EFE5E0] space-y-1">
               <div>
-                <strong>Amount in Words:</strong> {amountInWords || '—'}
+                <strong className="text-[#111827]">Amount in Words:</strong> {amountInWords || '—'}
               </div>
-              <div className="flex gap-4 text-[11px] pt-1">
-                <span>Working Days: <strong>{slip.totalWorkingDays || 30}</strong></span>
-                <span>Paid Days: <strong>{slip.paidDays || 30}</strong></span>
-                <span>Unpaid Leaves: <strong>{slip.unpaidLeaves || 0}</strong></span>
+              <div className="flex gap-4 text-[11px] pt-1 text-[#6B7280]">
+                <span>Working Days: <strong className="text-[#111827]">{slip.totalWorkingDays || 30}</strong></span>
+                <span>Paid Days: <strong className="text-[#111827]">{slip.paidDays || 30}</strong></span>
+                <span>Unpaid Leaves: <strong className="text-[#111827]">{slip.unpaidLeaves || 0}</strong></span>
               </div>
             </div>
 
             {/* Signatures */}
-            <div className="p-4 grid grid-cols-3 gap-4 text-center border-t border-surface-200 dark:border-surface-700 pt-6">
+            <div className="p-4 grid grid-cols-3 gap-4 text-center border-t border-[#EFE5E0] pt-6">
               <div>
-                <div className="border-t border-surface-300 dark:border-surface-600 mb-1" />
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 font-medium">Prepared By (Accounts)</p>
+                <div className="border-t border-[#D1D5DB] mb-1" />
+                <p className="text-[10px] text-[#6B7280] font-medium">Prepared By (Accounts)</p>
               </div>
               <div>
-                <div className="border-t border-surface-300 dark:border-surface-600 mb-1" />
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 font-medium">Verified By (HOD)</p>
+                <div className="border-t border-[#D1D5DB] mb-1" />
+                <p className="text-[10px] text-[#6B7280] font-medium">Verified By (HOD)</p>
               </div>
               <div>
-                <div className="border-t border-surface-300 dark:border-surface-600 mb-1" />
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 font-medium">Approved By (Principal)</p>
+                <div className="border-t border-[#D1D5DB] mb-1" />
+                <p className="text-[10px] text-[#6B7280] font-medium">Approved By (Principal)</p>
               </div>
             </div>
           </div>

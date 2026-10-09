@@ -104,10 +104,10 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-surface-900 dark:text-white">
+        <h3 className="font-serif text-base font-bold text-[#111827]">
           Course Materials
           {materials.length > 0 && (
-            <span className="ml-2 text-xs text-surface-500 font-normal">({materials.length})</span>
+            <span className="ml-2 text-xs text-[#6B7280] font-sans font-normal">({materials.length})</span>
           )}
         </h3>
         {canManage && (
@@ -143,13 +143,13 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
             return (
               <div
                 key={mat._id}
-                className="flex items-center gap-3 p-3 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-all group"
+                className="flex items-center gap-3 p-3.5 rounded-xl border border-[#EFE5E0] bg-white hover:border-[#5A0D1A]/30 hover:shadow-xs transition-all group"
               >
                 {/* Icon */}
                 <button
                   type="button"
                   onClick={() => handleMaterialClick(mat)}
-                  className="w-10 h-10 rounded-lg bg-surface-100 dark:bg-surface-700 flex items-center justify-center shrink-0 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition"
+                  className="w-10 h-10 rounded-lg bg-[#FAF8F5] border border-[#EFE5E0] flex items-center justify-center shrink-0 group-hover:bg-[#5A0D1A]/10 text-[#5A0D1A] transition cursor-pointer"
                 >
                   {isVideo && provider ? PROVIDER_ICONS[provider] : catMeta.icon}
                 </button>
@@ -158,10 +158,10 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
                 <button
                   type="button"
                   onClick={() => handleMaterialClick(mat)}
-                  className="flex-1 text-left min-w-0"
+                  className="flex-1 text-left min-w-0 cursor-pointer"
                 >
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
+                    <p className="text-sm font-bold text-[#111827] truncate">
                       {mat.title}
                     </p>
                     <Badge variant={catMeta.color} size="sm">{catMeta.label}</Badge>
@@ -176,12 +176,12 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
                     )}
                   </div>
                   {mat.description && (
-                    <p className="text-xs text-surface-500 mt-0.5 truncate">{mat.description}</p>
+                    <p className="text-xs text-[#4B5563] mt-0.5 truncate">{mat.description}</p>
                   )}
                   {!isVideo && mat.document && (
-                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs text-surface-400">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs text-[#6B7280]">
                       {mat.document.fileName && (
-                        <span className="font-mono text-surface-600 dark:text-surface-300 truncate max-w-[200px] sm:max-w-xs">
+                        <span className="font-mono text-[#111827] truncate max-w-[200px] sm:max-w-xs font-semibold">
                           {mat.document.fileName}
                         </span>
                       )}
@@ -196,7 +196,7 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
                     </div>
                   )}
                   {isVideo && mat.video?.durationMinutes && (
-                    <p className="text-xs text-surface-400 mt-0.5">{mat.video.durationMinutes} min</p>
+                    <p className="text-xs text-[#6B7280] mt-0.5">{mat.video.durationMinutes} min</p>
                   )}
                 </button>
 
@@ -214,12 +214,12 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
                   >
                     {mat.document.fileUrl.startsWith('data:') ? (
                       <>
-                        <Download className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                        <Download className="w-3.5 h-3.5 text-[#5A0D1A]" />
                         <span className="hidden sm:inline">Download</span>
                       </>
                     ) : (
                       <>
-                        <ExternalLink className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                        <ExternalLink className="w-3.5 h-3.5 text-[#5A0D1A]" />
                         <span className="hidden sm:inline">Open</span>
                       </>
                     )}
@@ -228,7 +228,7 @@ export const MaterialsSection = ({ classId, userRole, canManage = false }) => {
 
                 {/* Teacher: By */}
                 {mat.teacher?.fullName && userRole === 'admin' && (
-                  <span className="hidden sm:block text-xs text-surface-400 shrink-0">
+                  <span className="hidden sm:block text-xs text-[#6B7280] shrink-0 font-medium">
                     {mat.teacher.fullName}
                   </span>
                 )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { X, Settings } from 'lucide-react';
+import { X, Settings, Coins } from 'lucide-react';
 import feeApi from '../api/feeApi';
 import { classApi } from '../../classes/api/classApi';
 
@@ -93,29 +93,33 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
     .reduce((sum, f) => sum + (Number(form[f.key]) || 0), 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[95vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-lg max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-700">
+        <div className="flex items-center justify-between p-5 border-b border-[#EFE5E0] bg-[#FAF8F5]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center">
-              <Settings className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+              <Settings className="w-5 h-5 text-amber-700" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-surface-900 dark:text-white">
+              <h2 className="text-base font-bold text-[#111827]">
                 {initialStructure ? 'Edit Fee Structure' : 'Create Fee Structure'}
               </h2>
-              <p className="text-xs text-surface-500 dark:text-surface-400">Set monthly fee heads for a class</p>
+              <p className="text-xs text-[#6B7280]">Set monthly fee heads for a class</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 transition-colors cursor-pointer">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {apiError && (
-            <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 text-sm">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm">
               {apiError}
             </div>
           )}
@@ -123,14 +127,14 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
           {/* Class & Year */}
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 font-sans">
                 Class <span className="text-rose-500">*</span>
               </label>
               <select
                 value={form.classId}
                 onChange={(e) => setForm({ ...form, classId: e.target.value })}
                 disabled={Boolean(initialStructure)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-60"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] disabled:opacity-60"
               >
                 <option value="">— Select class —</option>
                 {classes.map((c) => (
@@ -139,13 +143,13 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
               </select>
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 font-sans">
                 Academic Year
               </label>
               <select
                 value={form.academicYear}
                 onChange={(e) => setForm({ ...form, academicYear: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               >
                 {[CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1].map((y) => (
                   <option key={y} value={y}>{y}</option>
@@ -156,11 +160,14 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
 
           {/* Fee heads */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-3">Fee Heads (PKR)</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#5A0D1A] mb-3 flex items-center gap-1.5">
+              <Coins className="w-3.5 h-3.5" />
+              Fee Heads (PKR)
+            </p>
             <div className="grid grid-cols-2 gap-3">
               {FEE_FIELDS.map(({ key, label, required }) => (
                 <div key={key}>
-                  <label className="block text-xs font-semibold text-surface-600 dark:text-surface-400 mb-1">
+                  <label className="block text-xs font-medium text-[#4B5563] mb-1">
                     {label} {required && <span className="text-rose-500">*</span>}
                   </label>
                   <input
@@ -168,7 +175,7 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
                     min="0"
                     value={form[key]}
                     onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
                   />
                 </div>
               ))}
@@ -177,7 +184,7 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
 
           {/* Due day */}
           <div>
-            <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 font-sans">
               Fee Due Day of Month
             </label>
             <input
@@ -186,27 +193,31 @@ const FeeStructureModal = ({ initialStructure, onClose, onSuccess }) => {
               max="28"
               value={form.dueDayOfMonth}
               onChange={(e) => setForm({ ...form, dueDayOfMonth: e.target.value })}
-              className="w-32 px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-32 px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
             />
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Challans are due on this day each month (1–28)</p>
+            <p className="text-xs text-[#6B7280] mt-1">Challans are due on this day each month (1–28)</p>
           </div>
 
           {/* Total preview */}
-          <div className="flex justify-between items-center p-3 rounded-xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/40">
-            <span className="text-sm font-bold text-primary-700 dark:text-primary-300">Monthly Total per Student</span>
-            <span className="text-lg font-extrabold text-primary-700 dark:text-primary-300">
+          <div className="flex justify-between items-center p-3.5 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+            <span className="text-sm font-bold text-[#5A0D1A]">Monthly Total per Student</span>
+            <span className="text-lg font-extrabold text-[#5A0D1A]">
               PKR {totalPreview.toLocaleString()}
             </span>
           </div>
 
-          <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer">
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-[#EFE5E0] text-[#4B5563] text-sm font-bold hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+            >
               Cancel
             </button>
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-sm font-bold shadow-xs transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {mutation.isPending ? 'Saving…' : initialStructure ? 'Update Structure' : 'Create Structure'}
             </button>

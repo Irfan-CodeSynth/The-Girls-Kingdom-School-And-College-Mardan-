@@ -38,10 +38,10 @@ const AttemptRow = ({ attempt }) => {
   const needsGrading = attempt.status === 'pending_review';
 
   return (
-    <tr className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-      <td className="px-4 py-3 text-sm font-medium text-surface-900 dark:text-white">
+    <tr className="hover:bg-[#FAF8F5] transition-colors">
+      <td className="px-4 py-3 text-sm font-bold text-[#111827]">
         {attempt.student?.fullName || '—'}
-        <div className="text-xs text-surface-400 font-normal">{attempt.student?.email}</div>
+        <div className="text-xs text-[#6B7280] font-normal">{attempt.student?.email}</div>
       </td>
       <td className="px-4 py-3">
         <Badge variant={cfg.variant}>
@@ -49,28 +49,28 @@ const AttemptRow = ({ attempt }) => {
           {cfg.label}
         </Badge>
       </td>
-      <td className="px-4 py-3 text-sm text-surface-700 dark:text-surface-300">
+      <td className="px-4 py-3 text-sm text-[#374151]">
         {attempt.status === 'graded' || attempt.status === 'pending_review' ? (
-          <span className="font-semibold">
+          <span className="font-bold text-[#111827]">
             {attempt.obtainedMarks ?? '—'} / {attempt.totalMarks}
             {attempt.percentage != null && (
-              <span className="text-xs text-surface-400 ml-1">({attempt.percentage}%)</span>
+              <span className="text-xs text-[#6B7280] font-normal ml-1">({attempt.percentage}%)</span>
             )}
           </span>
         ) : (
-          <span className="text-surface-400">—</span>
+          <span className="text-[#9CA3AF]">—</span>
         )}
       </td>
-      <td className="px-4 py-3 text-xs text-surface-500">
+      <td className="px-4 py-3 text-xs text-[#6B7280]">
         {formatDate(attempt.submittedAt || attempt.startedAt)}
       </td>
       <td className="px-4 py-3 text-right">
         <Link
           to={`/teacher/quizzes/${attempt.quiz?._id || attempt.quiz}/grade/${attempt._id}`}
-          className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+          className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors ${
             needsGrading
-              ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800'
-              : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+              ? 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200'
+              : 'bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] hover:bg-[#F3EBE6]'
           }`}
         >
           <Pencil className="w-3 h-3" />
@@ -119,7 +119,7 @@ export const TeacherQuizAttemptsPage = () => {
       {/* Back */}
       <Link
         to="/teacher/quizzes"
-        className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-primary-600 transition-colors"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
       >
         <ChevronLeft className="w-4 h-4" />
         Back to Quizzes
@@ -127,12 +127,12 @@ export const TeacherQuizAttemptsPage = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+        <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
           Student Attempts
         </h1>
         {quiz && (
-          <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-            {quiz.title} · {quiz.class?.name}
+          <p className="text-sm text-[#6B7280] mt-1">
+            {quiz.title} · <strong className="text-[#111827]">{quiz.class?.name}</strong>
           </p>
         )}
       </div>
@@ -140,52 +140,54 @@ export const TeacherQuizAttemptsPage = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Attempts', value: attempts.length, icon: Users },
-          { label: 'Graded', value: graded, icon: CheckCircle2 },
-          { label: 'Pending Review', value: pending, icon: AlertCircle },
-          { label: 'Avg Score', value: avgScore !== null ? `${avgScore}%` : '—', icon: Trophy },
-        ].map(({ label, value, icon: Icon }) => (
-          <Card key={label} className="text-center py-4">
-            <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400 mx-auto mb-2" />
-            <p className="text-xl font-bold text-surface-900 dark:text-white">{value}</p>
-            <p className="text-xs text-surface-400 mt-0.5">{label}</p>
+          { label: 'Total Attempts', value: attempts.length, icon: Users, color: 'text-[#5A0D1A]', bg: 'bg-rose-50 border-rose-200' },
+          { label: 'Graded', value: graded, icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
+          { label: 'Pending Review', value: pending, icon: AlertCircle, color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200' },
+          { label: 'Avg Score', value: avgScore !== null ? `${avgScore}%` : '—', icon: Trophy, color: 'text-sky-700', bg: 'bg-sky-50 border-sky-200' },
+        ].map(({ label, value, icon: Icon, color, bg }) => (
+          <Card key={label} className="text-center py-4 border-[#EFE5E0]">
+            <div className={`w-9 h-9 rounded-xl ${bg} border mx-auto mb-2 flex items-center justify-center`}>
+              <Icon className={`w-4.5 h-4.5 ${color}`} />
+            </div>
+            <p className="text-xl font-black text-[#111827]">{value}</p>
+            <p className="text-xs font-bold text-[#6B7280] mt-0.5 uppercase tracking-wider">{label}</p>
           </Card>
         ))}
       </div>
 
       {/* Table */}
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden border-[#EFE5E0]">
         {attempts.length === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={Users}
               title="No Attempts Yet"
-              message="No students have attempted this quiz yet."
+              description="No students have attempted this quiz yet."
             />
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm font-sans">
               <thead>
-                <tr className="border-b border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                <tr className="border-b border-[#EFE5E0] bg-[#FAF8F5]">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                     Student
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                     Score
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                     Submitted
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+              <tbody className="divide-y divide-[#EFE5E0] bg-white">
                 {attempts.map((a) => (
                   <AttemptRow key={a._id} attempt={a} />
                 ))}

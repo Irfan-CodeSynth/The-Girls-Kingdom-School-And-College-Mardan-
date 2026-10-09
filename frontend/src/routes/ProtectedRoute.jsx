@@ -8,10 +8,10 @@ export const ProtectedRoute = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF8F5]">
         <div className="flex flex-col items-center gap-3">
           <Spinner size="lg" />
-          <p className="text-sm font-medium text-surface-500">
+          <p className="text-sm font-sans font-semibold text-[#6B7280]">
             Verifying authentication...
           </p>
         </div>

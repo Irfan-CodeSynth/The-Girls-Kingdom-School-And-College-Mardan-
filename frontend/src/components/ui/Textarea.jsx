@@ -16,12 +16,12 @@ export const Textarea = React.forwardRef(({
     <div className="w-full">
       <div className="flex items-center justify-between mb-1">
         {label && (
-          <label className="block text-sm font-medium text-surface-700 dark:text-surface-200">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 font-sans">
             {label}
           </label>
         )}
         {maxLength && (
-          <span className="text-xs text-surface-400">
+          <span className="text-xs text-[#6B7280]">
             {currentLength} / {maxLength}
           </span>
         )}
@@ -45,7 +45,7 @@ export const Textarea = React.forwardRef(({
         {...props}
       />
       {(error || helperText) && (
-        <p className={`mt-1 text-sm ${error ? 'text-danger-500' : 'text-surface-500 dark:text-surface-400'}`}>
+        <p className={`mt-1 text-xs ${error ? 'text-danger-600 font-medium' : 'text-gray-500'}`}>
           {error || helperText}
         </p>
       )}

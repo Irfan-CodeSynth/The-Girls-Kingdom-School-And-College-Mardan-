@@ -7,16 +7,10 @@ import {
   ClipboardList,
   Clock,
   Trophy,
-  ChevronRight,
   Lock,
   Play,
   CheckCircle2,
 } from 'lucide-react';
-
-const statusConfig = {
-  published: { label: 'Available', variant: 'success', icon: Play },
-  closed: { label: 'Closed', variant: 'secondary', icon: Lock },
-};
 
 const QuizCard = ({ quiz, attempts = [] }) => {
   const latestAttempt = attempts[attempts.length - 1];
@@ -38,11 +32,11 @@ const QuizCard = ({ quiz, attempts = [] }) => {
   const Icon = badgeCfg.icon;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 cursor-pointer border border-transparent hover:border-primary-200 dark:hover:border-primary-800 flex flex-col">
+    <Card className="hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer border border-[#EFE5E0] hover:border-[#5A0D1A]/40 flex flex-col">
       {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-950/60 flex items-center justify-center flex-shrink-0">
-          <ClipboardList className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+        <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+          <ClipboardList className="w-5 h-5 text-amber-700" />
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={badgeCfg.variant} dot>
@@ -53,27 +47,27 @@ const QuizCard = ({ quiz, attempts = [] }) => {
       </div>
 
       {/* Title */}
-      <h3 className="font-bold text-surface-900 dark:text-white text-base leading-snug line-clamp-2">
+      <h3 className="font-bold text-[#111827] text-base leading-snug line-clamp-2 font-serif">
         {quiz.title}
       </h3>
       {quiz.description && (
-        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 line-clamp-2">
+        <p className="text-sm text-[#4B5563] mt-1 line-clamp-2 leading-relaxed">
           {quiz.description}
         </p>
       )}
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-surface-100 dark:border-surface-800 text-xs text-surface-500 dark:text-surface-400">
+      <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-[#EFE5E0] text-xs text-[#6B7280]">
         <span className="flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" />
+          <Clock className="w-3.5 h-3.5 text-[#5A0D1A]" />
           {quiz.duration} min
         </span>
         <span className="flex items-center gap-1">
-          <Trophy className="w-3.5 h-3.5" />
+          <Trophy className="w-3.5 h-3.5 text-amber-600" />
           {quiz.totalMarks} marks
         </span>
         {isCompleted && latestAttempt && (
-          <span className="ml-auto font-semibold text-primary-600 dark:text-primary-400">
+          <span className="ml-auto font-bold text-[#5A0D1A]">
             Score: {latestAttempt.obtainedMarks ?? '—'}/{latestAttempt.totalMarks}
           </span>
         )}
@@ -107,20 +101,22 @@ export const QuizListPage = () => {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+        <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
           My Quizzes
         </h1>
-        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-          Online assessments available for your class
+        <p className="text-sm text-[#6B7280] mt-1">
+          Online assessments and examinations scheduled for your class cohort
         </p>
       </div>
 
       {quizzes.length === 0 ? (
-        <EmptyState
-          icon={ClipboardList}
-          title="No Quizzes Yet"
-          message="No quizzes have been published for your class yet. Check back later."
-        />
+        <Card className="p-8">
+          <EmptyState
+            icon={ClipboardList}
+            title="No Quizzes Yet"
+            description="No quizzes have been published for your class yet. Check back later."
+          />
+        </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {quizzes.map((quiz) => {

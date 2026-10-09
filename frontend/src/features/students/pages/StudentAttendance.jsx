@@ -9,19 +9,18 @@ import {
   Clock,
   ShieldAlert,
   AlertTriangle,
-  Award,
   BookOpen,
 } from 'lucide-react';
 
 const STATUS_BADGES = {
   present: { variant: 'success', label: 'Present', icon: CheckCircle },
-  absent: { variant: 'error', label: 'Absent', icon: XCircle },
+  absent: { variant: 'danger', label: 'Absent', icon: XCircle },
   late: { variant: 'warning', label: 'Late', icon: Clock },
   excused: { variant: 'secondary', label: 'Excused', icon: ShieldAlert },
 };
 
 export const StudentAttendance = () => {
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['myStudentAttendance'],
     queryFn: async () => {
       const res = await api.get('/students/my-attendance');
@@ -91,23 +90,23 @@ export const StudentAttendance = () => {
     <div className="space-y-6">
       {/* Page Title */}
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+        <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
           Attendance Record
         </h1>
-        <p className="text-sm text-surface-500 dark:text-surface-400">
+        <p className="mt-1 text-sm text-[#6B7280]">
           Your official institutional attendance and session turnout history
         </p>
       </div>
 
       {/* 75% Institutional Threshold Warning Banner */}
       {records.length > 0 && stats.rate < 75 && (
-        <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+            <h4 className="text-sm font-bold text-amber-900">
               Attendance Alert: Below 75% Institutional Threshold
             </h4>
-            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+            <p className="text-xs text-amber-800 mt-0.5">
               Your overall attendance rate is currently <strong>{stats.rate}%</strong>. The College Board requires a minimum attendance rate of 75% to be eligible for end-of-term examinations. Please contact your class teacher.
             </p>
           </div>
@@ -117,11 +116,11 @@ export const StudentAttendance = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
             Attendance Rate
           </span>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className={`text-2xl font-bold ${stats.rate >= 75 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+            <span className={`text-2xl font-black ${stats.rate >= 75 ? 'text-emerald-700' : 'text-amber-700'}`}>
               {stats.rate}%
             </span>
             <Badge variant={stats.rate >= 75 ? 'success' : 'warning'}>
@@ -131,28 +130,28 @@ export const StudentAttendance = () => {
         </Card>
 
         <Card className="p-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
             Sessions Recorded
           </span>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white mt-2">
+          <p className="text-2xl font-black text-[#111827] mt-2">
             {stats.total}
           </p>
         </Card>
 
         <Card className="p-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
             Present
           </span>
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">
+          <p className="text-2xl font-black text-emerald-700 mt-2">
             {stats.present}
           </p>
         </Card>
 
         <Card className="p-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-rose-700">
             Absent
           </span>
-          <p className="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-2">
+          <p className="text-2xl font-black text-rose-700 mt-2">
             {stats.absent}
           </p>
         </Card>
@@ -164,7 +163,7 @@ export const StudentAttendance = () => {
           <EmptyState
             icon={Calendar}
             title="No Attendance Recorded"
-            message="No attendance sessions have been logged for your account yet. Check back after your teacher marks roll-call."
+            description="No attendance sessions have been logged for your account yet. Check back after your teacher marks roll-call."
           />
         </Card>
       ) : (
@@ -177,21 +176,21 @@ export const StudentAttendance = () => {
             return (
               <Card key={gIdx} className="overflow-hidden">
                 {/* Header */}
-                <div className="p-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-800/50 flex flex-wrap items-center justify-between gap-3">
+                <div className="p-4 border-b border-[#EFE5E0] bg-[#FAF8F5] flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-primary-500" />
-                    <h3 className="font-semibold text-surface-900 dark:text-white">
+                    <BookOpen className="w-4 h-4 text-[#5A0D1A]" />
+                    <h3 className="font-bold text-[#111827]">
                       {clsGroup.name}
                     </h3>
                     {clsGroup.code && (
-                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300">
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-white border border-[#EFE5E0] text-[#5A0D1A]">
                         {clsGroup.code}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-surface-500">
-                      Class Rate: <strong className="text-surface-900 dark:text-white">{classRate}%</strong>
+                    <span className="text-xs text-[#6B7280]">
+                      Class Rate: <strong className="text-[#111827]">{classRate}%</strong>
                     </span>
                     <Badge variant={classRate >= 75 ? 'success' : 'warning'}>
                       {classPresent}/{classTotal} Attended
@@ -201,15 +200,15 @@ export const StudentAttendance = () => {
 
                 {/* Table */}
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-surface-100/75 dark:bg-surface-800 text-surface-600 dark:text-surface-400 uppercase text-[11px] font-semibold tracking-wider border-b border-surface-200 dark:border-surface-700">
+                  <table className="w-full text-left text-sm font-sans">
+                    <thead className="bg-[#FAF8F5] text-[#6B7280] uppercase text-[11px] font-bold tracking-wider border-b border-[#EFE5E0]">
                       <tr>
                         <th className="py-3 px-4">Date</th>
                         <th className="py-3 px-4">Status</th>
                         <th className="py-3 px-4">Teacher Remarks</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-100 dark:divide-surface-700/60">
+                    <tbody className="divide-y divide-[#EFE5E0] bg-white">
                       {clsGroup.items.map((entry) => {
                         const dateFormatted = entry.date
                           ? new Date(entry.date).toLocaleDateString(undefined, {
@@ -225,10 +224,10 @@ export const StudentAttendance = () => {
                         return (
                           <tr
                             key={entry._id}
-                            className="hover:bg-surface-50/60 dark:hover:bg-surface-800/40 transition-colors"
+                            className="hover:bg-[#FAF8F5] transition-colors"
                           >
-                            <td className="py-3 px-4 font-medium text-surface-900 dark:text-white flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-surface-400" />
+                            <td className="py-3 px-4 font-bold text-[#111827] flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-[#5A0D1A]" />
                               <span>{dateFormatted}</span>
                             </td>
                             <td className="py-3 px-4">
@@ -237,11 +236,11 @@ export const StudentAttendance = () => {
                                 <span>{badgeCfg.label}</span>
                               </Badge>
                             </td>
-                            <td className="py-3 px-4 text-surface-600 dark:text-surface-400 text-xs">
+                            <td className="py-3 px-4 text-[#4B5563] text-xs">
                               {entry.remarks ? (
                                 <span className="italic">"{entry.remarks}"</span>
                               ) : (
-                                <span className="text-surface-400">—</span>
+                                <span className="text-[#9CA3AF]">—</span>
                               )}
                             </td>
                           </tr>

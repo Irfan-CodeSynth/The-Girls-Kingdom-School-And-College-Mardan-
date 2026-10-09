@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import quizApi from '../api/quizApi';
 import { Card, Badge, Skeleton } from '../../../components/ui';
 import {
@@ -12,9 +12,7 @@ import {
   Play,
   CheckCircle2,
   ClipboardList,
-  Calendar,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 export const QuizPreviewPage = () => {
   const { id: quizId } = useParams();
@@ -50,7 +48,7 @@ export const QuizPreviewPage = () => {
 
   if (!quiz) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-8 text-center text-surface-400">
+      <div className="max-w-xl mx-auto px-4 py-8 text-center text-[#6B7280]">
         Quiz not found.
       </div>
     );
@@ -64,24 +62,24 @@ export const QuizPreviewPage = () => {
     <div className="space-y-6 max-w-xl mx-auto px-4 py-8">
       <Link
         to="/student/quizzes"
-        className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-primary-600 transition-colors"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
       >
         <ChevronLeft className="w-4 h-4" />
         Back to Quizzes
       </Link>
 
-      <Card className="space-y-5">
+      <Card className="space-y-5 border-[#EFE5E0]">
         {/* Icon + title */}
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary-100 dark:bg-primary-950/60 flex items-center justify-center flex-shrink-0">
-            <ClipboardList className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+            <ClipboardList className="w-6 h-6 text-amber-700" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-surface-900 dark:text-white leading-snug">
+            <h1 className="font-serif text-2xl font-bold text-[#5A0D1A] leading-snug">
               {quiz.title}
             </h1>
             {quiz.description && (
-              <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+              <p className="text-sm text-[#4B5563] mt-1 leading-relaxed">
                 {quiz.description}
               </p>
             )}
@@ -96,55 +94,55 @@ export const QuizPreviewPage = () => {
             { label: 'Passing Marks', value: quiz.passingMarks || '—', icon: CheckCircle2 },
             { label: 'Max Attempts', value: maxAttempts, icon: RefreshCw },
           ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="bg-surface-50 dark:bg-surface-800 rounded-xl p-3 text-center">
-              <Icon className="w-4 h-4 text-primary-600 dark:text-primary-400 mx-auto mb-1" />
-              <p className="font-bold text-surface-900 dark:text-white text-sm">{value}</p>
-              <p className="text-xs text-surface-400 mt-0.5">{label}</p>
+            <div key={label} className="bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl p-3 text-center">
+              <Icon className="w-4 h-4 text-[#5A0D1A] mx-auto mb-1" />
+              <p className="font-bold text-[#111827] text-sm">{value}</p>
+              <p className="text-[11px] text-[#6B7280] mt-0.5 uppercase tracking-wider">{label}</p>
             </div>
           ))}
         </div>
 
         {/* Question breakdown */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-4 space-y-2 text-sm">
-          <p className="font-medium text-surface-700 dark:text-surface-300 text-xs uppercase tracking-wider mb-3">
+        <div className="bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl p-4 space-y-2 text-sm">
+          <p className="font-bold text-[#5A0D1A] text-xs uppercase tracking-wider mb-3">
             Question Breakdown
           </p>
           {mcqCount > 0 && (
-            <div className="flex justify-between">
-              <span className="text-surface-500">Multiple Choice</span>
+            <div className="flex justify-between items-center">
+              <span className="text-[#4B5563]">Multiple Choice</span>
               <Badge variant="secondary">{mcqCount} questions</Badge>
             </div>
           )}
           {tfCount > 0 && (
-            <div className="flex justify-between">
-              <span className="text-surface-500">True / False</span>
+            <div className="flex justify-between items-center">
+              <span className="text-[#4B5563]">True / False</span>
               <Badge variant="secondary">{tfCount} questions</Badge>
             </div>
           )}
           {compCount > 0 && (
-            <div className="flex justify-between">
-              <span className="text-surface-500">Written / Comprehensive</span>
+            <div className="flex justify-between items-center">
+              <span className="text-[#4B5563]">Written / Comprehensive</span>
               <Badge variant="secondary">{compCount} questions</Badge>
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-surface-200 dark:border-surface-700 font-semibold">
-            <span className="text-surface-700 dark:text-surface-300">Total Questions</span>
-            <span className="text-surface-900 dark:text-white">{quiz.questions?.length || 0}</span>
+          <div className="flex justify-between pt-2 border-t border-[#EFE5E0] font-bold">
+            <span className="text-[#111827]">Total Questions</span>
+            <span className="text-[#5A0D1A]">{quiz.questions?.length || 0}</span>
           </div>
         </div>
 
         {/* Attempt status */}
         {attempts.length > 0 && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800 text-sm">
-            <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Your Attempts</p>
-            <p className="text-blue-600 dark:text-blue-400">
+          <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 text-sm">
+            <p className="font-bold text-sky-900 mb-1">Your Attempts</p>
+            <p className="text-sky-800">
               {completedAttempts.length} of {maxAttempts} attempt{maxAttempts !== 1 ? 's' : ''} used
               {hasInProgress && ' • (1 attempt currently in progress)'}
             </p>
             {latestAttempt && latestAttempt.status !== 'in_progress' && (
               <Link
                 to={`/student/quizzes/${quizId}/result/${latestAttempt._id}`}
-                className="inline-flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 hover:underline mt-2 font-medium"
+                className="inline-flex items-center gap-1 text-xs text-[#5A0D1A] hover:underline mt-2 font-bold"
               >
                 View last attempt result →
               </Link>
@@ -153,12 +151,12 @@ export const QuizPreviewPage = () => {
         )}
 
         {/* Instructions */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800 text-sm space-y-1">
-          <div className="flex items-center gap-2 font-medium text-amber-700 dark:text-amber-300 mb-2">
-            <AlertTriangle className="w-4 h-4" />
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-1">
+          <div className="flex items-center gap-2 font-bold text-amber-900 mb-2">
+            <AlertTriangle className="w-4 h-4 text-amber-700" />
             Before you begin:
           </div>
-          <ul className="text-amber-800 dark:text-amber-200 space-y-1 text-xs list-disc list-inside">
+          <ul className="text-amber-800 space-y-1 text-xs list-disc list-inside">
             <li>The timer starts as soon as you click Start Quiz.</li>
             <li>Your answers are auto-saved every 30 seconds.</li>
             <li>The quiz submits automatically when time expires.</li>
@@ -169,23 +167,25 @@ export const QuizPreviewPage = () => {
         {/* CTA */}
         {canAttempt ? (
           <button
+            type="button"
             onClick={() => navigate(`/student/quizzes/${quizId}/take`)}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white font-bold text-sm transition-colors shadow-xs cursor-pointer"
           >
             <Play className="w-4 h-4" />
             {hasInProgress ? 'Resume Quiz' : 'Start Quiz'}
           </button>
         ) : latestAttempt ? (
           <button
+            type="button"
             onClick={() => navigate(`/student/quizzes/${quizId}/result/${latestAttempt._id}`)}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white font-bold text-sm transition-colors shadow-xs cursor-pointer"
           >
             <Trophy className="w-4 h-4" />
             View Quiz Result
           </button>
         ) : (
-          <div className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400 font-semibold text-sm">
-            <CheckCircle2 className="w-4 h-4" />
+          <div className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0] text-[#6B7280] font-bold text-sm">
+            <CheckCircle2 className="w-4 h-4 text-[#5A0D1A]" />
             Maximum attempts reached
           </div>
         )}

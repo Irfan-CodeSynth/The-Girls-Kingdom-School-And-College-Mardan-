@@ -39,12 +39,12 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
   const cfg = STATUS_CONFIG[quiz.status] || STATUS_CONFIG.draft;
 
   return (
-    <Card className="flex flex-col gap-3 hover:shadow-md transition-shadow relative overflow-visible z-10">
+    <Card className="flex flex-col gap-3 hover:shadow-md transition-shadow relative overflow-visible z-10 border border-[#EFE5E0]">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-primary-100 dark:bg-primary-950/60 flex items-center justify-center flex-shrink-0">
-            <ClipboardList className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
+          <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+            <ClipboardList className="w-4.5 h-4.5 text-amber-700" />
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -54,8 +54,9 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
           {/* Actions menu */}
           <div className="relative">
             <button
+              type="button"
               onClick={() => setMenuOpen((o) => !o)}
-              className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-400 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-[#FAF8F5] text-[#6B7280] transition-colors cursor-pointer"
             >
               <MoreVertical className="w-4 h-4" />
             </button>
@@ -65,31 +66,32 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
                   className="fixed inset-0 z-40"
                   onClick={() => setMenuOpen(false)}
                 />
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl shadow-xl z-50 py-1.5 text-sm">
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#EFE5E0] rounded-xl shadow-xl z-50 py-1.5 text-sm">
                   <Link
                     to={`/teacher/quizzes/${quiz._id}/edit`}
-                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200"
+                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#111827]"
                     onClick={() => setMenuOpen(false)}
                   >
-                    <Pencil className="w-3.5 h-3.5 text-primary-500" />
+                    <Pencil className="w-3.5 h-3.5 text-[#5A0D1A]" />
                     <span>Edit Quiz</span>
                   </Link>
                   <Link
                     to={`/teacher/quizzes/${quiz._id}/attempts`}
-                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200"
+                    className="flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#111827]"
                     onClick={() => setMenuOpen(false)}
                   >
-                    <Eye className="w-3.5 h-3.5 text-blue-500" />
+                    <Eye className="w-3.5 h-3.5 text-blue-600" />
                     <span>View Attempts</span>
                   </Link>
 
-                  <div className="my-1 border-t border-surface-100 dark:border-surface-700" />
+                  <div className="my-1 border-t border-[#EFE5E0]" />
 
                   {/* Status Change Options */}
                   {quiz.status === 'draft' && (
                     <button
+                      type="button"
                       onClick={() => { setMenuOpen(false); onPublish(quiz._id); }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-emerald-700 font-medium cursor-pointer"
                     >
                       <Globe className="w-3.5 h-3.5" />
                       <span>Publish Quiz</span>
@@ -98,15 +100,17 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
                   {quiz.status === 'published' && (
                     <>
                       <button
+                        type="button"
                         onClick={() => { setMenuOpen(false); onClose(quiz._id); }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-amber-600 dark:text-amber-400"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-amber-700 cursor-pointer"
                       >
                         <Lock className="w-3.5 h-3.5" />
                         <span>Close Quiz</span>
                       </button>
                       <button
+                        type="button"
                         onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#4B5563] cursor-pointer"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Revert to Draft</span>
@@ -116,15 +120,17 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
                   {quiz.status === 'closed' && (
                     <>
                       <button
+                        type="button"
                         onClick={() => { setMenuOpen(false); onPublish(quiz._id); }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-emerald-700 font-medium cursor-pointer"
                       >
                         <Globe className="w-3.5 h-3.5" />
                         <span>Re-Publish Quiz</span>
                       </button>
                       <button
+                        type="button"
                         onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#4B5563] cursor-pointer"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Revert to Draft</span>
@@ -133,8 +139,9 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
                   )}
                   {quiz.status !== 'archived' && (
                     <button
+                      type="button"
                       onClick={() => { setMenuOpen(false); onArchive(quiz._id); }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-500 dark:text-surface-400"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#6B7280] cursor-pointer"
                     >
                       <Archive className="w-3.5 h-3.5" />
                       <span>Archive</span>
@@ -142,20 +149,22 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
                   )}
                   {quiz.status === 'archived' && (
                     <button
+                      type="button"
                       onClick={() => { setMenuOpen(false); onUnpublish(quiz._id); }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-300"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-[#FAF8F5] text-[#4B5563] cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Restore to Draft</span>
                     </button>
                   )}
 
-                  <div className="my-1 border-t border-surface-100 dark:border-surface-700" />
+                  <div className="my-1 border-t border-[#EFE5E0]" />
 
                   {/* Delete option */}
                   <button
+                    type="button"
                     onClick={() => { setMenuOpen(false); onDelete(quiz); }}
-                    className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-danger-600 dark:text-danger-400"
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-rose-50 text-rose-700 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Delete Quiz</span>
@@ -169,31 +178,31 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
 
       {/* Title */}
       <div>
-        <h3 className="font-bold text-surface-900 dark:text-white text-sm leading-snug line-clamp-2">
+        <h3 className="font-bold text-[#111827] text-sm leading-snug line-clamp-2">
           {quiz.title}
         </h3>
         {quiz.description && (
-          <p className="text-xs text-surface-500 dark:text-surface-400 mt-1 line-clamp-1">
+          <p className="text-xs text-[#6B7280] mt-1 line-clamp-1 leading-relaxed">
             {quiz.description}
           </p>
         )}
-        <p className="text-xs text-surface-400 mt-1">
+        <p className="text-xs text-[#9CA3AF] mt-1 font-mono">
           {quiz.class?.name || 'No class'} · {quiz.class?.code}
         </p>
       </div>
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-surface-100 dark:border-surface-700 text-xs text-surface-500 dark:text-surface-400">
+      <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-[#EFE5E0] text-xs text-[#6B7280]">
         <span className="flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" />
+          <Clock className="w-3.5 h-3.5 text-[#5A0D1A]" />
           {quiz.duration} min
         </span>
         <span className="flex items-center gap-1">
-          <Trophy className="w-3.5 h-3.5" />
+          <Trophy className="w-3.5 h-3.5 text-amber-600" />
           {quiz.totalMarks} marks
         </span>
         <span className="flex items-center gap-1">
-          <Users className="w-3.5 h-3.5" />
+          <Users className="w-3.5 h-3.5 text-[#5A0D1A]" />
           {quiz.attemptCount ?? 0} attempts
         </span>
       </div>
@@ -202,19 +211,29 @@ const QuizCard = ({ quiz, onPublish, onUnpublish, onClose, onArchive, onDelete }
 };
 
 export const TeacherQuizListPage = () => {
-  const queryClient = useQueryClient();
-  const [quizToDelete, setQuizToDelete] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
+  const [quizToDelete, setQuizToDelete] = useState(null);
+  const queryClient = useQueryClient();
 
   const { data, isPending } = useQuery({
     queryKey: ['teacherQuizzes', statusFilter],
-    queryFn: () => quizApi.getQuizzes(statusFilter ? { status: statusFilter } : {}),
+    queryFn: () => quizApi.getQuizzes({ status: statusFilter || undefined }),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: (id) => quizApi.deleteQuiz(id),
+    onSuccess: () => {
+      toast.success('Quiz deleted.');
+      setQuizToDelete(null);
+      queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
+    },
+    onError: (e) => toast.error(e?.response?.data?.message || 'Delete failed'),
   });
 
   const publishMut = useMutation({
     mutationFn: quizApi.publishQuiz,
     onSuccess: () => {
-      toast.success('Quiz published!');
+      toast.success('Quiz published! Students can now see it.');
       queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
     },
     onError: (e) => toast.error(e?.response?.data?.message || 'Publish failed'),
@@ -236,16 +255,6 @@ export const TeacherQuizListPage = () => {
       queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
     },
     onError: (e) => toast.error(e?.response?.data?.message || 'Archive failed'),
-  });
-
-  const deleteMut = useMutation({
-    mutationFn: (id) => quizApi.deleteQuiz(id),
-    onSuccess: () => {
-      toast.success('Quiz deleted.');
-      setQuizToDelete(null);
-      queryClient.invalidateQueries({ queryKey: ['teacherQuizzes'] });
-    },
-    onError: (e) => toast.error(e?.response?.data?.message || 'Delete failed'),
   });
 
   const unpublishMut = useMutation({
@@ -284,15 +293,15 @@ export const TeacherQuizListPage = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
               My Quizzes
             </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-              Create, manage, and publish quizzes for your classes
+            <p className="text-sm text-[#6B7280] mt-1">
+              Create, manage, and publish quizzes for your academic classes
             </p>
           </div>
           <Link to="/teacher/quizzes/new">
-            <Button icon={Plus}>New Quiz</Button>
+            <Button leftIcon={<Plus className="w-4 h-4" />}>New Quiz</Button>
           </Link>
         </div>
 
@@ -301,11 +310,12 @@ export const TeacherQuizListPage = () => {
           {statusTabs.map((tab) => (
             <button
               key={tab.value}
+              type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors cursor-pointer ${
                 statusFilter === tab.value
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+                  ? 'bg-[#5A0D1A] text-white shadow-xs'
+                  : 'bg-white border border-[#EFE5E0] text-[#6B7280] hover:bg-[#FAF8F5] hover:text-[#111827]'
               }`}
             >
               {tab.label}
@@ -321,22 +331,19 @@ export const TeacherQuizListPage = () => {
             ))}
           </div>
         ) : quizzes.length === 0 ? (
-          <EmptyState
-            icon={ClipboardList}
-            title="No Quizzes Found"
-            message={
-              statusFilter
-                ? `No ${statusFilter} quizzes. Change the filter or create a new quiz.`
-                : 'Get started by creating your first quiz.'
-            }
-            action={
-              !statusFilter && (
-                <Link to="/teacher/quizzes/new">
-                  <Button icon={Plus} size="sm">Create First Quiz</Button>
-                </Link>
-              )
-            }
-          />
+          <Card className="p-8">
+            <EmptyState
+              icon={ClipboardList}
+              title="No Quizzes Found"
+              description={
+                statusFilter
+                  ? `No ${statusFilter} quizzes. Change the filter or create a new quiz.`
+                  : 'Get started by creating your first quiz.'
+              }
+              actionLabel={!statusFilter ? 'Create First Quiz' : undefined}
+              onAction={!statusFilter ? () => window.location.assign('/teacher/quizzes/new') : undefined}
+            />
+          </Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {quizzes.map((quiz) => (

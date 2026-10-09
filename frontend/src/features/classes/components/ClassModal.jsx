@@ -112,7 +112,7 @@ export const ClassModal = ({
           />
         )}
 
-        <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+        <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-[#EFE5E0]">
           <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

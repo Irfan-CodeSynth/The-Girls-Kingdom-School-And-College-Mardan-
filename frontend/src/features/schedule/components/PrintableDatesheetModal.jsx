@@ -238,20 +238,20 @@ const PrintableDatesheetModal = ({ datesheet, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs font-sans">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-5xl max-h-[95vh] flex flex-col overflow-hidden">
 
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5] shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center shrink-0">
-              <CalendarDays className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <div className="w-10 h-10 rounded-xl bg-[#5A0D1A]/10 border border-[#EFE5E0] flex items-center justify-center shrink-0">
+              <CalendarDays className="w-5 h-5 text-[#5A0D1A]" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-bold text-surface-900 dark:text-white truncate">
+              <h2 className="font-serif text-lg font-bold text-[#111827] truncate">
                 {datesheet.title || 'Examination Datesheet'}
               </h2>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 {datesheet?.className || datesheet?.class?.name || 'Class'} &nbsp;·&nbsp; {fmt(datesheet?.startDate)} – {fmt(datesheet?.endDate)}
               </p>
             </div>
@@ -259,14 +259,14 @@ const PrintableDatesheetModal = ({ datesheet, onClose }) => {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs sm:text-sm font-bold shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               Print Datesheet
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -274,21 +274,21 @@ const PrintableDatesheetModal = ({ datesheet, onClose }) => {
         </div>
 
         {/* ── Info bar ── */}
-        <div className="px-5 py-3 bg-primary-50/60 dark:bg-primary-950/20 border-b border-primary-100 dark:border-primary-900/40 flex flex-wrap gap-4 shrink-0">
+        <div className="px-6 py-3 bg-[#FAF8F5] border-b border-[#EFE5E0] flex flex-wrap gap-5 shrink-0">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">Exam Type</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Exam Type</p>
             <Badge variant={examTypeVariant} size="sm">{datesheet.examType || '—'}</Badge>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">Academic Year</p>
-            <p className="text-xs font-semibold text-surface-800 dark:text-surface-200">{datesheet.academicYear || '—'}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Academic Year</p>
+            <p className="text-xs font-bold text-[#111827] mt-0.5">{datesheet.academicYear || '—'}</p>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">Total Subjects</p>
-            <p className="text-xs font-semibold text-surface-800 dark:text-surface-200">{entries.length}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total Subjects</p>
+            <p className="text-xs font-bold text-[#111827] mt-0.5">{entries.length}</p>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">Status</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Status</p>
             <Badge variant={datesheet.status === 'published' ? 'success' : 'warning'} dot size="sm">
               {datesheet.status === 'published' ? 'Published' : 'Draft'}
             </Badge>
@@ -296,40 +296,40 @@ const PrintableDatesheetModal = ({ datesheet, onClose }) => {
         </div>
 
         {/* ── Scrollable body ── */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
 
           {/* Entries Table */}
           <div>
-            <h3 className="text-sm font-bold text-surface-800 dark:text-white mb-3">Examination Schedule</h3>
+            <h3 className="font-serif text-sm font-bold text-[#111827] mb-3">Examination Schedule</h3>
             {entries.length === 0 ? (
-              <div className="text-center py-10 text-surface-400 dark:text-surface-500">
-                <CalendarDays className="w-10 h-10 mx-auto mb-2 opacity-30" />
+              <div className="text-center py-10 text-[#6B7280]">
+                <CalendarDays className="w-10 h-10 mx-auto mb-2 opacity-30 text-[#5A0D1A]" />
                 <p className="text-sm">No entries in this datesheet</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-surface-200 dark:border-surface-700">
+              <div className="overflow-x-auto rounded-xl border border-[#EFE5E0]">
                 <table className="w-full text-sm">
-                  <thead className="bg-primary-600 text-white">
+                  <thead className="bg-[#5A0D1A] text-white">
                     <tr>
                       {['Subject', 'Date', 'Day', 'Time', 'Exam Hall', 'Total Marks', 'Passing Marks'].map((h) => (
-                        <th key={h} className="px-3 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">
+                        <th key={h} className="px-3.5 py-3 text-left text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">
                           {h}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                  <tbody className="divide-y divide-[#EFE5E0]">
                     {entries.map((e, i) => (
-                      <tr key={i} className="hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                        <td className="px-3 py-2.5 font-semibold text-surface-900 dark:text-white">{e.subject || '—'}</td>
-                        <td className="px-3 py-2.5 text-surface-700 dark:text-surface-300 whitespace-nowrap">{fmt(e.examDate)}</td>
-                        <td className="px-3 py-2.5 text-surface-600 dark:text-surface-400">{dayName(e.examDate)}</td>
-                        <td className="px-3 py-2.5 text-surface-700 dark:text-surface-300 whitespace-nowrap font-mono text-xs">
+                      <tr key={i} className="hover:bg-[#FAF8F5]/60 transition-colors">
+                        <td className="px-3.5 py-2.5 font-bold text-[#111827]">{e.subject || '—'}</td>
+                        <td className="px-3.5 py-2.5 text-[#111827] whitespace-nowrap font-medium">{fmt(e.examDate)}</td>
+                        <td className="px-3.5 py-2.5 text-[#6B7280]">{dayName(e.examDate)}</td>
+                        <td className="px-3.5 py-2.5 text-[#111827] whitespace-nowrap font-mono text-xs font-semibold">
                           {e.startTime || '—'} – {e.endTime || '—'}
                         </td>
-                        <td className="px-3 py-2.5 text-surface-700 dark:text-surface-300">{e.room || '—'}</td>
-                        <td className="px-3 py-2.5 text-center font-bold text-surface-900 dark:text-white">{e.totalMarks ?? '—'}</td>
-                        <td className="px-3 py-2.5 text-center text-emerald-700 dark:text-emerald-400 font-semibold">{e.passingMarks ?? '—'}</td>
+                        <td className="px-3.5 py-2.5 text-[#6B7280]">{e.room || '—'}</td>
+                        <td className="px-3.5 py-2.5 text-center font-bold text-[#111827]">{e.totalMarks ?? '—'}</td>
+                        <td className="px-3.5 py-2.5 text-center text-emerald-700 font-bold">{e.passingMarks ?? '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -340,27 +340,27 @@ const PrintableDatesheetModal = ({ datesheet, onClose }) => {
 
           {/* General Instructions */}
           {datesheet.generalInstructions && (
-            <div className="rounded-xl border border-primary-100 dark:border-primary-900/40 bg-primary-50/50 dark:bg-primary-950/20 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-2">
+            <div className="rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#5A0D1A] mb-2 font-sans">
                 General Instructions
               </h3>
-              <p className="text-sm text-surface-700 dark:text-surface-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#4B5563] whitespace-pre-wrap leading-relaxed">
                 {datesheet.generalInstructions}
               </p>
             </div>
           )}
 
           {/* Signature preview */}
-          <div className="flex justify-between pt-4 border-t border-surface-200 dark:border-surface-700">
+          <div className="flex justify-between pt-4 border-t border-[#EFE5E0]">
             <div className="text-center w-44">
-              <div className="border-t-2 border-surface-300 dark:border-surface-600 mb-1.5" />
-              <p className="text-xs font-bold text-surface-700 dark:text-surface-300">Controller of Examinations</p>
-              <p className="text-[10px] text-surface-400">Signature &amp; Stamp</p>
+              <div className="border-t-2 border-[#EFE5E0] mb-1.5" />
+              <p className="text-xs font-bold text-[#111827]">Controller of Examinations</p>
+              <p className="text-[10px] text-[#6B7280]">Signature &amp; Stamp</p>
             </div>
             <div className="text-center w-44">
-              <div className="border-t-2 border-surface-300 dark:border-surface-600 mb-1.5" />
-              <p className="text-xs font-bold text-surface-700 dark:text-surface-300">Principal</p>
-              <p className="text-[10px] text-surface-400">Signature &amp; Stamp</p>
+              <div className="border-t-2 border-[#EFE5E0] mb-1.5" />
+              <p className="text-xs font-bold text-[#111827]">Principal</p>
+              <p className="text-[10px] text-[#6B7280]">Signature &amp; Stamp</p>
             </div>
           </div>
         </div>

@@ -19,25 +19,25 @@ import { toast } from 'sonner';
 const STATUS_CONFIG = {
   present: {
     label: 'Present',
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800',
+    color: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     activeBadge: 'bg-emerald-600 text-white',
     icon: CheckCircle,
   },
   absent: {
     label: 'Absent',
-    color: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800',
+    color: 'bg-rose-50 text-rose-800 border-rose-200',
     activeBadge: 'bg-rose-600 text-white',
     icon: XCircle,
   },
   late: {
     label: 'Late',
-    color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800',
+    color: 'bg-amber-50 text-amber-800 border-amber-200',
     activeBadge: 'bg-amber-600 text-white',
     icon: Clock,
   },
   excused: {
     label: 'Excused',
-    color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-400 dark:border-sky-800',
+    color: 'bg-sky-50 text-sky-800 border-sky-200',
     activeBadge: 'bg-sky-600 text-white',
     icon: ShieldAlert,
   },
@@ -229,9 +229,9 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
       {/* ── Top Bar: Date Selector & Overall Attendance Rate ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Date Selector Card */}
-        <Card className="p-4 flex flex-col justify-between">
+        <Card className="p-4.5 flex flex-col justify-between bg-white border border-[#EFE5E0] shadow-xs">
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400 block mb-1">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#6B7280] block mb-1.5 font-sans">
               Roll-Call Date
             </label>
             <div className="flex items-center gap-2">
@@ -239,7 +239,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2 text-xs font-semibold rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               />
               <Button
                 variant="outline"
@@ -252,23 +252,23 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
             </div>
           </div>
           {attendanceFetching && (
-            <p className="text-xs text-primary-500 mt-2 animate-pulse">
+            <p className="text-xs text-[#5A0D1A] mt-2 animate-pulse font-medium">
               Syncing date records...
             </p>
           )}
         </Card>
 
         {/* Day Breakdown Card */}
-        <Card className="p-4 flex flex-col justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400">
+        <Card className="p-4.5 flex flex-col justify-between bg-white border border-[#EFE5E0] shadow-xs">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280] font-sans">
             Selected Day Turnout ({selectedDate})
           </span>
           <div className="flex items-center justify-between mt-2">
             <div>
-              <span className="text-2xl font-bold text-surface-900 dark:text-white">
+              <span className="text-2xl font-bold font-serif text-[#111827]">
                 {dayStats.rate}%
               </span>
-              <p className="text-xs text-surface-500">
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 {dayStats.present} of {dayStats.total} students present
               </p>
             </div>
@@ -282,24 +282,24 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
         </Card>
 
         {/* Cumulative Class Rate Card */}
-        <Card className="p-4 flex flex-col justify-between">
+        <Card className="p-4.5 flex flex-col justify-between bg-white border border-[#EFE5E0] shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280] font-sans">
               Term Attendance Rate
             </span>
-            <TrendingUp className="w-4 h-4 text-primary-500" />
+            <TrendingUp className="w-4 h-4 text-[#5A0D1A]" />
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-surface-900 dark:text-white">
+              <span className="text-2xl font-bold font-serif text-[#111827]">
                 {summary.attendanceRate ?? 0}%
               </span>
-              <span className="text-xs text-surface-500">
+              <span className="text-xs text-[#6B7280]">
                 across {summary.daysCount ?? 0} recorded sessions
               </span>
             </div>
             {summary.attendanceRate !== undefined && summary.attendanceRate < 75 && (
-              <p className="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1">
+              <p className="text-xs font-semibold text-amber-700 flex items-center gap-1 mt-1">
                 <AlertCircle className="w-3.5 h-3.5" />
                 Class is below the 75% institutional threshold
               </p>
@@ -309,15 +309,15 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
       </div>
 
       {/* ── Main Attendance Sheet ── */}
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden bg-white border border-[#EFE5E0] shadow-xs">
         {/* Actions header */}
-        <div className="p-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-800/50 flex flex-wrap items-center justify-between gap-3">
+        <div className="p-4 border-b border-[#EFE5E0] bg-[#FAF8F5] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <FileCheck className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-            <h3 className="font-semibold text-surface-900 dark:text-white text-base">
+            <FileCheck className="w-5 h-5 text-[#5A0D1A]" />
+            <h3 className="font-serif font-bold text-[#111827] text-base">
               Roll-Call Sheet
             </h3>
-            <span className="text-xs text-surface-500">
+            <span className="text-xs text-[#6B7280]">
               ({enrolledStudents.length} students enrolled)
             </span>
             {isDirty && (
@@ -329,14 +329,14 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
 
           {canManage && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-surface-500 mr-1 hidden sm:inline">
+              <span className="text-xs font-semibold text-[#6B7280] mr-1 hidden sm:inline">
                 Quick Mark:
               </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleBulkMark('present')}
-                className="text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                className="text-xs text-emerald-700 hover:bg-emerald-50"
               >
                 All Present
               </Button>
@@ -344,7 +344,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                 variant="outline"
                 size="sm"
                 onClick={() => handleBulkMark('absent')}
-                className="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                className="text-xs text-rose-700 hover:bg-rose-50"
               >
                 All Absent
               </Button>
@@ -352,12 +352,12 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                 variant="outline"
                 size="sm"
                 onClick={() => handleBulkMark('late')}
-                className="text-xs text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                className="text-xs text-amber-700 hover:bg-amber-50"
               >
                 All Late
               </Button>
 
-              <div className="h-5 w-px bg-surface-200 dark:bg-surface-700 mx-1" />
+              <div className="h-5 w-px bg-[#EFE5E0] mx-1" />
 
               <Button
                 variant="primary"
@@ -385,7 +385,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-surface-100/75 dark:bg-surface-800 text-surface-600 dark:text-surface-400 uppercase text-[11px] font-semibold tracking-wider border-b border-surface-200 dark:border-surface-700">
+              <thead className="bg-[#FAF8F5] text-[#6B7280] uppercase text-[11px] font-bold tracking-wider border-b border-[#EFE5E0]">
                 <tr>
                   <th className="py-3 px-4">#</th>
                   <th className="py-3 px-4">Student</th>
@@ -394,7 +394,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                   <th className="py-3 px-4">Remarks / Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100 dark:divide-surface-700/60">
+              <tbody className="divide-y divide-[#EFE5E0]">
                 {enrolledStudents.map((item, idx) => {
                   const student = item.student || item;
                   const sId = String(student._id || student.id);
@@ -404,10 +404,10 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                   return (
                     <tr
                       key={sId}
-                      className="hover:bg-surface-50/60 dark:hover:bg-surface-800/40 transition-colors"
+                      className="hover:bg-[#FAF8F5]/60 transition-colors"
                     >
                       {/* Index */}
-                      <td className="py-3 px-4 text-surface-400 font-mono text-xs">
+                      <td className="py-3 px-4 text-[#6B7280] font-mono text-xs">
                         {idx + 1}
                       </td>
 
@@ -421,10 +421,10 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                             size="sm"
                           />
                           <div>
-                            <p className="font-semibold text-surface-900 dark:text-white leading-tight">
+                            <p className="font-bold text-[#111827] leading-tight text-sm">
                               {student.fullName || 'Unknown Student'}
                             </p>
-                            <p className="text-xs text-surface-500 font-mono">
+                            <p className="text-xs text-[#6B7280] font-mono">
                               {student.email}
                             </p>
                           </div>
@@ -433,7 +433,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
 
                       {/* Reg # */}
                       <td className="py-3 px-4">
-                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300">
+                        <span className="font-mono text-xs px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#111827] font-semibold">
                           {student.studentId || item.rollNumber || 'N/A'}
                         </span>
                       </td>
@@ -453,7 +453,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                                 disabled={!canManage}
                                 onClick={() => handleStatusChange(sId, st)}
                                 className={`
-                                  flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border
+                                  flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all border
                                   ${
                                     isSelected
                                       ? `${cfg.activeBadge} shadow-xs scale-102`
@@ -479,7 +479,7 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
                           onChange={(e) => handleRemarksChange(sId, e.target.value)}
                           placeholder={canManage ? 'Optional remarks / excuse...' : 'None'}
                           maxLength={250}
-                          className="w-full px-2.5 py-1 text-xs rounded border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-hidden focus:ring-1 focus:ring-primary-500 disabled:bg-surface-50 dark:disabled:bg-surface-900 disabled:text-surface-400"
+                          className="w-full px-3 py-1.5 text-xs rounded-lg border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-[#5A0D1A] disabled:bg-gray-50 disabled:text-gray-400"
                         />
                       </td>
                     </tr>
@@ -492,9 +492,9 @@ export const AttendanceTab = ({ classId, canManage = true }) => {
 
         {/* Footer with save button */}
         {canManage && enrolledStudents.length > 0 && (
-          <div className="p-4 bg-surface-50/50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex items-center justify-between">
-            <span className="text-xs text-surface-500">
-              * Remember to click <strong>Save Attendance</strong> to record this session to the institutional database.
+          <div className="p-4 bg-[#FAF8F5] border-t border-[#EFE5E0] flex items-center justify-between">
+            <span className="text-xs text-[#6B7280]">
+              * Remember to click <strong className="text-[#111827]">Save Attendance</strong> to record this session to the institutional database.
             </span>
             <Button
               variant="primary"

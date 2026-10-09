@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { classApi } from '../../classes/api/classApi';
 import { MaterialsSection } from '../../classes/components/MaterialsSection';
 import { AttendanceTab } from '../../classes/components/AttendanceTab';
-import { Card, Badge, Skeleton, Table, EmptyState, Tabs } from '../../../components/ui';
+import { Card, Badge, Skeleton, Table, Tabs } from '../../../components/ui';
 import {
   ArrowLeft,
   BookOpen,
@@ -48,26 +48,30 @@ export const TeacherClassDetailPage = () => {
       label: 'Student',
       render: (val) => (
         <div>
-          <p className="font-medium text-surface-900 dark:text-white text-sm">
-            {val?.fullName || <span className="text-surface-400 italic">Unknown</span>}
+          <p className="font-bold text-[#111827] text-sm">
+            {val?.fullName || <span className="text-[#9CA3AF] italic">Unknown</span>}
           </p>
-          <p className="text-xs text-surface-500">{val?.email}</p>
+          <p className="text-xs text-[#6B7280]">{val?.email}</p>
         </div>
       ),
     },
     {
       key: 'student',
-      label: 'Reg #',
+      label: 'Roll / Reg #',
       render: (val) => (
-        <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700">
+        <span className="font-mono text-xs px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] font-bold">
           {val?.studentId || 'N/A'}
         </span>
       ),
     },
     {
       key: 'enrolledAt',
-      label: 'Enrolled',
-      render: (val) => (val ? new Date(val).toLocaleDateString() : 'N/A'),
+      label: 'Enrollment Date',
+      render: (val) => (
+        <span className="text-xs text-[#6B7280]">
+          {val ? new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+        </span>
+      ),
     },
   ];
 
@@ -75,55 +79,59 @@ export const TeacherClassDetailPage = () => {
     <div className="space-y-6">
       <Link
         to="/teacher/classes"
-        className="inline-flex items-center gap-2 text-sm font-medium text-surface-500 hover:text-surface-900 dark:hover:text-white transition"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to My Classes
+        <span>Back to My Classes</span>
       </Link>
 
-      {/* Class Header */}
+      {/* Class Header Banner */}
       <Card>
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-950/60 flex items-center justify-center shrink-0">
-              <BookOpen className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+            <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+              <BookOpen className="w-6 h-6 text-amber-700" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] font-bold">
+                  {cls?.code}
+                </span>
+                <Badge variant={cls?.status === 'active' ? 'success' : 'default'} dot>
+                  {cls?.status?.toUpperCase()}
+                </Badge>
+              </div>
+              <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
                 {cls?.name}
               </h1>
-              <p className="text-sm font-mono text-surface-500 mt-0.5">{cls?.code}</p>
               {cls?.description && (
-                <p className="text-sm text-surface-600 dark:text-surface-400 mt-2 max-w-xl">
+                <p className="text-sm text-[#4B5563] mt-2 max-w-xl leading-relaxed">
                   {cls.description}
                 </p>
               )}
             </div>
           </div>
-          <Badge variant={cls?.status === 'active' ? 'success' : 'secondary'} dot>
-            {cls?.status}
-          </Badge>
         </div>
 
-        <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-surface-100 dark:border-surface-700 text-sm text-surface-600 dark:text-surface-400">
+        <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-[#EFE5E0] text-sm text-[#6B7280]">
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-primary-500" />
+            <Users className="w-4 h-4 text-[#5A0D1A]" />
             <span>
-              <strong className="text-surface-900 dark:text-white">{students.length}</strong> students enrolled
+              <strong className="text-[#111827]">{students.length}</strong> students enrolled
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary-500" />
+            <Calendar className="w-4 h-4 text-[#5A0D1A]" />
             <span>
               Academic Year:{' '}
-              <strong className="text-surface-900 dark:text-white">{cls?.academicYear}</strong>
+              <strong className="text-[#111827]">{cls?.academicYear}</strong>
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Hash className="w-4 h-4 text-primary-500" />
+            <Hash className="w-4 h-4 text-[#5A0D1A]" />
             <span>
               Class Code:{' '}
-              <strong className="font-mono text-surface-900 dark:text-white">{cls?.code}</strong>
+              <strong className="font-mono text-[#111827]">{cls?.code}</strong>
             </span>
           </div>
         </div>

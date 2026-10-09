@@ -57,11 +57,11 @@ export const Dropdown = ({
                     setIsOpen(false);
                   }}
                   className={`
-                    w-full text-left px-4 py-2 text-sm flex items-center gap-2.5 transition-colors
+                    w-full text-left px-4 py-2 text-xs font-semibold flex items-center gap-2.5 transition-colors
                     ${
                       item.danger
-                        ? 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20'
-                        : 'text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700'
+                        ? 'text-red-600 hover:bg-red-50'
+                        : 'text-[#111827] hover:bg-[#FAF8F5]'
                     }
                   `}
                 >

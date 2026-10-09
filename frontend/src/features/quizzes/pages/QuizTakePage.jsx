@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import quizApi from '../api/quizApi';
 import { Spinner } from '../../../components/ui';
 import {
@@ -40,10 +40,10 @@ const Timer = ({ expiresAt, onExpire }) => {
 
   return (
     <div
-      className={`flex items-center gap-1.5 text-sm font-mono font-bold px-3 py-1.5 rounded-lg ${
+      className={`flex items-center gap-1.5 text-sm font-mono font-bold px-3 py-1.5 rounded-xl border ${
         isUrgent
-          ? 'bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 animate-pulse'
-          : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300'
+          ? 'bg-rose-50 border-rose-200 text-rose-700 animate-pulse'
+          : 'bg-[#FAF8F5] border-[#EFE5E0] text-[#5A0D1A]'
       }`}
     >
       <Clock className="w-4 h-4" />
@@ -61,13 +61,14 @@ const QuestionNav = ({ questions, answers, currentIdx, onSelect }) => (
       return (
         <button
           key={q._id}
+          type="button"
           onClick={() => onSelect(i)}
-          className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
+          className={`w-8 h-8 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
             isCurrent
-              ? 'bg-primary-600 text-white'
+              ? 'bg-[#5A0D1A] text-white shadow-xs'
               : answered
-              ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-300 dark:border-primary-700'
-              : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+              ? 'bg-[#FAF8F5] text-[#5A0D1A] border border-[#EFE5E0]'
+              : 'bg-white text-[#6B7280] border border-[#EFE5E0] hover:bg-[#FAF8F5]'
           }`}
         >
           {i + 1}
@@ -85,19 +86,20 @@ const MCQQuestion = ({ question, answer, onChange }) => (
       return (
         <button
           key={opt._id}
+          type="button"
           onClick={() => onChange({ selectedOptionId: opt._id })}
-          className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 text-sm ${
+          className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 text-sm cursor-pointer ${
             selected
-              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-900 dark:text-primary-100 font-medium'
-              : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-300 dark:hover:border-primary-700 text-surface-700 dark:text-surface-300'
+              ? 'border-[#5A0D1A] bg-[#FAF8F5] text-[#5A0D1A] font-bold shadow-xs'
+              : 'border-[#EFE5E0] bg-white hover:border-[#5A0D1A]/30 text-[#111827]'
           }`}
         >
           <span className="flex items-center gap-3">
             <span
-              className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+              className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center ${
                 selected
-                  ? 'border-primary-500 bg-primary-500'
-                  : 'border-surface-300 dark:border-surface-600'
+                  ? 'border-[#5A0D1A] bg-[#5A0D1A]'
+                  : 'border-[#D1D5DB]'
               }`}
             >
               {selected && <span className="w-2 h-2 rounded-full bg-white" />}
@@ -118,11 +120,12 @@ const TrueFalseQuestion = ({ question, answer, onChange }) => (
       return (
         <button
           key={val}
+          type="button"
           onClick={() => onChange({ selectedAnswer: val })}
-          className={`flex-1 py-4 rounded-xl border-2 font-semibold text-sm transition-all duration-150 capitalize ${
+          className={`flex-1 py-4 rounded-xl border-2 font-bold text-sm transition-all duration-150 capitalize cursor-pointer ${
             selected
-              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300'
-              : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-300 dark:hover:border-primary-700 text-surface-600 dark:text-surface-400'
+              ? 'border-[#5A0D1A] bg-[#FAF8F5] text-[#5A0D1A] shadow-xs'
+              : 'border-[#EFE5E0] bg-white hover:border-[#5A0D1A]/30 text-[#4B5563]'
           }`}
         >
           {val === 'true' ? '✓ True' : '✗ False'}
@@ -136,12 +139,12 @@ const TrueFalseQuestion = ({ question, answer, onChange }) => (
 const ComprehensiveQuestion = ({ question, answer, onChange }) => (
   <div>
     <textarea
-      className="w-full h-40 px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm resize-none focus:outline-none focus:border-primary-500 dark:focus:border-primary-500 transition-colors"
-      placeholder="Write your answer here…"
+      className="w-full h-40 px-4 py-3 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] transition-colors"
+      placeholder="Type your essay or detailed response here…"
       value={answer?.writtenAnswer || ''}
       onChange={(e) => onChange({ writtenAnswer: e.target.value })}
     />
-    <p className="text-xs text-surface-400 mt-1 text-right">
+    <p className="text-xs text-[#6B7280] mt-1 text-right">
       {(answer?.writtenAnswer || '').length} / 8000 characters
     </p>
   </div>
@@ -151,33 +154,35 @@ const ComprehensiveQuestion = ({ question, answer, onChange }) => (
 const ConfirmModal = ({ answered, total, onConfirm, onCancel }) => {
   const unanswered = total - answered;
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-md p-6">
-        <h3 className="text-xl font-bold text-surface-900 dark:text-white">Submit Quiz?</h3>
-        <p className="text-surface-500 dark:text-surface-400 mt-2 text-sm">
-          You have answered {answered} of {total} questions.
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-md p-6">
+        <h3 className="text-xl font-serif font-bold text-[#5A0D1A]">Submit Assessment?</h3>
+        <p className="text-[#4B5563] mt-2 text-sm leading-relaxed">
+          You have answered <strong className="text-[#111827]">{answered}</strong> of <strong className="text-[#111827]">{total}</strong> questions.
           {unanswered > 0 && (
-            <span className="text-amber-600 dark:text-amber-400 font-medium">
-              {' '}{unanswered} question{unanswered !== 1 ? 's' : ''} unanswered.
+            <span className="text-rose-700 font-bold block mt-1">
+              {' '}{unanswered} question{unanswered !== 1 ? 's' : ''} remaining unanswered.
             </span>
           )}
         </p>
-        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-          You cannot change your answers after submission.
+        <p className="text-xs text-[#6B7280] mt-2">
+          Once submitted, responses cannot be edited or modified.
         </p>
         <div className="flex gap-3 mt-6">
           <button
+            type="button"
             onClick={onCancel}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-[#EFE5E0] text-sm font-bold text-[#4B5563] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
           >
-            Continue Reviewing
+            Review Answers
           </button>
           <button
+            type="button"
             onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
             <Send className="w-4 h-4" />
-            Submit Now
+            Confirm Submit
           </button>
         </div>
       </div>
@@ -191,7 +196,7 @@ export const QuizTakePage = () => {
   const navigate = useNavigate();
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState({}); // { [questionId]: { selectedOptionId?, selectedAnswer?, writtenAnswer? } }
+  const [answers, setAnswers] = useState({});
   const [attemptId, setAttemptId] = useState(null);
   const [expiresAt, setExpiresAt] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -301,9 +306,9 @@ export const QuizTakePage = () => {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <Spinner className="w-10 h-10 mx-auto" />
-          <p className="text-surface-500 dark:text-surface-400 text-sm">
-            {isStarting ? 'Starting your quiz…' : 'Loading questions…'}
+          <Spinner className="w-10 h-10 mx-auto text-[#5A0D1A]" />
+          <p className="text-[#6B7280] text-sm">
+            {isStarting ? 'Starting your assessment session…' : 'Loading questions…'}
           </p>
         </div>
       </div>
@@ -312,7 +317,7 @@ export const QuizTakePage = () => {
 
   if (!quiz) {
     return (
-      <div className="flex-1 flex items-center justify-center text-surface-400">
+      <div className="flex-1 flex items-center justify-center text-[#6B7280]">
         Quiz not found.
       </div>
     );
@@ -334,22 +339,23 @@ export const QuizTakePage = () => {
 
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4 py-6 gap-6">
         {/* Quiz Header Bar */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-700 px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="font-bold text-surface-900 dark:text-white text-lg leading-tight">
+            <h1 className="font-serif font-bold text-[#5A0D1A] text-lg leading-tight">
               {quiz.title}
             </h1>
-            <p className="text-xs text-surface-400 mt-0.5">
+            <p className="text-xs text-[#6B7280] mt-0.5">
               {quiz.totalMarks} total marks · {quiz.questions?.length} questions
             </p>
           </div>
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={doAutoSave}
-              className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-bold text-[#5A0D1A] bg-[#FAF8F5] border border-[#EFE5E0] px-3 py-1.5 rounded-xl hover:bg-[#F3EBE6] transition-colors cursor-pointer"
             >
               <Save className="w-3.5 h-3.5" />
-              Save
+              Save Progress
             </button>
             <Timer expiresAt={expiresAt} onExpire={handleTimerExpire} />
           </div>
@@ -357,10 +363,10 @@ export const QuizTakePage = () => {
 
         <div className="flex gap-6 flex-col lg:flex-row">
           {/* Left: Question navigator */}
-          <aside className="lg:w-52 flex-shrink-0">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-700 p-4 sticky top-6">
-              <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 mb-3 uppercase tracking-wider">
-                Questions
+          <aside className="lg:w-52 shrink-0">
+            <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs p-4 sticky top-6">
+              <p className="text-xs font-bold text-[#6B7280] mb-3 uppercase tracking-wider">
+                Question Index
               </p>
               <QuestionNav
                 questions={questions}
@@ -368,10 +374,10 @@ export const QuizTakePage = () => {
                 currentIdx={currentIdx}
                 onSelect={setCurrentIdx}
               />
-              <div className="mt-4 pt-4 border-t border-surface-100 dark:border-surface-800 text-xs text-surface-400">
-                <span className="text-primary-600 dark:text-primary-400 font-semibold">
+              <div className="mt-4 pt-4 border-t border-[#EFE5E0] text-xs text-[#6B7280]">
+                <strong className="text-[#5A0D1A]">
                   {answeredCount}
-                </span>
+                </strong>
                 /{questions.length} answered
               </div>
             </div>
@@ -380,23 +386,15 @@ export const QuizTakePage = () => {
           {/* Right: Current question */}
           <main className="flex-1">
             {currentQ && (
-              <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 space-y-5">
+              <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs p-6 space-y-5">
                 {/* Question header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-[#5A0D1A] uppercase tracking-wider">
                         Question {currentIdx + 1} of {questions.length}
                       </span>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          currentQ.type === 'mcq'
-                            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
-                            : currentQ.type === 'true_false'
-                            ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
-                            : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
-                        }`}
-                      >
+                      <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A]">
                         {currentQ.type === 'mcq'
                           ? 'MCQ'
                           : currentQ.type === 'true_false'
@@ -404,11 +402,11 @@ export const QuizTakePage = () => {
                           : 'Written'}
                       </span>
                     </div>
-                    <p className="text-base font-medium text-surface-900 dark:text-white leading-relaxed">
+                    <p className="text-base font-semibold text-[#111827] leading-relaxed">
                       {currentQ.questionText}
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-surface-500 dark:text-surface-400 whitespace-nowrap">
+                  <span className="text-xs font-bold text-[#6B7280] whitespace-nowrap">
                     {currentQ.marks} mark{currentQ.marks !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -437,11 +435,12 @@ export const QuizTakePage = () => {
                 )}
 
                 {/* Navigation buttons */}
-                <div className="flex items-center justify-between pt-4 border-t border-surface-100 dark:border-surface-800">
+                <div className="flex items-center justify-between pt-4 border-t border-[#EFE5E0]">
                   <button
+                    type="button"
                     disabled={currentIdx === 0}
                     onClick={() => setCurrentIdx((i) => i - 1)}
-                    className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold text-[#4B5563] hover:bg-[#FAF8F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Previous
@@ -449,17 +448,19 @@ export const QuizTakePage = () => {
 
                   {currentIdx < questions.length - 1 ? (
                     <button
+                      type="button"
                       onClick={() => setCurrentIdx((i) => i + 1)}
-                      className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white transition-colors"
+                      className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold bg-[#5A0D1A] hover:bg-[#420812] text-white transition-colors cursor-pointer shadow-xs"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => setShowConfirm(true)}
                       disabled={isSubmitting}
-                      className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold bg-green-600 hover:bg-green-700 text-white transition-colors disabled:opacity-60"
+                      className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-emerald-700 hover:bg-emerald-800 text-white transition-colors disabled:opacity-60 cursor-pointer shadow-xs"
                     >
                       {isSubmitting ? (
                         <Spinner className="w-4 h-4" />
@@ -476,18 +477,19 @@ export const QuizTakePage = () => {
         </div>
 
         {/* Bottom submit bar (always visible) */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-700 px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
-            <AlertTriangle className="w-4 h-4 text-amber-500" />
-            Answers are auto-saved every 30 seconds
+        <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2 text-sm text-[#6B7280]">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            Answers are auto-saved in the background every 30 seconds
           </div>
           <button
+            type="button"
             onClick={() => setShowConfirm(true)}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#5A0D1A] hover:bg-[#420812] text-white transition-colors disabled:opacity-60 cursor-pointer shadow-xs"
           >
             {isSubmitting ? <Spinner className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-            Submit Quiz
+            Submit Assessment
           </button>
         </div>
       </div>

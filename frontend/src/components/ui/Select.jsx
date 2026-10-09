@@ -47,7 +47,7 @@ export const Select = React.forwardRef(({
         ))}
       </select>
       {(error || helperText) && (
-        <p className={`mt-1 text-sm ${error ? 'text-danger-500' : 'text-surface-500 dark:text-surface-400'}`}>
+        <p className={`mt-1 text-xs ${error ? 'text-danger-600 font-medium' : 'text-gray-500'}`}>
           {error || helperText}
         </p>
       )}

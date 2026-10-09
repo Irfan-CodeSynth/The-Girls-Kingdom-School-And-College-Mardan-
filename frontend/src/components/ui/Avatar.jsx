@@ -28,7 +28,7 @@ export const Avatar = ({
         <img
           src={src}
           alt={alt}
-          className={`${sizeMap[size]} rounded-full object-cover border border-surface-200 dark:border-surface-700`}
+          className={`${sizeMap[size]} rounded-full object-cover border border-[#EFE5E0]`}
         />
       ) : (
         <div
@@ -40,8 +40,8 @@ export const Avatar = ({
       {status && (
         <span
           className={`
-            absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-surface-800
-            ${status === 'online' ? 'bg-emerald-500' : 'bg-surface-400'}
+            absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-white
+            ${status === 'online' ? 'bg-emerald-500' : 'bg-[#9CA3AF]'}
           `}
         />
       )}

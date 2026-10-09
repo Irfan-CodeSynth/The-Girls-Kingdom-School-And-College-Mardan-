@@ -28,20 +28,22 @@ export const StudentClassPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+        <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
           My Class
         </h1>
-        <p className="text-sm text-surface-500 dark:text-surface-400">
-          Your current enrollment
+        <p className="mt-1 text-sm text-[#6B7280]">
+          Your current academic cohort enrollment and resources
         </p>
       </div>
 
       {!cls ? (
-        <EmptyState
-          icon={GraduationCap}
-          title="Not Enrolled Yet"
-          message="You are not currently enrolled in any class. Contact the admin to get enrolled."
-        />
+        <Card className="p-8">
+          <EmptyState
+            icon={GraduationCap}
+            title="Not Enrolled Yet"
+            description="You are not currently enrolled in any class cohort. Please contact the college administration."
+          />
+        </Card>
       ) : (
         <>
           {/* Tabs */}
@@ -59,40 +61,40 @@ export const StudentClassPage = () => {
           {activeTab === 'overview' && (
             <Card className="max-w-xl">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-950/60 flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-amber-700" />
                 </div>
-                <Badge variant={cls.status === 'active' ? 'success' : 'secondary'} dot>
-                  {cls.status}
+                <Badge variant={cls.status === 'active' ? 'success' : 'default'} dot>
+                  {cls.status?.toUpperCase()}
                 </Badge>
               </div>
 
-              <h2 className="text-xl font-bold text-surface-900 dark:text-white">
+              <h2 className="font-serif text-2xl font-bold text-[#5A0D1A]">
                 {cls.name}
               </h2>
-              <p className="text-sm font-mono text-surface-500 mt-1">{cls.code}</p>
+              <p className="text-xs font-mono text-[#6B7280] mt-1">{cls.code}</p>
 
               {cls.description && (
-                <p className="text-sm text-surface-600 dark:text-surface-400 mt-3">
+                <p className="text-sm text-[#4B5563] mt-3 leading-relaxed">
                   {cls.description}
                 </p>
               )}
 
-              <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-surface-100 dark:border-surface-700 text-sm text-surface-600 dark:text-surface-400">
+              <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-[#EFE5E0] text-sm text-[#6B7280]">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-primary-500" />
+                  <Users className="w-4 h-4 text-[#5A0D1A]" />
                   <span>
-                    <strong className="text-surface-900 dark:text-white">
+                    <strong className="text-[#111827]">
                       {cls.studentCount ?? 0}
                     </strong>{' '}
-                    classmates
+                    enrolled classmates
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-primary-500" />
+                  <Calendar className="w-4 h-4 text-[#5A0D1A]" />
                   <span>
                     Academic Year:{' '}
-                    <strong className="text-surface-900 dark:text-white">
+                    <strong className="text-[#111827]">
                       {cls.academicYear}
                     </strong>
                   </span>

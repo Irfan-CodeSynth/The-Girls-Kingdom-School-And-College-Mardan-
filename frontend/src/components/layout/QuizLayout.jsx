@@ -3,20 +3,20 @@ import { Outlet } from 'react-router';
 
 export const QuizLayout = () => {
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-surface-100 flex flex-col">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#111827] flex flex-col">
       {/* Minimal clean header */}
-      <header className="h-14 border-b border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 px-6 flex items-center justify-between">
+      <header className="h-14 border-b border-[#EFE5E0] bg-white px-6 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-2.5">
           <img
             src="/logo.png"
             alt="The Girls Kingdom School and College Mardan Logo"
-            className="h-7 w-7 object-contain rounded-full"
+            className="h-8 w-8 object-contain rounded-full shadow-xs"
           />
-          <span className="text-sm font-semibold text-surface-900 dark:text-white">
-            The Girls Kingdom School and College Mardan — Online Quiz System
+          <span className="text-sm font-serif font-bold text-[#111827]">
+            The Girls Kingdom School and College Mardan — Online Quiz Portal
           </span>
         </div>
-        <div className="text-xs text-surface-400">
+        <div className="text-xs text-[#5A0D1A] font-bold tracking-wider uppercase bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">
           Distraction-Free Mode
         </div>
       </header>

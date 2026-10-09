@@ -17,13 +17,13 @@ export const EmptyState = ({
       animate={{ opacity: 1, y: 0 }}
       className={`flex flex-col items-center justify-center text-center p-8 ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-surface-400 dark:text-surface-300 mb-4 shadow-inner">
+      <div className="w-12 h-12 rounded-2xl bg-[#FAF8F5] border border-[#EFE5E0] flex items-center justify-center text-[#5A0D1A] mb-4 shadow-xs">
         <Icon className="w-6 h-6" />
       </div>
-      <h4 className="text-base font-semibold text-surface-900 dark:text-white">
+      <h4 className="text-base font-bold text-[#111827]">
         {title}
       </h4>
-      <p className="mt-1 text-sm text-surface-500 dark:text-surface-400 max-w-sm">
+      <p className="mt-1 text-sm text-[#6B7280] max-w-sm">
         {description}
       </p>
       {actionLabel && onAction && (

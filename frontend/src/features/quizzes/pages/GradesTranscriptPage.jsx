@@ -21,17 +21,10 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────
 const scoreColor = (pct) => {
-  if (pct === null || pct === undefined) return 'text-surface-400';
-  if (pct >= 80) return 'text-emerald-600 dark:text-emerald-400';
-  if (pct >= 50) return 'text-amber-600 dark:text-amber-400';
-  return 'text-danger-600 dark:text-danger-400';
-};
-
-const scoreBg = (pct) => {
-  if (pct === null || pct === undefined) return 'bg-surface-100 dark:bg-surface-700';
-  if (pct >= 80) return 'bg-emerald-50 dark:bg-emerald-950/60';
-  if (pct >= 50) return 'bg-amber-50 dark:bg-amber-950/60';
-  return 'bg-danger-50 dark:bg-danger-950/60';
+  if (pct === null || pct === undefined) return 'text-[#6B7280]';
+  if (pct >= 80) return 'text-emerald-700';
+  if (pct >= 50) return 'text-amber-700';
+  return 'text-red-600';
 };
 
 const statusConfig = {
@@ -48,7 +41,7 @@ const ScoreRing = ({ pct }) => {
   return (
     <div className="relative w-16 h-16 flex-shrink-0">
       <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r={r} fill="none" stroke="#e5e7eb" strokeWidth="6" />
+        <circle cx="32" cy="32" r={r} fill="none" stroke="#EFE5E0" strokeWidth="6" />
         <circle
           cx="32" cy="32" r={r}
           fill="none"
@@ -60,7 +53,7 @@ const ScoreRing = ({ pct }) => {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`text-xs font-bold ${scoreColor(pct)}`}>
+        <span className={`text-xs font-bold font-serif ${scoreColor(pct)}`}>
           {pct ?? '—'}%
         </span>
       </div>
@@ -70,7 +63,7 @@ const ScoreRing = ({ pct }) => {
 
 // ─── Summary stat tile ────────────────────────────────────────
 const StatTile = ({ icon: Icon, label, value, color, loading }) => (
-  <Card className="flex items-center gap-4">
+  <Card className="flex items-center gap-4 bg-white border border-[#EFE5E0] shadow-xs rounded-2xl p-4">
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color}`}>
       <Icon className="w-6 h-6" />
     </div>
@@ -82,8 +75,8 @@ const StatTile = ({ icon: Icon, label, value, color, loading }) => (
         </>
       ) : (
         <>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white">{value ?? '—'}</p>
-          <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
+          <p className="text-2xl font-serif font-bold text-[#111827]">{value ?? '—'}</p>
+          <p className="text-xs uppercase tracking-wider font-semibold text-[#6B7280]">{label}</p>
         </>
       )}
     </div>
@@ -126,11 +119,11 @@ export const GradesTranscriptPage = () => {
     <div className="space-y-8">
       {/* ── Page header ── */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white flex items-center gap-2">
-          <GraduationCap className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+        <h1 className="text-2xl font-serif font-bold tracking-tight text-[#111827] flex items-center gap-2.5">
+          <GraduationCap className="w-6 h-6 text-[#5A0D1A]" />
           Grades &amp; Transcripts
         </h1>
-        <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+        <p className="mt-1 text-sm text-[#6B7280]">
           Your complete academic performance record across all quizzes
         </p>
       </div>
@@ -141,72 +134,72 @@ export const GradesTranscriptPage = () => {
           label="Total Attempts"
           value={summary.totalAttempts}
           icon={ClipboardList}
-          color="bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400"
+          color="bg-blue-50 text-blue-700"
           loading={isPending}
         />
         <StatTile
           label="Quizzes Graded"
           value={summary.totalGraded}
           icon={CheckCircle2}
-          color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+          color="bg-emerald-50 text-emerald-700"
           loading={isPending}
         />
         <StatTile
           label="Avg. Score"
           value={summary.avgPercentage !== null ? `${summary.avgPercentage}%` : '—'}
           icon={BarChart3}
-          color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
+          color="bg-rose-50 text-[#5A0D1A]"
           loading={isPending}
         />
         <StatTile
           label="Passed"
           value={summary.passedCount}
           icon={Award}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
+          color="bg-amber-50 text-amber-700"
           loading={isPending}
         />
       </div>
 
       {/* ── Performance summary bar ── */}
       {!isPending && summary.totalGraded > 0 && (
-        <Card>
-          <div className="flex items-center gap-3 mb-4">
-            <TrendingUp className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-            <h2 className="text-sm font-semibold text-surface-900 dark:text-white">Performance Overview</h2>
+        <Card className="bg-white border border-[#EFE5E0] shadow-xs rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-[#5A0D1A]" />
+            <h2 className="text-sm font-serif font-bold text-[#111827]">Performance Overview</h2>
           </div>
-          <div className="flex flex-wrap gap-6 text-sm">
+          <div className="flex flex-wrap gap-8 text-sm">
             {[
               {
                 label: 'Highest Score',
                 value: summary.highestScore !== null ? `${summary.highestScore}%` : '—',
-                color: 'text-emerald-600 dark:text-emerald-400',
+                color: 'text-emerald-700',
               },
               {
                 label: 'Average Score',
                 value: summary.avgPercentage !== null ? `${summary.avgPercentage}%` : '—',
-                color: 'text-primary-600 dark:text-primary-400',
+                color: 'text-[#5A0D1A]',
               },
               {
                 label: 'Pass Rate',
                 value: summary.totalGraded > 0
                   ? `${Math.round((summary.passedCount / summary.totalGraded) * 100)}%`
                   : '—',
-                color: 'text-amber-600 dark:text-amber-400',
+                color: 'text-amber-700',
               },
             ].map(({ label, value, color }) => (
               <div key={label}>
-                <p className="text-surface-400 text-xs mb-0.5">{label}</p>
-                <p className={`text-xl font-bold ${color}`}>{value}</p>
+                <p className="text-[#6B7280] text-xs font-semibold uppercase tracking-wider mb-0.5">{label}</p>
+                <p className={`text-xl font-serif font-bold ${color}`}>{value}</p>
               </div>
             ))}
           </div>
 
           {/* Mini score distribution */}
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-4 pt-3 border-t border-[#EFE5E0] flex items-center gap-3 flex-wrap">
             {['Excellent (≥80%)', 'Satisfactory (50–79%)', 'Below Pass (<50%)'].map((lbl, i) => {
-              const colors = ['bg-emerald-500', 'bg-amber-400', 'bg-danger-500'];
+              const colors = ['bg-emerald-500', 'bg-amber-400', 'bg-red-500'];
               return (
-                <span key={lbl} className="flex items-center gap-1 text-xs text-surface-400">
+                <span key={lbl} className="flex items-center gap-1.5 text-xs text-[#6B7280] font-medium">
                   <span className={`w-2.5 h-2.5 rounded-full ${colors[i]}`} />
                   {lbl}
                 </span>
@@ -222,15 +215,15 @@ export const GradesTranscriptPage = () => {
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
               filter === f.value
-                ? 'bg-primary-600 text-white'
-                : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+                ? 'bg-[#5A0D1A] text-white shadow-xs'
+                : 'bg-white border border-[#EFE5E0] text-[#6B7280] hover:text-[#111827] hover:bg-[#FAF8F5]'
             }`}
           >
             {f.label}
             {!isPending && f.value !== 'all' && (
-              <span className="ml-1.5 text-xs opacity-70">
+              <span className="ml-1.5 text-[10px] opacity-80">
                 ({attempts.filter((a) => a.status === f.value).length})
               </span>
             )}
@@ -242,7 +235,7 @@ export const GradesTranscriptPage = () => {
       {isPending ? (
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
+            <Skeleton key={i} className="h-24 rounded-2xl" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -261,34 +254,34 @@ export const GradesTranscriptPage = () => {
             <div key={cls?._id || 'unknown'}>
               {/* Class group header */}
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-4 h-4 text-[#5A0D1A]" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-surface-900 dark:text-white">
+                  <p className="text-sm font-serif font-bold text-[#111827]">
                     {cls?.name || 'Unknown Class'}
                   </p>
-                  <p className="text-xs text-surface-400">
+                  <p className="text-xs text-[#6B7280]">
                     {cls?.code} · {cls?.academicYear}
                   </p>
                 </div>
               </div>
 
               {/* Attempt cards for this class */}
-              <div className="space-y-3 ml-11">
+              <div className="space-y-3 ml-0 sm:ml-11">
                 {items.map((attempt) => {
                   const quiz = attempt.quiz;
                   const pct = attempt.status === 'graded' ? (attempt.percentage ?? 0) : null;
                   const cfg = statusConfig[attempt.status] || statusConfig.submitted;
 
                   return (
-                    <Card key={attempt._id} hover className="!p-0 overflow-hidden">
+                    <Card key={attempt._id} hover className="!p-0 overflow-hidden bg-white border border-[#EFE5E0] shadow-xs rounded-2xl">
                       <div className="flex items-center gap-4 p-4">
                         {/* Score ring or pending indicator */}
                         {attempt.status === 'graded' ? (
                           <ScoreRing pct={pct} />
                         ) : (
-                          <div className="w-16 h-16 flex-shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center">
+                          <div className="w-16 h-16 flex-shrink-0 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center">
                             <AlertCircle className="w-7 h-7 text-amber-500" />
                           </div>
                         )}
@@ -296,7 +289,7 @@ export const GradesTranscriptPage = () => {
                         {/* Quiz info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">
+                            <p className="text-sm font-serif font-bold text-[#111827] truncate">
                               {quiz?.title || 'Unknown Quiz'}
                             </p>
                             <Badge variant={cfg.variant} dot size="sm">
@@ -312,15 +305,15 @@ export const GradesTranscriptPage = () => {
                             )}
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-surface-400">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-[#6B7280]">
                             {quiz?.teacher?.fullName && (
-                              <span className="flex items-center gap-1">
-                                <Star className="w-3 h-3" />
+                              <span className="flex items-center gap-1 font-medium">
+                                <Star className="w-3 h-3 text-[#5A0D1A]" />
                                 {quiz.teacher.fullName}
                               </span>
                             )}
                             <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
+                              <Clock className="w-3 h-3 text-[#6B7280]" />
                               {quiz?.duration} min
                             </span>
                             {attempt.submittedAt && (
@@ -335,10 +328,10 @@ export const GradesTranscriptPage = () => {
                           {/* Score bar for graded attempts */}
                           {attempt.status === 'graded' && (
                             <div className="mt-2 flex items-center gap-3">
-                              <div className="flex-1 h-1.5 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden max-w-xs">
+                              <div className="flex-1 h-1.5 bg-[#FAF8F5] border border-[#EFE5E0] rounded-full overflow-hidden max-w-xs">
                                 <div
                                   className={`h-full rounded-full transition-all duration-700 ${
-                                    pct >= 80 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-400' : 'bg-danger-500'
+                                    pct >= 80 ? 'bg-emerald-600' : pct >= 50 ? 'bg-amber-500' : 'bg-red-500'
                                   }`}
                                   style={{ width: `${pct}%` }}
                                 />
@@ -351,7 +344,7 @@ export const GradesTranscriptPage = () => {
 
                           {/* Pending review note */}
                           {attempt.status === 'submitted' && (
-                            <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                            <p className="mt-1 text-xs text-amber-700 font-medium">
                               Auto-graded: {attempt.autoGradedMarks}/{attempt.totalMarks} — awaiting teacher review for written answers
                             </p>
                           )}
@@ -361,7 +354,7 @@ export const GradesTranscriptPage = () => {
                         {attempt.status === 'graded' && quiz?._id && (
                           <Link
                             to={`/student/quizzes/${quiz._id}/result/${attempt._id}`}
-                            className="flex-shrink-0 flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+                            className="flex-shrink-0 flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#5A0D1A] hover:underline"
                           >
                             View
                             <ChevronRight className="w-3.5 h-3.5" />

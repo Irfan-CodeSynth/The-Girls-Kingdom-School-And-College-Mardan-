@@ -271,22 +271,22 @@ export default function PaymentVoucherPrintModal({ expense, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-800 w-full max-w-xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-800/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/60 border border-primary-200/50 dark:border-primary-800/40 flex items-center justify-center">
-              <Receipt className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            <div className="w-9 h-9 rounded-xl bg-[#5A0D1A]/10 border border-[#EFE5E0] flex items-center justify-center">
+              <Receipt className="w-4 h-4 text-[#5A0D1A]" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-surface-900 dark:text-white">Institutional Payment Voucher</h2>
-              <p className="text-xs font-mono text-primary-600 dark:text-primary-400">{expense.voucherNumber}</p>
+              <h2 className="font-serif text-sm font-bold text-[#111827]">Institutional Payment Voucher</h2>
+              <p className="text-xs font-mono font-bold text-[#5A0D1A]">{expense.voucherNumber}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -294,35 +294,35 @@ export default function PaymentVoucherPrintModal({ expense, onClose }) {
 
         {/* Preview Card */}
         <div className="p-6 space-y-4">
-          <div className="bg-surface-50 dark:bg-surface-800/60 border border-surface-200 dark:border-surface-700 rounded-2xl p-4.5 space-y-3.5">
+          <div className="bg-[#FAF8F5] border border-[#EFE5E0] rounded-2xl p-4.5 space-y-3.5">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[10px] font-bold text-surface-400 uppercase tracking-wider">Voucher Identification</p>
-                <p className="text-base font-extrabold font-mono text-primary-700 dark:text-primary-300 mt-0.5">{expense.voucherNumber}</p>
+                <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans">Voucher Identification</p>
+                <p className="text-base font-extrabold font-mono text-[#5A0D1A] mt-0.5">{expense.voucherNumber}</p>
               </div>
               <Badge variant={expense.status === 'paid' ? 'success' : expense.status === 'cancelled' ? 'danger' : 'warning'}>
                 {expense.status?.replace('_', ' ').toUpperCase()}
               </Badge>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-surface-200/60 dark:border-surface-700/60 text-xs">
+            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#EFE5E0] text-xs">
               <div>
-                <p className="text-[10px] text-surface-400 font-bold uppercase tracking-wider">Expense Title</p>
-                <p className="font-bold text-surface-900 dark:text-white mt-0.5 truncate">{expense.title}</p>
+                <p className="text-[10px] text-[#6B7280] font-bold uppercase tracking-wider font-sans">Expense Title</p>
+                <p className="font-bold text-[#111827] mt-0.5 truncate">{expense.title}</p>
               </div>
               <div>
-                <p className="text-[10px] text-surface-400 font-bold uppercase tracking-wider">Paid To (Payee)</p>
-                <p className="font-bold text-surface-900 dark:text-white mt-0.5 truncate">{expense.paidTo}</p>
+                <p className="text-[10px] text-[#6B7280] font-bold uppercase tracking-wider font-sans">Paid To (Payee)</p>
+                <p className="font-bold text-[#111827] mt-0.5 truncate">{expense.paidTo}</p>
               </div>
               <div>
-                <p className="text-[10px] text-surface-400 font-bold uppercase tracking-wider">Disbursed Amount</p>
-                <p className="font-extrabold text-sm text-primary-600 dark:text-primary-400 mt-0.5">
+                <p className="text-[10px] text-[#6B7280] font-bold uppercase tracking-wider font-sans">Disbursed Amount</p>
+                <p className="font-extrabold text-sm text-[#5A0D1A] mt-0.5">
                   PKR {Number(expense.amount).toLocaleString('en-PK')}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] text-surface-400 font-bold uppercase tracking-wider">Date of Expense</p>
-                <p className="font-medium text-surface-700 dark:text-surface-300 mt-0.5">
+                <p className="text-[10px] text-[#6B7280] font-bold uppercase tracking-wider font-sans">Date of Expense</p>
+                <p className="font-semibold text-[#111827] mt-0.5">
                   {expense.expenseDate
                     ? new Date(expense.expenseDate).toLocaleDateString('en-PK', {
                         day: '2-digit',
@@ -334,22 +334,22 @@ export default function PaymentVoucherPrintModal({ expense, onClose }) {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-surface-900 rounded-xl p-3 border border-surface-200/70 dark:border-surface-700/70">
-              <p className="text-[10px] font-bold text-surface-400 uppercase tracking-wider">Amount in Words</p>
-              <p className="text-xs font-semibold italic text-primary-700 dark:text-primary-300 mt-0.5">{amountInWords}</p>
+            <div className="bg-white rounded-xl p-3 border border-[#EFE5E0]">
+              <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans">Amount in Words</p>
+              <p className="text-xs font-bold italic text-[#5A0D1A] mt-0.5">{amountInWords}</p>
             </div>
           </div>
 
           <div className="flex gap-2.5 pt-1">
             <button
               onClick={onClose}
-              className="flex-1 py-2 text-xs font-semibold text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 rounded-xl transition-colors cursor-pointer"
+              className="flex-1 py-2 text-xs font-bold text-[#111827] bg-white border border-[#EFE5E0] hover:bg-[#FAF8F5] rounded-xl transition-colors cursor-pointer"
             >
               Close
             </button>
             <button
               onClick={handlePrint}
-              className="flex-1 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+              className="flex-1 py-2 text-xs font-bold text-white bg-[#5A0D1A] hover:bg-[#420812] rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               Print Official Voucher

@@ -45,21 +45,21 @@ function formatBytes(bytes, decimals = 1) {
 function getFileTypeMeta(typeOrExt = '') {
   const ext = (typeOrExt || '').toLowerCase().replace('.', '');
   if (['pdf'].includes(ext)) {
-    return { label: 'PDF', bg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900/50' };
+    return { label: 'PDF', bg: 'bg-rose-50 text-rose-700 border-rose-200' };
   }
   if (['doc', 'docx'].includes(ext)) {
-    return { label: 'WORD', bg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/50' };
+    return { label: 'WORD', bg: 'bg-blue-50 text-blue-700 border-blue-200' };
   }
   if (['ppt', 'pptx'].includes(ext)) {
-    return { label: 'PPT', bg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50' };
+    return { label: 'PPT', bg: 'bg-amber-50 text-amber-700 border-amber-200' };
   }
   if (['xls', 'xlsx', 'csv'].includes(ext)) {
-    return { label: 'SHEET', bg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/50' };
+    return { label: 'SHEET', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
   }
   if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext)) {
-    return { label: 'IMAGE', bg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-900/50' };
+    return { label: 'IMAGE', bg: 'bg-purple-50 text-purple-700 border-purple-200' };
   }
-  return { label: ext.toUpperCase() || 'DOC', bg: 'bg-surface-500/10 text-surface-600 dark:text-surface-400 border-surface-200 dark:border-surface-700' };
+  return { label: ext.toUpperCase() || 'DOC', bg: 'bg-[#FAF8F5] text-[#5A0D1A] border-[#EFE5E0]' };
 }
 
 // Derive thumbnail from a YouTube URL or ID
@@ -280,10 +280,10 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
       title={isEdit ? 'Edit Course Material' : 'Add Course Material'}
       size="lg"
     >
-      <div className="space-y-5">
+      <div className="space-y-5 font-sans">
 
         {/* ── Top-level Tabs: Video / Document ────────────────── */}
-        <div className="flex gap-2 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl">
+        <div className="flex gap-2 p-1.5 bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl">
           {[
             { id: 'video', label: 'Video Lecture', icon: <Youtube className="w-4 h-4" /> },
             { id: 'document', label: 'Lecture Notes / Docs', icon: <FileText className="w-4 h-4" /> },
@@ -297,10 +297,10 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                   set('category', 'lecture_notes');
                 }
               }}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 topTab === t.id
-                  ? 'bg-white dark:bg-surface-700 text-primary-700 dark:text-primary-400 shadow-sm'
-                  : 'text-surface-500 hover:text-surface-900 dark:hover:text-white'
+                  ? 'bg-[#5A0D1A] text-white shadow-xs'
+                  : 'text-[#6B7280] hover:text-[#111827] hover:bg-white/60'
               }`}
             >
               {t.icon}{t.label}
@@ -333,27 +333,27 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
         {topTab === 'video' && (
           <div className="space-y-4">
             {/* Provider sub-tabs */}
-            <div className="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden">
-              <div className="flex border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+            <div className="border border-[#EFE5E0] bg-white rounded-xl overflow-hidden shadow-2xs">
+              <div className="flex border-b border-[#EFE5E0] bg-[#FAF8F5]">
                 {PROVIDER_TABS.map((pt) => (
                   <button
                     key={pt.id}
                     type="button"
                     onClick={() => setProviderTab(pt.id)}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-all border-b-2 ${
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold transition-all border-b-2 cursor-pointer ${
                       providerTab === pt.id
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400 bg-white dark:bg-surface-700'
-                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                        ? 'border-[#5A0D1A] text-[#5A0D1A] bg-white'
+                        : 'border-transparent text-[#6B7280] hover:text-[#111827]'
                     }`}
                   >
                     {pt.icon}
                     {pt.label}
                     {pt.live ? (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-semibold">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
                         LIVE
                       </span>
                     ) : (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-semibold">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-50 text-amber-700 border border-amber-200 font-bold">
                         SOON
                       </span>
                     )}
@@ -361,7 +361,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                 ))}
               </div>
 
-              <div className="p-4 space-y-4">
+              <div className="p-4 space-y-4 bg-white">
                 {/* ── YouTube (LIVE) ─────────────────────────────── */}
                 {providerTab === 'youtube' && (
                   <>
@@ -383,7 +383,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
 
                     {/* Live thumbnail preview */}
                     {ytPreview ? (
-                      <div className="rounded-xl overflow-hidden border border-surface-200 dark:border-surface-700 relative group">
+                      <div className="rounded-xl overflow-hidden border border-[#EFE5E0] relative group bg-[#FAF8F5]">
                         <img
                           src={ytPreview.thumb}
                           alt="YouTube thumbnail"
@@ -397,15 +397,15 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                             <Youtube className="w-3.5 h-3.5" /> Video Preview Available
                           </span>
                         </div>
-                        <div className="p-3 bg-surface-900 text-white flex items-center justify-between">
-                          <span className="text-xs text-surface-300 font-mono">ID: {ytPreview.id}</span>
-                          <span className="text-xs text-emerald-400 flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Valid YouTube Link
+                        <div className="p-3 bg-[#FAF8F5] border-t border-[#EFE5E0] text-[#111827] flex items-center justify-between">
+                          <span className="text-xs text-[#6B7280] font-mono">ID: {ytPreview.id}</span>
+                          <span className="text-xs text-emerald-700 font-bold flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Valid YouTube Link
                           </span>
                         </div>
                       </div>
                     ) : form.videoUrl.trim() ? (
-                      <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                      <p className="text-xs text-amber-600 flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5" /> Could not extract YouTube video ID from URL.
                       </p>
                     ) : null}
@@ -415,13 +415,13 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                 {/* ── Cloudflare Stream (MOCKUP) ─────────────────── */}
                 {providerTab === 'cloudflare' && (
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 flex items-start gap-3">
-                      <Cloud className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                    <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 flex items-start gap-3">
+                      <Cloud className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                        <p className="text-sm font-bold text-amber-900">
                           Cloudflare Stream — Edge Global Video — Ready for Activation
                         </p>
-                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                        <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
                           Cloudflare Stream provides ad-free, high-performance adaptive bitrate streaming. Save your credentials now; they will become active once your Cloudflare API key is configured.
                         </p>
                       </div>
@@ -440,7 +440,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                       onChange={(e) => set('cfSubdomain', e.target.value)}
                     />
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                         🔒 Activation Pending — Credentials Saved for Future Use
                       </span>
                     </div>
@@ -450,13 +450,13 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                 {/* ── Vimeo Pro (MOCKUP) ─────────────────────────── */}
                 {providerTab === 'vimeo' && (
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/30 p-4 flex items-start gap-3">
+                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-4 flex items-start gap-3">
                       <span className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-xs font-bold mt-0.5 shrink-0">V</span>
                       <div>
-                        <p className="text-sm font-semibold text-indigo-800 dark:text-indigo-300">
+                        <p className="text-sm font-bold text-indigo-900">
                           Vimeo Pro — Enterprise Cloud — Ready for Activation
                         </p>
-                        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+                        <p className="text-xs text-indigo-700 mt-0.5 leading-relaxed">
                           Vimeo Pro offers ad-free hosting, password protection, and custom privacy settings ideal for academic content. Save your credentials now to activate later.
                         </p>
                       </div>
@@ -476,7 +476,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                       helperText="Only required if the video has privacy settings enabled."
                     />
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-800 border border-indigo-200">
                         🔒 Activation Pending — Credentials Saved for Future Use
                       </span>
                     </div>
@@ -491,29 +491,29 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
         {topTab === 'document' && (
           <div className="space-y-4">
             {/* Sub-mode selector: Upload File vs Document Link */}
-            <div className="flex rounded-xl bg-surface-100 dark:bg-surface-800 p-1 gap-1">
+            <div className="flex rounded-xl bg-[#FAF8F5] border border-[#EFE5E0] p-1 gap-1">
               <button
                 type="button"
                 onClick={() => setDocMode('upload')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
                   docMode === 'upload'
-                    ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
-                    : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
+                    ? 'bg-[#5A0D1A] text-white shadow-xs'
+                    : 'text-[#6B7280] hover:text-[#111827]'
                 }`}
               >
-                <Upload className="w-3.5 h-3.5 text-primary-500" />
+                <Upload className="w-3.5 h-3.5" />
                 Upload Document File
               </button>
               <button
                 type="button"
                 onClick={() => setDocMode('link')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
                   docMode === 'link'
-                    ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
-                    : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
+                    ? 'bg-[#5A0D1A] text-white shadow-xs'
+                    : 'text-[#6B7280] hover:text-[#111827]'
                 }`}
               >
-                <Link2 className="w-3.5 h-3.5 text-primary-500" />
+                <Link2 className="w-3.5 h-3.5" />
                 Paste Document Link
               </button>
             </div>
@@ -532,27 +532,27 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                 />
 
                 {isReadingFile ? (
-                  <div className="border border-surface-200 dark:border-surface-700 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-surface-50 dark:bg-surface-800/40">
-                    <Loader2 className="w-8 h-8 text-primary-600 animate-spin mb-2" />
-                    <p className="text-sm font-semibold text-surface-900 dark:text-white">Processing Document...</p>
-                    <p className="text-xs text-surface-500 mt-1">Preparing file for secure portal storage</p>
+                  <div className="border border-[#EFE5E0] rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-[#FAF8F5]">
+                    <Loader2 className="w-8 h-8 text-[#5A0D1A] animate-spin mb-2" />
+                    <p className="text-sm font-bold text-[#111827]">Processing Document...</p>
+                    <p className="text-xs text-[#6B7280] mt-1">Preparing file for secure portal storage</p>
                   </div>
                 ) : form.docUrl && form.docName ? (
-                  <div className="p-4 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/40 flex items-center justify-between gap-3">
+                  <div className="p-4 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-xs border shrink-0 ${fileTypeMeta.bg}`}>
                         {fileTypeMeta.label}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
+                        <p className="text-sm font-bold text-[#111827] truncate">
                           {form.docName}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           {form.docSizeFormatted && (
-                            <span className="text-xs text-surface-500">{form.docSizeFormatted}</span>
+                            <span className="text-xs text-[#6B7280]">{form.docSizeFormatted}</span>
                           )}
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Ready for upload
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Ready for upload
                           </span>
                         </div>
                       </div>
@@ -569,7 +569,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                       <button
                         type="button"
                         onClick={handleRemoveFile}
-                        className="p-1.5 rounded-lg text-surface-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition"
+                        className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 transition cursor-pointer"
                         title="Remove file"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -584,21 +584,21 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
                     onClick={() => fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-2xl p-7 text-center cursor-pointer transition flex flex-col items-center justify-center ${
                       isDragging
-                        ? 'border-primary-500 bg-primary-50/60 dark:bg-primary-950/30 ring-2 ring-primary-500/20'
-                        : 'border-surface-300 dark:border-surface-700 hover:border-primary-500 hover:bg-surface-50 dark:hover:bg-surface-800/40'
+                        ? 'border-[#5A0D1A] bg-[#5A0D1A]/5 ring-2 ring-[#5A0D1A]/20'
+                        : 'border-[#EFE5E0] hover:border-[#5A0D1A]/40 bg-[#FAF8F5] hover:bg-[#FAF8F5]/80'
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-primary-100 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-[#5A0D1A]/10 text-[#5A0D1A] flex items-center justify-center mb-3">
                       <UploadCloud className="w-6 h-6" />
                     </div>
-                    <p className="text-sm font-semibold text-surface-900 dark:text-white">
+                    <p className="text-sm font-bold text-[#111827]">
                       Click to upload document or drag and drop
                     </p>
-                    <p className="text-xs text-surface-500 mt-1 max-w-sm">
+                    <p className="text-xs text-[#6B7280] mt-1 max-w-sm">
                       PDF, Word (DOCX/DOC), PowerPoint (PPTX/PPT), Excel, or TXT up to 20MB
                     </p>
-                    <span className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface-200/70 dark:bg-surface-700 text-surface-700 dark:text-surface-300">
-                      <Paperclip className="w-3 h-3" /> Select file from computer
+                    <span className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-[#EFE5E0] text-[#5A0D1A] shadow-2xs">
+                      <Paperclip className="w-3 h-3 text-[#5A0D1A]" /> Select file from computer
                     </span>
                   </div>
                 )}
@@ -637,18 +637,18 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
         )}
 
         {/* ── Publish toggle ───────────────────────────────────── */}
-        <div className="flex items-center justify-between p-3 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/40">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between p-3.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5]">
+          <div className="flex items-center gap-2.5">
             {form.isPublished ? (
-              <Eye className="w-4 h-4 text-emerald-500" />
+              <Eye className="w-4 h-4 text-emerald-600" />
             ) : (
-              <EyeOff className="w-4 h-4 text-surface-400" />
+              <EyeOff className="w-4 h-4 text-[#9CA3AF]" />
             )}
             <div>
-              <p className="text-sm font-medium text-surface-900 dark:text-white">
+              <p className="text-xs sm:text-sm font-bold text-[#111827]">
                 {form.isPublished ? 'Published — visible to students' : 'Draft — only visible to you'}
               </p>
-              <p className="text-xs text-surface-500">Students will be notified when published.</p>
+              <p className="text-[11px] text-[#6B7280]">Students will be notified when published.</p>
             </div>
           </div>
           <button
@@ -656,12 +656,12 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
             role="switch"
             aria-checked={form.isPublished}
             onClick={() => set('isPublished', !form.isPublished)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              form.isPublished ? 'bg-emerald-500' : 'bg-surface-300 dark:bg-surface-600'
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+              form.isPublished ? 'bg-emerald-600' : 'bg-gray-300'
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition-transform ${
                 form.isPublished ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
@@ -669,7 +669,7 @@ export const MaterialUploadModal = ({ isOpen, onClose, onSubmit, loading = false
         </div>
 
         {/* ── Actions ─────────────────────────────────────────── */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-surface-200 dark:border-surface-700">
+        <div className="flex justify-end gap-3 pt-3 border-t border-[#EFE5E0]">
           <Button variant="ghost" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

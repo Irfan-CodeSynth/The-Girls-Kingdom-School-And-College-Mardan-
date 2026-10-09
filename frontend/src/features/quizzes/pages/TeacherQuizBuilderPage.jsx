@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import quizApi from '../api/quizApi';
 import classApi from '../../classes/api/classApi';
-import { Card, Button, Input, Spinner, Badge } from '../../../components/ui';
+import { Card, Button, Spinner } from '../../../components/ui';
 import {
   ChevronLeft,
   Plus,
@@ -64,13 +64,13 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
   };
 
   return (
-    <Card className="border border-surface-200 dark:border-surface-700">
+    <Card className="border border-[#EFE5E0]">
       {/* Question Header */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <GripVertical className="w-4 h-4 text-surface-300 dark:text-surface-600" />
-          <span className="text-sm font-semibold text-surface-500 dark:text-surface-400">
-            Q{index + 1}
+          <GripVertical className="w-4 h-4 text-[#9CA3AF]" />
+          <span className="text-sm font-bold text-[#5A0D1A]">
+            Question {index + 1}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
                 correctAnswer: t === 'true_false' ? 'true' : undefined,
               });
             }}
-            className="text-xs border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="text-xs border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] font-medium"
           >
             {QUESTION_TYPES.map((t) => (
               <option key={t.value} value={t.value}>{t.label}</option>
@@ -97,13 +97,14 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
             step="0.5"
             value={question.marks}
             onChange={(e) => updateField('marks', parseFloat(e.target.value))}
-            className="w-16 text-xs border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-16 text-xs border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] font-bold"
             title="Marks"
           />
-          <span className="text-xs text-surface-400">marks</span>
+          <span className="text-xs text-[#6B7280]">marks</span>
           <button
+            type="button"
             onClick={onRemove}
-            className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+            className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -112,9 +113,9 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
 
       {/* Question Text */}
       <textarea
-        className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 mb-4"
+        className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] mb-4"
         rows={2}
-        placeholder="Enter your question…"
+        placeholder="Enter your question prompt…"
         value={question.questionText}
         onChange={(e) => updateField('questionText', e.target.value)}
       />
@@ -122,31 +123,33 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
       {/* MCQ Options */}
       {question.type === 'mcq' && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-2">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-2">
             Options — click ◯ to mark the correct answer
           </p>
           {question.options.map((opt, i) => (
             <div key={i} className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => setCorrectOption(i)}
-                className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors cursor-pointer ${
                   opt.isCorrect
-                    ? 'border-green-500 bg-green-500'
-                    : 'border-surface-300 dark:border-surface-600 hover:border-green-400'
+                    ? 'border-emerald-600 bg-emerald-600 text-white'
+                    : 'border-[#D1D5DB] hover:border-emerald-500 bg-white'
                 }`}
               >
-                {opt.isCorrect && <CheckCircle2 className="w-3 h-3 text-white" />}
+                {opt.isCorrect && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
               </button>
               <input
-                className="flex-1 px-3 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-sm text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="flex-1 px-3 py-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] focus:bg-white text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
                 placeholder={`Option ${i + 1}`}
                 value={opt.text}
                 onChange={(e) => updateOption(i, 'text', e.target.value)}
               />
               {question.options.length > 2 && (
                 <button
+                  type="button"
                   onClick={() => removeOption(i)}
-                  className="text-surface-400 hover:text-red-400 transition-colors p-1"
+                  className="text-gray-400 hover:text-rose-600 transition-colors p-1 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -155,8 +158,9 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
           ))}
           {question.options.length < 6 && (
             <button
+              type="button"
               onClick={addOption}
-              className="flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-400 hover:underline mt-1"
+              className="flex items-center gap-1.5 text-xs text-[#5A0D1A] font-bold hover:underline mt-1 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" /> Add option
             </button>
@@ -170,11 +174,12 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
           {['true', 'false'].map((val) => (
             <button
               key={val}
+              type="button"
               onClick={() => updateField('correctAnswer', val)}
-              className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-medium capitalize transition-colors ${
+              className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-bold capitalize transition-colors cursor-pointer ${
                 question.correctAnswer === val
-                  ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                  : 'border-surface-200 dark:border-surface-700 text-surface-500 hover:border-green-300'
+                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800'
+                  : 'border-[#EFE5E0] text-[#6B7280] hover:border-emerald-300'
               }`}
             >
               {question.correctAnswer === val ? <CheckCircle2 className="w-4 h-4 inline mr-1" /> : <Circle className="w-4 h-4 inline mr-1" />}
@@ -187,13 +192,13 @@ const QuestionBuilder = ({ question, index, onChange, onRemove }) => {
       {/* Comprehensive */}
       {question.type === 'comprehensive' && (
         <div>
-          <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-2">
-            Model Answer (optional — for teacher reference only)
+          <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-2">
+            Model Answer (optional — for instructor reference only)
           </p>
           <textarea
-            className="w-full px-3 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-sm text-surface-900 dark:text-surface-100 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] focus:bg-white text-sm text-[#111827] resize-none focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
             rows={3}
-            placeholder="Enter model answer…"
+            placeholder="Enter model rubric or key answer points…"
             value={question.modelAnswer || ''}
             onChange={(e) => updateField('modelAnswer', e.target.value)}
           />
@@ -404,7 +409,7 @@ export const TeacherQuizBuilderPage = () => {
   if (isEdit && loadingExisting) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner className="w-8 h-8" />
+        <Spinner className="w-8 h-8 text-[#5A0D1A]" />
       </div>
     );
   }
@@ -416,15 +421,15 @@ export const TeacherQuizBuilderPage = () => {
         <div className="flex items-center gap-3">
           <Link
             to="/teacher/quizzes"
-            className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-500 transition-colors"
+            className="p-2 rounded-xl bg-white border border-[#EFE5E0] hover:bg-[#FAF8F5] text-[#5A0D1A] transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-surface-900 dark:text-white">
-              {isEdit ? 'Edit Quiz' : 'New Quiz'}
+            <h1 className="font-serif text-2xl font-bold text-[#5A0D1A]">
+              {isEdit ? 'Edit Assessment' : 'New Assessment Quiz'}
             </h1>
-            <p className="text-sm text-surface-400">
+            <p className="text-xs text-[#6B7280]">
               {totalMarks} total mark{totalMarks !== 1 ? 's' : ''} · {questions.length} question{questions.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -432,18 +437,19 @@ export const TeacherQuizBuilderPage = () => {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            icon={Save}
+            leftIcon={<Save className="w-4 h-4" />}
             onClick={() => handleSave(false)}
-            isLoading={isSaving}
+            loading={isSaving}
             disabled={isSaving}
           >
             Save Draft
           </Button>
           {!isEdit && (
             <Button
-              icon={Globe}
+              variant="primary"
+              leftIcon={<Globe className="w-4 h-4" />}
               onClick={() => handleSave(true)}
-              isLoading={isSaving}
+              loading={isSaving}
               disabled={isSaving}
             >
               Save & Publish
@@ -453,31 +459,31 @@ export const TeacherQuizBuilderPage = () => {
       </div>
 
       {/* Quiz Metadata */}
-      <Card>
-        <h2 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-4">
-          Quiz Details
+      <Card className="border-[#EFE5E0]">
+        <h2 className="text-sm font-bold text-[#111827] uppercase tracking-wider mb-4">
+          Quiz Configuration
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
               Quiz Title *
             </label>
             <input
-              className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="e.g. Midterm Examination — CS Fundamentals"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
+              placeholder="e.g. Midterm Examination — Biology Section A"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
-              Description
+            <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
+              Description / Instructions
             </label>
             <textarea
-              className="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3.5 py-2 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               rows={2}
-              placeholder="What does this quiz cover?"
+              placeholder="Guidelines for students attempting this quiz…"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -485,15 +491,15 @@ export const TeacherQuizBuilderPage = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
                 Class *
               </label>
               <select
                 value={classId}
                 onChange={(e) => setClassId(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               >
-                <option value="">Select class…</option>
+                <option value="">Select class cohort…</option>
                 {classes.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.name} ({c.code})
@@ -502,7 +508,7 @@ export const TeacherQuizBuilderPage = () => {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
                 Duration (minutes) *
               </label>
               <input
@@ -511,11 +517,11 @@ export const TeacherQuizBuilderPage = () => {
                 max="360"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
                 Passing Marks
               </label>
               <input
@@ -523,11 +529,11 @@ export const TeacherQuizBuilderPage = () => {
                 min="0"
                 value={passingMarks}
                 onChange={(e) => setPassingMarks(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1.5 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 block">
                 Max Attempts
               </label>
               <input
@@ -536,20 +542,20 @@ export const TeacherQuizBuilderPage = () => {
                 max="10"
                 value={maxAttempts}
                 onChange={(e) => setMaxAttempts(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
               />
             </div>
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={shuffleQuestions}
               onChange={(e) => setShuffleQuestions(e.target.checked)}
-              className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+              className="rounded border-[#EFE5E0] text-[#5A0D1A] focus:ring-[#5A0D1A]"
             />
-            <span className="text-sm text-surface-700 dark:text-surface-300">
-              Shuffle questions for each student
+            <span className="text-sm font-medium text-[#374151]">
+              Shuffle questions randomly for each student
             </span>
           </label>
         </div>
@@ -558,10 +564,10 @@ export const TeacherQuizBuilderPage = () => {
       {/* Questions */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-surface-700 dark:text-surface-300">
+          <h2 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
             Questions ({questions.length})
           </h2>
-          <span className="text-xs text-surface-400">Total: {totalMarks} marks</span>
+          <span className="text-xs text-[#5A0D1A] font-bold">Total: {totalMarks} marks</span>
         </div>
 
         {questions.map((q, idx) => (
@@ -579,8 +585,9 @@ export const TeacherQuizBuilderPage = () => {
           {QUESTION_TYPES.map((t) => (
             <button
               key={t.value}
+              type="button"
               onClick={() => addQuestion(t.value)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-dashed border-surface-300 dark:border-surface-600 text-xs font-medium text-surface-500 hover:border-primary-400 hover:text-primary-600 dark:hover:border-primary-600 dark:hover:text-primary-400 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-2 border-dashed border-[#EFE5E0] bg-[#FAF8F5] text-xs font-bold text-[#5A0D1A] hover:border-[#5A0D1A] hover:bg-white transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               Add {t.label}
@@ -591,11 +598,23 @@ export const TeacherQuizBuilderPage = () => {
 
       {/* Bottom save bar */}
       <div className="flex justify-end gap-3 pt-2 pb-8">
-        <Button variant="outline" icon={Save} onClick={() => handleSave(false)} isLoading={isSaving} disabled={isSaving}>
+        <Button
+          variant="outline"
+          leftIcon={<Save className="w-4 h-4" />}
+          onClick={() => handleSave(false)}
+          loading={isSaving}
+          disabled={isSaving}
+        >
           Save Draft
         </Button>
         {!isEdit && (
-          <Button icon={Globe} onClick={() => handleSave(true)} isLoading={isSaving} disabled={isSaving}>
+          <Button
+            variant="primary"
+            leftIcon={<Globe className="w-4 h-4" />}
+            onClick={() => handleSave(true)}
+            loading={isSaving}
+            disabled={isSaving}
+          >
             Save & Publish
           </Button>
         )}

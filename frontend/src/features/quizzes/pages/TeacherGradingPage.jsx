@@ -39,7 +39,7 @@ export const TeacherGradingPage = () => {
         teacherFeedback: feedback,
       }),
     onSuccess: (_, vars) => {
-      toast.success(`Q answered graded: ${vars.marks} marks`);
+      toast.success(`Question graded: ${vars.marks} marks`);
       queryClient.invalidateQueries({ queryKey: ['attempt', attemptId] });
       queryClient.invalidateQueries({ queryKey: ['quizAttempts', quizId] });
     },
@@ -62,7 +62,7 @@ export const TeacherGradingPage = () => {
 
   if (!attempt) {
     return (
-      <div className="text-center py-16 text-surface-400">Attempt not found.</div>
+      <div className="text-center py-16 text-[#6B7280]">Attempt not found.</div>
     );
   }
 
@@ -95,7 +95,7 @@ export const TeacherGradingPage = () => {
       {/* Back */}
       <Link
         to={`/teacher/quizzes/${quizId}/attempts`}
-        className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-primary-600 transition-colors"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
       >
         <ChevronLeft className="w-4 h-4" />
         Back to Attempts
@@ -103,45 +103,45 @@ export const TeacherGradingPage = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+        <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
           Grade Attempt
         </h1>
-        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+        <p className="text-sm text-[#6B7280] mt-1">
           {quiz?.title}
         </p>
       </div>
 
       {/* Student Info + Score Summary */}
-      <Card className="flex flex-wrap gap-4 items-center justify-between">
+      <Card className="flex flex-wrap gap-4 items-center justify-between border-[#EFE5E0]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
-            <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+          <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center">
+            <User className="w-5 h-5 text-amber-700" />
           </div>
           <div>
-            <p className="font-semibold text-surface-900 dark:text-white text-sm">
+            <p className="font-bold text-[#111827] text-sm">
               {attempt.student?.fullName || '—'}
             </p>
-            <p className="text-xs text-surface-400">{attempt.student?.email}</p>
+            <p className="text-xs text-[#6B7280]">{attempt.student?.email}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="text-center">
-            <p className="font-bold text-surface-900 dark:text-white">
+            <p className="font-bold text-[#111827]">
               {attempt.autoGradedMarks}
             </p>
-            <p className="text-xs text-surface-400">Auto-graded</p>
+            <p className="text-xs text-[#6B7280]">Auto-graded</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-primary-600 dark:text-primary-400">
+            <p className="font-bold text-[#5A0D1A]">
               {attempt.manualGradedMarks ?? 0}
             </p>
-            <p className="text-xs text-surface-400">Manual</p>
+            <p className="text-xs text-[#6B7280]">Manual</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-surface-900 dark:text-white">
+            <p className="font-bold text-[#111827]">
               {attempt.obtainedMarks} / {attempt.totalMarks}
             </p>
-            <p className="text-xs text-surface-400">Total</p>
+            <p className="text-xs text-[#6B7280]">Total</p>
           </div>
           <Badge
             variant={attempt.status === 'graded' ? 'success' : 'warning'}
@@ -163,32 +163,32 @@ export const TeacherGradingPage = () => {
         return (
           <Card
             key={q._id}
-            className={`border-l-4 ${
+            className={`border border-[#EFE5E0] border-l-4 ${
               isComp
                 ? alreadyGraded
-                  ? 'border-l-green-500'
-                  : 'border-l-amber-400'
+                  ? 'border-l-emerald-600'
+                  : 'border-l-amber-500'
                 : ans.isCorrect
-                ? 'border-l-green-500'
-                : 'border-l-red-400'
+                ? 'border-l-emerald-600'
+                : 'border-l-rose-500'
             }`}
           >
             {/* Question header */}
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold text-surface-400">
+                <span className="text-xs font-bold text-[#5A0D1A]">
                   Q{idx + 1}
                 </span>
                 <Badge variant="secondary" className="text-xs">
                   {QUESTION_TYPE_LABELS[q.type]}
                 </Badge>
               </div>
-              <span className="text-xs font-medium text-surface-500">
+              <span className="text-xs font-bold text-[#6B7280]">
                 Max: {q.marks} mark{q.marks !== 1 ? 's' : ''}
               </span>
             </div>
 
-            <p className="text-sm font-medium text-surface-900 dark:text-white mb-4 leading-relaxed">
+            <p className="text-sm font-semibold text-[#111827] mb-4 leading-relaxed">
               {q.questionText}
             </p>
 
@@ -201,24 +201,24 @@ export const TeacherGradingPage = () => {
                   return (
                     <div
                       key={opt._id}
-                      className={`text-xs px-3 py-2 rounded-lg border ${
+                      className={`text-xs px-3 py-2 rounded-xl border ${
                         opt.isCorrect
-                          ? 'bg-green-50 dark:bg-green-900/30 border-green-300 text-green-800 dark:text-green-200'
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-medium'
                           : wasSelected
-                          ? 'bg-red-50 dark:bg-red-900/30 border-red-300 text-red-700'
-                          : 'bg-surface-50 dark:bg-surface-800 border-surface-200 text-surface-500'
+                          ? 'bg-rose-50 border-rose-300 text-rose-700 font-medium'
+                          : 'bg-[#FAF8F5] border-[#EFE5E0] text-[#6B7280]'
                       }`}
                     >
                       {opt.text}
-                      {opt.isCorrect && <span className="ml-2 text-green-600">(Correct)</span>}
+                      {opt.isCorrect && <span className="ml-2 text-emerald-700 font-bold">(Correct)</span>}
                       {wasSelected && !opt.isCorrect && (
-                        <span className="ml-2 text-red-500">(Student's answer)</span>
+                        <span className="ml-2 text-rose-700 font-bold">(Student's answer)</span>
                       )}
                     </div>
                   );
                 })}
-                <p className="text-xs text-surface-400 mt-2">
-                  Auto-graded: {ans.marksObtained ?? 0}/{q.marks} marks
+                <p className="text-xs text-[#6B7280] mt-2">
+                  Auto-graded: <strong className="text-[#111827]">{ans.marksObtained ?? 0}/{q.marks}</strong> marks
                 </p>
               </div>
             )}
@@ -233,12 +233,12 @@ export const TeacherGradingPage = () => {
                     return (
                       <span
                         key={val}
-                        className={`px-4 py-2 rounded-lg text-sm border capitalize ${
+                        className={`px-4 py-2 rounded-xl text-sm border font-medium capitalize ${
                           isCorrect
-                            ? 'bg-green-50 dark:bg-green-900/30 border-green-300 text-green-700'
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
                             : wasSelected
-                            ? 'bg-red-50 dark:bg-red-900/30 border-red-300 text-red-600'
-                            : 'bg-surface-50 dark:bg-surface-800 border-surface-200 text-surface-400'
+                            ? 'bg-rose-50 border-rose-300 text-rose-700'
+                            : 'bg-[#FAF8F5] border-[#EFE5E0] text-[#6B7280]'
                         }`}
                       >
                         {val}
@@ -248,8 +248,8 @@ export const TeacherGradingPage = () => {
                     );
                   })}
                 </div>
-                <p className="text-xs text-surface-400">
-                  Auto-graded: {ans.marksObtained ?? 0}/{q.marks} marks
+                <p className="text-xs text-[#6B7280]">
+                  Auto-graded: <strong className="text-[#111827]">{ans.marksObtained ?? 0}/{q.marks}</strong> marks
                 </p>
               </div>
             )}
@@ -258,39 +258,39 @@ export const TeacherGradingPage = () => {
             {isComp && (
               <div className="space-y-4">
                 {/* Student's answer */}
-                <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-surface-400 mb-2 flex items-center gap-1">
-                    <BookOpen className="w-3.5 h-3.5" /> Student's Answer:
+                <div className="bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-2 flex items-center gap-1">
+                    <BookOpen className="w-3.5 h-3.5 text-[#5A0D1A]" /> Student's Answer:
                   </p>
                   {ans.writtenAnswer ? (
-                    <p className="text-sm text-surface-800 dark:text-surface-200 leading-relaxed">
+                    <p className="text-sm text-[#111827] leading-relaxed">
                       {ans.writtenAnswer}
                     </p>
                   ) : (
-                    <p className="text-sm text-surface-400 italic">No answer provided</p>
+                    <p className="text-sm text-[#9CA3AF] italic">No answer provided</p>
                   )}
                 </div>
 
                 {/* Model answer hint */}
                 {q.modelAnswer && (
-                  <details className="text-xs text-surface-500">
-                    <summary className="cursor-pointer hover:text-primary-600 transition-colors font-medium">
+                  <details className="text-xs text-[#6B7280]">
+                    <summary className="cursor-pointer hover:text-[#5A0D1A] transition-colors font-bold">
                       View model answer
                     </summary>
-                    <p className="mt-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 text-surface-700 dark:text-surface-300 leading-relaxed">
+                    <p className="mt-2 bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl p-3 text-[#374151] leading-relaxed">
                       {q.modelAnswer}
                     </p>
                   </details>
                 )}
 
                 {/* Grading input */}
-                <div className="bg-amber-50 dark:bg-amber-900/10 rounded-xl p-4 border border-amber-200 dark:border-amber-800 space-y-3">
-                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+                <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-200/80 space-y-3">
+                  <p className="text-xs font-bold text-amber-900">
                     {alreadyGraded ? 'Update Grade' : 'Enter Grade'}
                   </p>
 
                   <div className="flex items-center gap-3">
-                    <label className="text-xs text-surface-500 w-28 flex-shrink-0">
+                    <label className="text-xs font-bold text-[#374151] w-28 shrink-0">
                       Marks (max {q.marks}):
                     </label>
                     <input
@@ -306,13 +306,13 @@ export const TeacherGradingPage = () => {
                           [q._id]: { ...g[q._id], marks: e.target.value },
                         }))
                       }
-                      className="w-24 px-3 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-24 px-3 py-2 rounded-xl border border-[#EFE5E0] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
                     />
-                    <span className="text-xs text-surface-400">/ {q.marks}</span>
+                    <span className="text-xs text-[#6B7280]">/ {q.marks}</span>
                   </div>
 
                   <div>
-                    <label className="text-xs text-surface-500 block mb-1">
+                    <label className="text-xs font-bold text-[#374151] block mb-1">
                       Feedback (optional):
                     </label>
                     <textarea
@@ -325,21 +325,22 @@ export const TeacherGradingPage = () => {
                           [q._id]: { ...g[q._id], feedback: e.target.value },
                         }))
                       }
-                      className="w-full px-3 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 rounded-xl border border-[#EFE5E0] bg-white text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
                     {alreadyGraded && (
-                      <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <span className="text-xs text-emerald-700 font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Currently: {ans.teacherMarks}/{q.marks} marks
                       </span>
                     )}
                     <button
+                      type="button"
                       onClick={() => handleGrade(q._id, q)}
                       disabled={gradeMut.isPending}
-                      className="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-colors disabled:opacity-60"
+                      className="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs font-bold transition-colors disabled:opacity-60 cursor-pointer"
                     >
                       {gradeMut.isPending ? (
                         <Spinner className="w-3.5 h-3.5" />
@@ -357,13 +358,13 @@ export const TeacherGradingPage = () => {
       })}
 
       {allGraded && (
-        <Card className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-center py-6">
-          <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" />
-          <p className="font-semibold text-green-800 dark:text-green-200">
+        <Card className="bg-emerald-50 border border-emerald-200 text-center py-6">
+          <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto mb-2" />
+          <p className="font-bold text-emerald-900 text-base">
             All comprehensive questions graded!
           </p>
-          <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-            Final score: {attempt.obtainedMarks} / {attempt.totalMarks} ({attempt.percentage}%)
+          <p className="text-sm text-emerald-700 mt-1">
+            Final score: <strong>{attempt.obtainedMarks} / {attempt.totalMarks}</strong> ({attempt.percentage}%)
           </p>
         </Card>
       )}

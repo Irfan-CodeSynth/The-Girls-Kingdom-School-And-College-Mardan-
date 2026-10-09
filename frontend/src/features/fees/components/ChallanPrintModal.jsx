@@ -495,22 +495,22 @@ const ChallanPrintModal = ({ challan, onClose }) => {
   ].filter((f) => f.amount && Number(f.amount) > 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-5xl max-h-[95vh] flex flex-col overflow-hidden">
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5]">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-full object-contain shadow-xs border border-primary-100" />
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-full object-contain shadow-xs border border-[#EFE5E0]" />
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-bold text-surface-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-bold text-[#111827]">
                   3-Copy Bank Fee Challan
                 </h2>
-                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 font-semibold">
+                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] font-bold">
                   {challan.challanNumber}
                 </span>
               </div>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 {student.fullName} ({cls.name || 'Class'}) · {formatMonth(challan.billingMonth)}
               </p>
             </div>
@@ -518,15 +518,17 @@ const ChallanPrintModal = ({ challan, onClose }) => {
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm font-semibold shadow-md transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs sm:text-sm font-bold shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Print All 3 Copies (A4)</span>
             </button>
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 transition-colors cursor-pointer"
+              className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -534,7 +536,7 @@ const ChallanPrintModal = ({ challan, onClose }) => {
         </div>
 
         {/* Modal Sub-nav on small screens */}
-        <div className="flex items-center justify-between px-5 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800/50 text-xs text-amber-800 dark:text-amber-300">
+        <div className="flex items-center justify-between px-5 py-2.5 bg-amber-50/70 border-b border-amber-200/60 text-xs text-amber-900">
           <div className="flex items-center gap-2">
             <span>🖨️ <strong>Print Ready:</strong> Click &quot;Print All 3 Copies&quot; to print Bank Copy, Student Copy, and College Copy formatted for A4 Landscape.</span>
           </div>
@@ -542,11 +544,12 @@ const ChallanPrintModal = ({ challan, onClose }) => {
             {['all', 'bank', 'student', 'school'].map((tab) => (
               <button
                 key={tab}
+                type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold capitalize transition-colors cursor-pointer ${
                   activeTab === tab
-                    ? 'bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200'
-                    : 'text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30'
+                    ? 'bg-amber-200 text-amber-950 font-bold'
+                    : 'text-amber-800 hover:bg-amber-100'
                 }`}
               >
                 {tab === 'all' ? 'All 3 Copies' : `${tab} Copy`}
@@ -556,54 +559,54 @@ const ChallanPrintModal = ({ challan, onClose }) => {
         </div>
 
         {/* Preview Container */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-surface-100 dark:bg-surface-900/50">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#FAF8F5]">
           <div className={`grid gap-4 ${activeTab === 'all' ? 'grid-cols-1 md:grid-cols-3' : 'max-w-md mx-auto grid-cols-1'}`}>
             {COPIES.filter((c) => activeTab === 'all' || activeTab === c.key).map((copy) => (
               <div
                 key={copy.key}
-                className="bg-white dark:bg-surface-800 border-2 border-surface-300 dark:border-surface-600 rounded-xl p-4 shadow-sm flex flex-col justify-between"
+                className="bg-white border border-[#EFE5E0] rounded-xl p-4 shadow-xs flex flex-col justify-between"
               >
                 {/* Copy Badge */}
                 <div>
-                  <div className="text-center bg-[#1e3a5f] text-white py-1 rounded-md text-[11px] font-extrabold tracking-wider uppercase mb-3">
+                  <div className="text-center bg-[#5A0D1A] text-white py-1 rounded-md text-[11px] font-extrabold tracking-wider uppercase mb-3">
                     {copy.label}
                   </div>
 
                   {/* College Header */}
-                  <div className="flex items-center gap-2.5 border-b border-surface-200 dark:border-surface-700 pb-3 mb-3">
+                  <div className="flex items-center gap-2.5 border-b border-[#EFE5E0] pb-3 mb-3">
                     <img src="/logo.png" alt="Logo" className="w-9 h-9 rounded-full object-contain shrink-0" />
                     <div>
-                      <h3 className="text-xs font-bold text-surface-900 dark:text-white leading-tight">
+                      <h3 className="text-xs font-bold text-[#111827] leading-tight">
                         {SCHOOL_NAME}
                       </h3>
-                      <p className="text-[10px] text-surface-500 dark:text-surface-400">{SCHOOL_TAGLINE}</p>
-                      <p className="text-[10px] font-bold text-primary-600 dark:text-primary-400 mt-0.5">
+                      <p className="text-[10px] text-[#6B7280]">{SCHOOL_TAGLINE}</p>
+                      <p className="text-[10px] font-bold text-[#5A0D1A] mt-0.5">
                         MONTHLY FEE CHALLAN
                       </p>
                     </div>
                   </div>
 
                   {/* Student Info Table */}
-                  <div className="bg-surface-50 dark:bg-surface-700/50 rounded-lg p-2.5 mb-3 text-xs space-y-1">
+                  <div className="bg-[#FAF8F5] border border-[#EFE5E0] rounded-lg p-2.5 mb-3 text-xs space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-surface-500 dark:text-surface-400">Challan No:</span>
-                      <span className="font-mono font-bold text-surface-900 dark:text-white">{challan.challanNumber}</span>
+                      <span className="text-[#6B7280]">Challan No:</span>
+                      <span className="font-mono font-bold text-[#111827]">{challan.challanNumber}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500 dark:text-surface-400">Student:</span>
-                      <span className="font-semibold text-surface-900 dark:text-white truncate max-w-[150px]">{student.fullName}</span>
+                      <span className="text-[#6B7280]">Student:</span>
+                      <span className="font-bold text-[#111827] truncate max-w-[150px]">{student.fullName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500 dark:text-surface-400">Class:</span>
-                      <span className="text-surface-700 dark:text-surface-300">{cls.name || '—'}</span>
+                      <span className="text-[#6B7280]">Class:</span>
+                      <span className="text-[#374151] font-medium">{cls.name || '—'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500 dark:text-surface-400">Billing Month:</span>
-                      <span className="text-surface-700 dark:text-surface-300">{formatMonth(challan.billingMonth)}</span>
+                      <span className="text-[#6B7280]">Billing Month:</span>
+                      <span className="text-[#374151] font-medium">{formatMonth(challan.billingMonth)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500 dark:text-surface-400">Due Date:</span>
-                      <span className="font-bold text-rose-600 dark:text-rose-400">
+                      <span className="text-[#6B7280]">Due Date:</span>
+                      <span className="font-bold text-rose-700">
                         {challan.dueDate ? new Date(challan.dueDate).toLocaleDateString('en-PK') : '—'}
                       </span>
                     </div>
@@ -611,15 +614,15 @@ const ChallanPrintModal = ({ challan, onClose }) => {
 
                   {/* Particulars Table */}
                   <div className="mb-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1.5">
                       Fee Breakdown
                     </p>
                     <table className="w-full text-xs">
-                      <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                      <tbody className="divide-y divide-[#EFE5E0]">
                         {feeItems.map((item) => (
                           <tr key={item.label} className="py-1">
-                            <td className="py-1 text-surface-600 dark:text-surface-400">{item.label}</td>
-                            <td className="py-1 text-right font-medium text-surface-900 dark:text-white">
+                            <td className="py-1 text-[#4B5563]">{item.label}</td>
+                            <td className="py-1 text-right font-semibold text-[#111827]">
                               PKR {Number(item.amount).toLocaleString()}
                             </td>
                           </tr>
@@ -631,18 +634,18 @@ const ChallanPrintModal = ({ challan, onClose }) => {
 
                 <div>
                   {/* Total Bar */}
-                  <div className="bg-[#1e3a5f] text-white p-2.5 rounded-lg flex justify-between items-center mb-2">
+                  <div className="bg-[#5A0D1A] text-white p-2.5 rounded-lg flex justify-between items-center mb-2">
                     <span className="text-xs font-bold uppercase tracking-wider">Total Payable:</span>
                     <span className="text-sm font-extrabold">{formatCurrency(due)}</span>
                   </div>
 
                   {/* In words */}
-                  <div className="text-[10px] text-surface-600 dark:text-surface-400 bg-surface-50 dark:bg-surface-700/50 p-2 rounded-md mb-2">
-                    <strong>Words:</strong> {numberToWords(due)}
+                  <div className="text-[10px] text-[#4B5563] bg-[#FAF8F5] border border-[#EFE5E0] p-2 rounded-md mb-2">
+                    <strong className="text-[#111827]">Words:</strong> {numberToWords(due)}
                   </div>
 
                   {/* Bank Details */}
-                  <div className="text-[10px] bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/40 p-2 rounded-md mb-3 space-y-0.5 text-amber-900 dark:text-amber-300">
+                  <div className="text-[10px] bg-amber-50/80 border border-amber-200/80 p-2 rounded-md mb-3 space-y-0.5 text-amber-900">
                     <div className="font-bold uppercase tracking-wider">Bank Details:</div>
                     <div>HBL / MCB / UBL (Any Branch)</div>
                     <div>A/C: Girls Kingdom Education Trust</div>
@@ -650,13 +653,13 @@ const ChallanPrintModal = ({ challan, onClose }) => {
                   </div>
 
                   {/* Signatures */}
-                  <div className="grid grid-cols-2 gap-4 text-center pt-2 border-t border-surface-200 dark:border-surface-700 text-[10px] text-surface-400">
+                  <div className="grid grid-cols-2 gap-4 text-center pt-2 border-t border-[#EFE5E0] text-[10px] text-[#6B7280]">
                     <div>
-                      <div className="border-t border-surface-300 dark:border-surface-600 mb-1" />
+                      <div className="border-t border-[#D1D5DB] mb-1" />
                       <span>Bank Stamp / Signature</span>
                     </div>
                     <div>
-                      <div className="border-t border-surface-300 dark:border-surface-600 mb-1" />
+                      <div className="border-t border-[#D1D5DB] mb-1" />
                       <span>Authorized Officer</span>
                     </div>
                   </div>

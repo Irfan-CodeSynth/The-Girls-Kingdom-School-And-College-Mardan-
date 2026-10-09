@@ -5,18 +5,18 @@ import { HelpCircle, Home } from 'lucide-react';
 
 export const NotFoundPage = () => {
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-950 flex items-center justify-center p-4">
-      <Card className="max-w-md w-full text-center p-8">
-        <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
+    <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-4">
+      <Card className="max-w-md w-full text-center p-8 bg-white border border-[#EFE5E0] shadow-xl rounded-2xl">
+        <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center mx-auto mb-4">
           <HelpCircle className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-extrabold text-surface-900 dark:text-white">
+        <h1 className="text-4xl font-serif font-bold text-[#111827]">
           404
         </h1>
-        <p className="mt-2 text-base font-semibold text-surface-700 dark:text-surface-300">
+        <p className="mt-2 text-base font-serif font-semibold text-[#111827]">
           Page Not Found
         </p>
-        <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+        <p className="mt-1 text-sm text-[#6B7280]">
           The page you are looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6 flex justify-center">

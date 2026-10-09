@@ -94,21 +94,21 @@ export const StudentRegisterForm = () => {
         Complete Registration
       </Button>
 
-      <div className="pt-4 border-t border-surface-200 dark:border-surface-700 text-center space-y-1.5">
-        <p className="text-xs text-surface-500 dark:text-surface-400">
+      <div className="pt-4 border-t border-[#EFE5E0] text-center space-y-1.5">
+        <p className="text-xs text-[#6B7280]">
           Already registered?{' '}
           <Link
             to="/login"
-            className="font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 hover:underline"
+            className="font-bold text-[#5A0D1A] hover:underline"
           >
             Sign In here
           </Link>
         </p>
-        <p className="text-xs text-surface-400">
+        <p className="text-xs text-[#9CA3AF]">
           Are you a teacher?{' '}
           <Link
             to="/register/teacher"
-            className="font-medium text-surface-600 dark:text-surface-300 hover:underline"
+            className="font-medium text-[#4B5563] hover:underline"
           >
             Faculty portal
           </Link>

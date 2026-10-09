@@ -22,37 +22,37 @@ const TYPE_CONFIG = {
   quiz_published: {
     label: 'New Quiz',
     icon: ClipboardList,
-    color: 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400',
+    color: 'bg-rose-50 border border-rose-100 text-[#5A0D1A]',
     badgeVariant: 'primary',
   },
   quiz_graded: {
     label: 'Result Ready',
     icon: Trophy,
-    color: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400',
+    color: 'bg-emerald-50 border border-emerald-100 text-emerald-700',
     badgeVariant: 'success',
   },
   result_available: {
     label: 'Submitted',
     icon: CheckCheck,
-    color: 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400',
+    color: 'bg-blue-50 border border-blue-100 text-blue-700',
     badgeVariant: 'info',
   },
   enrollment: {
     label: 'Enrolled',
     icon: BookOpen,
-    color: 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400',
+    color: 'bg-rose-50 border border-rose-100 text-[#5A0D1A]',
     badgeVariant: 'primary',
   },
   quiz_deadline: {
     label: 'Deadline',
     icon: Bell,
-    color: 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400',
+    color: 'bg-amber-50 border border-amber-100 text-amber-700',
     badgeVariant: 'warning',
   },
   general: {
     label: 'Notice',
     icon: Info,
-    color: 'bg-surface-100 dark:bg-surface-700 text-surface-500 dark:text-surface-400',
+    color: 'bg-[#FAF8F5] border border-[#EFE5E0] text-[#6B7280]',
     badgeVariant: 'default',
   },
 };
@@ -96,10 +96,10 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
 
   const content = (
     <div
-      className={`flex items-start gap-4 p-4 transition-colors ${
+      className={`flex items-start gap-4 p-4.5 transition-colors ${
         isUnread
-          ? 'bg-primary-50/40 dark:bg-primary-950/20'
-          : 'hover:bg-surface-50 dark:hover:bg-surface-700/40'
+          ? 'bg-rose-50/25'
+          : 'hover:bg-[#FAF8F5]'
       }`}
     >
       {/* Icon */}
@@ -111,40 +111,40 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className={`text-sm font-semibold ${isUnread ? 'text-surface-900 dark:text-white' : 'text-surface-700 dark:text-surface-200'}`}>
+            <p className={`text-sm font-semibold ${isUnread ? 'text-[#111827] font-bold' : 'text-[#374151]'}`}>
               {notification.title}
             </p>
             <Badge variant={cfg.badgeVariant} size="sm">{cfg.label}</Badge>
             {isUnread && (
-              <span className="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-[#5A0D1A] flex-shrink-0" />
             )}
           </div>
-          <span className="text-xs text-surface-400 flex-shrink-0 mt-0.5">
+          <span className="text-xs text-[#6B7280] font-medium flex-shrink-0 mt-0.5">
             {timeAgo(notification.createdAt)}
           </span>
         </div>
-        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 leading-relaxed">
+        <p className="text-sm text-[#4B5563] mt-1 leading-relaxed">
           {notification.message}
         </p>
 
         {/* Actions row */}
-        <div className="flex items-center gap-3 mt-2">
+        <div className="flex items-center gap-3 mt-2.5">
           {link && (
-            <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 flex items-center gap-0.5">
-              View details <ChevronRight className="w-3 h-3" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#5A0D1A] hover:underline flex items-center gap-0.5">
+              View details <ChevronRight className="w-3.5 h-3.5" />
             </span>
           )}
           {isUnread && (
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onMarkRead(notification._id); }}
-              className="text-xs text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              className="text-xs font-semibold text-[#6B7280] hover:text-[#5A0D1A] transition-colors"
             >
               Mark read
             </button>
           )}
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(notification._id); }}
-            className="text-xs text-surface-300 hover:text-danger-500 transition-colors ml-auto"
+            className="text-xs text-[#9CA3AF] hover:text-red-600 transition-colors ml-auto p-1 rounded-md hover:bg-red-50"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -154,7 +154,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
   );
 
   return link ? (
-    <Link to={link} onClick={() => isUnread && onMarkRead(notification._id)}>
+    <Link to={link} onClick={() => isUnread && onMarkRead(notification._id)} className="block">
       {content}
     </Link>
   ) : (
@@ -209,11 +209,11 @@ export const NotificationsPage = () => {
       {/* ── Page header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white flex items-center gap-2">
-            <Bell className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-[#111827] flex items-center gap-2.5">
+            <Bell className="w-6 h-6 text-[#5A0D1A]" />
             Notifications
           </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <p className="mt-1 text-sm text-[#6B7280]">
             {unreadCount > 0
               ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}`
               : 'All caught up!'}
@@ -224,9 +224,10 @@ export const NotificationsPage = () => {
           <Button
             variant="outline"
             size="sm"
-            leftIcon={<CheckCheck className="w-4 h-4" />}
+            leftIcon={<CheckCheck className="w-4 h-4 text-[#5A0D1A]" />}
             loading={markAllReadMutation.isPending}
             onClick={() => markAllReadMutation.mutate()}
+            className="border-[#EFE5E0] text-[#5A0D1A] hover:bg-rose-50 rounded-xl"
           >
             Mark all read
           </Button>
@@ -239,15 +240,15 @@ export const NotificationsPage = () => {
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
               filter === f.value
-                ? 'bg-primary-600 text-white'
-                : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+                ? 'bg-[#5A0D1A] text-white shadow-xs'
+                : 'bg-white border border-[#EFE5E0] text-[#6B7280] hover:text-[#111827] hover:bg-[#FAF8F5]'
             }`}
           >
             {f.label}
             {f.value === 'unread' && unreadCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-primary-500 text-white text-xs">
+              <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-[#5A0D1A] text-white text-[10px]">
                 {unreadCount}
               </span>
             )}
@@ -259,7 +260,7 @@ export const NotificationsPage = () => {
       {isPending ? (
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <Skeleton key={i} className="h-20 rounded-2xl" />
           ))}
         </div>
       ) : notifications.length === 0 ? (
@@ -273,7 +274,7 @@ export const NotificationsPage = () => {
           }
         />
       ) : (
-        <Card className="!p-0 overflow-hidden divide-y divide-surface-100 dark:divide-surface-700">
+        <Card className="!p-0 overflow-hidden divide-y divide-[#EFE5E0] bg-white border border-[#EFE5E0] shadow-xs rounded-2xl">
           {notifications.map((notification) => (
             <NotificationItem
               key={notification._id}
@@ -291,7 +292,7 @@ export const NotificationsPage = () => {
           {Object.entries(TYPE_CONFIG).map(([key, cfg]) => {
             const Icon = cfg.icon;
             return (
-              <span key={key} className="flex items-center gap-1.5 text-xs text-surface-400">
+              <span key={key} className="flex items-center gap-1.5 text-xs text-[#6B7280] font-medium">
                 <span className={`w-5 h-5 rounded-md flex items-center justify-center ${cfg.color}`}>
                   <Icon className="w-3 h-3" />
                 </span>

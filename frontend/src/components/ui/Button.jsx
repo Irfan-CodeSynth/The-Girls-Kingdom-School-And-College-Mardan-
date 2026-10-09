@@ -21,7 +21,7 @@ export const Button = React.forwardRef(({
   children, variant = 'primary', size = 'md', className = '', 
   loading = false, disabled = false, leftIcon, rightIcon, ...props 
 }, ref) => {
-  const classes = `inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-surface-900 disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${sizes[size]} ${className}`;
+  const classes = `inline-flex items-center justify-center rounded-xl font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${sizes[size]} ${className}`;
   
   return (
     <motion.button
