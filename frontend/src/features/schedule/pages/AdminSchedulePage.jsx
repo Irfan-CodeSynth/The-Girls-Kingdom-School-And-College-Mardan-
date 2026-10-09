@@ -4,7 +4,7 @@ import {
   Calendar, Plus, Settings, ChevronDown, ChevronUp, Trash2, Pencil,
   Send, BookOpen, Clock, AlertCircle, RefreshCw, X, Check,
 } from 'lucide-react';
-import { Card, Badge, Skeleton } from '../../../components/ui';
+import { Card, Badge, Skeleton, Button } from '../../../components/ui';
 import scheduleApi from '../api/scheduleApi';
 import { classApi } from '../../classes/api/classApi';
 import { teacherApi } from '../../teachers/api/teacherApi';
@@ -431,7 +431,20 @@ const TimetableGrid = ({ timetable }) => {
     return acc;
   }, {});
 
-  const periods = byDay[DAYS[0]] || [];
+  const maxPeriods = Math.max(...DAYS.map((d) => byDay[d]?.length || 0), 0);
+
+  if (maxPeriods === 0) {
+    return (
+      <div className="py-12 text-center text-[#6B7280]">
+        <Clock className="w-10 h-10 mx-auto mb-2 opacity-30 text-[#5A0D1A]" />
+        <p className="font-serif font-bold text-sm text-[#111827]">No periods configured in this timetable</p>
+        <p className="text-xs mt-1">Click "Edit Timetable" above to add periods.</p>
+      </div>
+    );
+  }
+
+  const longestDay = DAYS.reduce((best, d) => ((byDay[d]?.length || 0) > (byDay[best]?.length || 0) ? d : best), DAYS[0]);
+  const periods = byDay[longestDay] || [];
 
   return (
     <div className="overflow-x-auto">
@@ -448,12 +461,12 @@ const TimetableGrid = ({ timetable }) => {
         </thead>
         <tbody className="divide-y divide-[#EFE5E0]">
           {periods.map((_, pIdx) => {
-            const firstCell = byDay[DAYS[0]][pIdx];
+            const firstCell = byDay[longestDay]?.[pIdx];
             return (
               <tr key={pIdx} className={firstCell?.isBreak ? 'bg-amber-50/60' : 'hover:bg-[#FAF8F5]/60 transition-colors'}>
                 <td className="px-3.5 py-2.5 font-bold text-[#111827] bg-[#FAF8F5]/40 border-r border-[#EFE5E0] whitespace-nowrap">
                   {firstCell?.isBreak ? (
-                    <span className="text-amber-800 font-bold">{firstCell.subject}</span>
+                    <span className="text-amber-800 font-bold">{firstCell?.subject || 'Break'}</span>
                   ) : (
                     <>
                       <span className="font-bold text-[#111827]">P{pIdx + 1}</span><br />
@@ -464,12 +477,12 @@ const TimetableGrid = ({ timetable }) => {
                   )}
                 </td>
                 {DAYS.map((d) => {
-                  const cell = byDay[d][pIdx];
+                  const cell = byDay[d]?.[pIdx];
                   if (!cell) return <td key={d} className="px-3 py-2.5 text-center text-[#9CA3AF] border-r border-[#EFE5E0] last:border-r-0">—</td>;
                   if (cell.isBreak) {
                     return (
                       <td key={d} className="px-3 py-2.5 text-center border-r border-amber-200 last:border-r-0 bg-amber-50/60">
-                        <span className="text-amber-800 font-bold">{cell.subject}</span>
+                        <span className="text-amber-800 font-bold">{cell.subject || 'Break'}</span>
                       </td>
                     );
                   }
