@@ -2,8 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { teacherApi } from '../api/teacherApi';
-import { Input, Button } from '../../../components/ui';
-import { User, Mail, IdCard, Lock, Phone, Building2, X } from 'lucide-react';
+import { Modal, Input, Button } from '../../../components/ui';
+import { User, Mail, IdCard, Lock, Phone, Building2, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AddTeacherModal = ({ isOpen, onClose }) => {
@@ -38,8 +38,6 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
     },
   });
 
-  if (!isOpen) return null;
-
   const onSubmit = (data) => {
     const payload = {
       fullName: data.fullName.trim(),
@@ -53,28 +51,28 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-surface-200 dark:border-surface-700">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title="Add Faculty Member"
+    >
+      <div className="space-y-5">
+        {/* Banner */}
+        <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+          <div className="w-9 h-9 rounded-lg bg-[#5A0D1A]/10 text-[#5A0D1A] flex items-center justify-center shrink-0">
+            <GraduationCap className="w-5 h-5 text-[#5A0D1A]" />
+          </div>
           <div>
-            <h2 className="text-lg font-bold text-surface-900 dark:text-white">
-              Add Faculty Member
-            </h2>
-            <p className="text-xs text-surface-500">
-              Create a faculty / staff account with active portal credentials
+            <p className="text-xs font-bold text-[#111827]">Faculty Appointment Record</p>
+            <p className="text-xs text-[#6B7280]">
+              Create a faculty or academic staff account with active portal credentials
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-200"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
             label="Full Name *"
             placeholder="e.g. Dr. Sadia Rehman"
@@ -83,9 +81,9 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
             {...register('fullName', { required: 'Full name is required' })}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <Input
-              label="Email Address *"
+              label="Official Email *"
               type="email"
               placeholder="sadia@girlskingdom.edu"
               leftIcon={<Mail className="w-4 h-4" />}
@@ -100,26 +98,26 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
             />
 
             <Input
-              label="Faculty ID *"
-              placeholder="TCH-2026-015"
+              label="Teacher ID / Staff Code *"
+              placeholder="TCH-2026-012"
               leftIcon={<IdCard className="w-4 h-4" />}
               error={errors.teacherId?.message}
               {...register('teacherId', { required: 'Teacher ID is required' })}
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <Input
-              label="Department *"
-              placeholder="e.g. Physics / Mathematics"
+              label="Department / Subject *"
+              placeholder="e.g. Mathematics, Sciences"
               leftIcon={<Building2 className="w-4 h-4" />}
               error={errors.department?.message}
               {...register('department', { required: 'Department is required' })}
             />
 
             <Input
-              label="Phone Number"
-              placeholder="+92 321 9876543"
+              label="Contact Phone"
+              placeholder="+92 300 1234567"
               leftIcon={<Phone className="w-4 h-4" />}
               {...register('phone')}
             />
@@ -127,7 +125,7 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
 
           <div>
             <Input
-              label="Password (Default: Teacher@123456)"
+              label="Initial Password"
               type="text"
               placeholder="Leave blank for default: Teacher@123456"
               leftIcon={<Lock className="w-4 h-4" />}
@@ -139,13 +137,17 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
                 },
               })}
             />
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-              Default password <code className="font-mono bg-surface-100 dark:bg-surface-700 px-1 py-0.5 rounded text-primary-600 dark:text-primary-400 font-semibold">Teacher@123456</code> will be assigned if left blank.
+            <p className="text-xs text-[#6B7280] mt-1.5 flex items-center gap-1">
+              <span>Default password</span>
+              <code className="font-mono bg-[#FAF8F5] border border-[#EFE5E0] px-1.5 py-0.5 rounded text-[#5A0D1A] font-bold text-[11px]">
+                Teacher@123456
+              </code>
+              <span>will be assigned if left blank.</span>
             </p>
           </div>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-3 border-t border-surface-200 dark:border-surface-700">
+          {/* Action buttons */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EFE5E0]">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
@@ -155,7 +157,7 @@ export const AddTeacherModal = ({ isOpen, onClose }) => {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };
 

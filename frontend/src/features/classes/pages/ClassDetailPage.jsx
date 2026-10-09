@@ -108,7 +108,7 @@ export const ClassDetailPage = () => {
       queryClient.invalidateQueries({ queryKey: ['class', id] });
       queryClient.invalidateQueries({ queryKey: ['teachers'] });
       setItemToRemove(null);
-      toast.success('Teacher assignment removed.');
+      toast.success('Faculty removed from class.');
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || 'Failed to remove assignment.');
@@ -118,16 +118,28 @@ export const ClassDetailPage = () => {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-44 w-full" />
-        <Skeleton className="h-96 w-full" />
+        <Skeleton className="h-8 w-48 rounded-xl" />
+        <Skeleton className="h-44 w-full rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
       </div>
     );
   }
 
   const cls = data?.class;
-  const students = data?.students || [];
-  const teachers = data?.teachers || [];
+  if (!cls) {
+    return (
+      <div className="bg-white rounded-2xl border border-[#EFE5E0] p-12 text-center">
+        <h3 className="font-serif text-xl font-bold text-[#111827]">Class not found</h3>
+        <p className="text-sm text-[#6B7280] mt-1">The requested class cohort could not be retrieved.</p>
+        <Link to="/admin/classes" className="inline-block mt-4">
+          <Button variant="primary">Return to Classes</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const students = cls.enrollments || [];
+  const teachers = cls.teacherAssignments || [];
 
   const studentColumns = [
     {
@@ -137,10 +149,10 @@ export const ClassDetailPage = () => {
         <div className="flex items-center gap-3">
           <Avatar src={val?.profilePhoto} name={val?.fullName} size="sm" />
           <div>
-            <p className="font-semibold text-surface-900 dark:text-white">
+            <p className="font-bold text-[#111827] text-sm">
               {val?.fullName}
             </p>
-            <p className="text-xs text-surface-500">{val?.email}</p>
+            <p className="text-xs text-[#6B7280]">{val?.email}</p>
           </div>
         </div>
       ),
@@ -148,14 +160,18 @@ export const ClassDetailPage = () => {
     {
       key: 'enrolledAt',
       label: 'Enrollment Date',
-      render: (val) => new Date(val).toLocaleDateString(),
+      render: (val) => (
+        <span className="text-xs text-[#6B7280]">
+          {val ? new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+        </span>
+      ),
     },
     {
       key: 'status',
       label: 'Status',
       render: (val) => (
         <Badge variant={val === 'active' ? 'success' : 'default'} dot>
-          {val?.toUpperCase()}
+          {val?.toUpperCase() || 'ACTIVE'}
         </Badge>
       ),
     },
@@ -163,12 +179,13 @@ export const ClassDetailPage = () => {
       key: 'actions',
       label: 'Actions',
       className: 'text-right',
+      cellClassName: 'text-right',
       render: (_, row) => (
         <div className="flex justify-end">
           <Button
             variant="ghost"
-            size="sm"
-            className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+            size="xs"
+            className="text-rose-600 hover:bg-rose-50"
             onClick={() =>
               setItemToRemove({
                 type: 'enrollment',
@@ -192,10 +209,10 @@ export const ClassDetailPage = () => {
         <div className="flex items-center gap-3">
           <Avatar src={val?.profilePhoto} name={val?.fullName} size="sm" />
           <div>
-            <p className="font-semibold text-surface-900 dark:text-white">
+            <p className="font-bold text-[#111827] text-sm">
               {val?.fullName}
             </p>
-            <p className="text-xs text-surface-500">{val?.email}</p>
+            <p className="text-xs text-[#6B7280]">{val?.email}</p>
           </div>
         </div>
       ),
@@ -203,14 +220,18 @@ export const ClassDetailPage = () => {
     {
       key: 'assignedAt',
       label: 'Assignment Date',
-      render: (val) => new Date(val).toLocaleDateString(),
+      render: (val) => (
+        <span className="text-xs text-[#6B7280]">
+          {val ? new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+        </span>
+      ),
     },
     {
       key: 'status',
       label: 'Status',
       render: (val) => (
         <Badge variant={val === 'active' ? 'success' : 'default'} dot>
-          {val?.toUpperCase()}
+          {val?.toUpperCase() || 'ACTIVE'}
         </Badge>
       ),
     },
@@ -218,12 +239,13 @@ export const ClassDetailPage = () => {
       key: 'actions',
       label: 'Actions',
       className: 'text-right',
+      cellClassName: 'text-right',
       render: (_, row) => (
         <div className="flex justify-end">
           <Button
             variant="ghost"
-            size="sm"
-            className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+            size="xs"
+            className="text-rose-600 hover:bg-rose-50"
             onClick={() =>
               setItemToRemove({
                 type: 'assignment',
@@ -240,42 +262,48 @@ export const ClassDetailPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Back button */}
-      <Link
-        to="/admin/classes"
-        className="inline-flex items-center gap-2 text-sm font-medium text-surface-500 hover:text-surface-900 dark:hover:text-white transition"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Classes</span>
-      </Link>
+    <div className="space-y-6 font-sans">
+      {/* ── Breadcrumb ── */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/admin/classes"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Classes</span>
+        </Link>
 
-      {/* Class Overview Card */}
-      <Card className="p-6">
+        <span className="text-xs text-[#6B7280] font-mono">
+          Code: {cls.code}
+        </span>
+      </div>
+
+      {/* ── Class Overview Banner Card ── */}
+      <div className="bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] font-bold">
+                {cls.code}
+              </span>
               <Badge variant={cls.status === 'active' ? 'success' : 'default'} dot>
                 {cls.status?.toUpperCase()}
               </Badge>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300">
-                {cls.code}
-              </span>
             </div>
 
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
               {cls.name}
             </h1>
 
-            <div className="flex items-center gap-4 mt-2 text-xs text-surface-500 dark:text-surface-400">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Academic Year: {cls.academicYear}</span>
+            <div className="flex items-center gap-4 mt-2 text-xs text-[#6B7280]">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#5A0D1A]" />
+                <span>Academic Year: <strong className="text-[#111827]">{cls.academicYear}</strong></span>
               </div>
             </div>
 
             {cls.description && (
-              <p className="mt-3 text-sm text-surface-600 dark:text-surface-300 max-w-2xl">
+              <p className="mt-3 text-sm text-[#4B5563] max-w-2xl leading-relaxed">
                 {cls.description}
               </p>
             )}
@@ -285,7 +313,7 @@ export const ClassDetailPage = () => {
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<UserPlus className="w-4 h-4" />}
+              leftIcon={<UserPlus className="w-4 h-4 text-[#5A0D1A]" />}
               onClick={() => setIsEnrollModalOpen(true)}
             >
               Enroll Student
@@ -300,9 +328,9 @@ export const ClassDetailPage = () => {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Tabs */}
+      {/* ── Tabs & Subsections ── */}
       <div className="space-y-4">
         <Tabs
           tabs={[
@@ -357,7 +385,7 @@ export const ClassDetailPage = () => {
         )}
       </div>
 
-      {/* Enroll Student Modal */}
+      {/* ── Enroll Student Modal ── */}
       <Modal
         isOpen={isEnrollModalOpen}
         onClose={() => {
@@ -368,12 +396,12 @@ export const ClassDetailPage = () => {
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-sm text-surface-500">
-            Select a student to enroll into <strong>{cls?.name}</strong>. If already enrolled in another class, their enrollment will be transferred automatically.
+          <p className="text-xs text-[#6B7280]">
+            Select a student to enroll into <strong className="text-[#111827]">{cls?.name}</strong>. If already enrolled elsewhere, their record will transition smoothly.
           </p>
 
           <Select
-            label="Select Student"
+            label="Select Registered Student"
             placeholder={
               loadingStudents
                 ? 'Loading students...'
@@ -381,7 +409,7 @@ export const ClassDetailPage = () => {
                 ? 'Error loading students. Please refresh.'
                 : (allStudentsData?.students || []).length === 0
                 ? 'No registered students found'
-                : 'Choose a registered student...'
+                : 'Choose a student...'
             }
             disabled={loadingStudents || (allStudentsData?.students || []).length === 0}
             value={selectedStudentId}
@@ -391,15 +419,10 @@ export const ClassDetailPage = () => {
               label: `${s.fullName} (${s.studentId || 'No ID'}) — ${s.email}`,
             }))}
           />
-          {!loadingStudents && (allStudentsData?.students || []).length === 0 && (
-            <p className="text-xs text-amber-600 dark:text-amber-400">
-              No students found. Students must register through the student portal first.
-            </p>
-          )}
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[#EFE5E0]">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => setIsEnrollModalOpen(false)}
               disabled={enrollMutation.isPending}
             >
@@ -417,7 +440,7 @@ export const ClassDetailPage = () => {
         </div>
       </Modal>
 
-      {/* Assign Teacher Modal */}
+      {/* ── Assign Teacher Modal ── */}
       <Modal
         isOpen={isAssignModalOpen}
         onClose={() => {
@@ -428,8 +451,8 @@ export const ClassDetailPage = () => {
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-sm text-surface-500">
-            Select a teacher to authorize quiz creation and management for <strong>{cls?.name}</strong>.
+          <p className="text-xs text-[#6B7280]">
+            Select an instructor to authorize curriculum management, materials, and quizzes for <strong className="text-[#111827]">{cls?.name}</strong>.
           </p>
 
           <Select
@@ -441,7 +464,7 @@ export const ClassDetailPage = () => {
                 ? 'Error loading faculty. Please refresh.'
                 : (allTeachersData?.teachers || []).length === 0
                 ? 'No registered teachers found'
-                : 'Choose a registered instructor...'
+                : 'Choose an instructor...'
             }
             disabled={loadingTeachers || (allTeachersData?.teachers || []).length === 0}
             value={selectedTeacherId}
@@ -451,15 +474,10 @@ export const ClassDetailPage = () => {
               label: `${t.fullName} (${t.department || 'General'}) — ${t.email}`,
             }))}
           />
-          {!loadingTeachers && (allTeachersData?.teachers || []).length === 0 && (
-            <p className="text-xs text-amber-600 dark:text-amber-400">
-              No faculty members found. Register a teacher through the teacher portal first.
-            </p>
-          )}
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[#EFE5E0]">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => setIsAssignModalOpen(false)}
               disabled={assignTeacherMutation.isPending}
             >
@@ -471,13 +489,13 @@ export const ClassDetailPage = () => {
               loading={assignTeacherMutation.isPending}
               onClick={() => assignTeacherMutation.mutate(selectedTeacherId)}
             >
-              Assign Teacher
+              Assign Faculty Member
             </Button>
           </div>
         </div>
       </Modal>
 
-      {/* Remove Confirmation Dialog */}
+      {/* ── Remove Confirmation Dialog ── */}
       <ConfirmDialog
         isOpen={Boolean(itemToRemove)}
         onClose={() => setItemToRemove(null)}
@@ -486,7 +504,7 @@ export const ClassDetailPage = () => {
             ? 'Remove Student Enrollment?'
             : 'Remove Teacher Assignment?'
         }
-        message={`Are you sure you want to remove ${itemToRemove?.name} from ${cls?.name}? They will lose access to all quizzes assigned to this class.`}
+        message={`Are you sure you want to remove ${itemToRemove?.name} from ${cls?.name}?`}
         confirmText="Remove"
         loading={
           removeEnrollmentMutation.isPending ||

@@ -12,22 +12,24 @@ import {
   IdCard,
   Building2,
   KeyRound,
+  GraduationCap,
+  ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const InfoRow = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start gap-3 py-3 border-b border-surface-100 dark:border-surface-700/60 last:border-0">
-    <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center shrink-0 mt-0.5">
-      <Icon className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-    </div>
-    <div>
-      <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+  <div className="flex items-center justify-between py-3 border-b border-[#EFE5E0] last:border-0 font-sans">
+    <div className="flex items-center gap-2.5">
+      <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#EFE5E0] flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4 text-[#5A0D1A]" />
+      </div>
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
         {label}
       </p>
-      <p className="text-sm font-semibold text-surface-900 dark:text-white mt-0.5">
-        {value || 'N/A'}
-      </p>
     </div>
+    <p className="text-sm font-bold text-[#111827] text-right">
+      {value || '—'}
+    </p>
   </div>
 );
 
@@ -52,10 +54,10 @@ export const TeacherDetailPage = () => {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-8 w-48 rounded-xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="col-span-2 h-64 w-full" />
+          <Skeleton className="h-96 w-full rounded-2xl" />
+          <Skeleton className="col-span-2 h-96 w-full rounded-2xl" />
         </div>
       </div>
     );
@@ -70,106 +72,182 @@ export const TeacherDetailPage = () => {
       label: 'Class Name',
       render: (val, row) => (
         <div>
-          <p className="font-medium text-surface-900 dark:text-white">{val}</p>
-          <p className="text-xs text-surface-500 font-mono">{row.code}</p>
+          <p className="font-bold text-[#111827] text-sm">{val}</p>
+          <p className="text-xs text-[#6B7280] font-mono">{row.code}</p>
         </div>
       ),
     },
     {
       key: 'academicYear',
       label: 'Academic Year',
+      render: (val) => (
+        <span className="text-xs font-semibold text-[#111827]">
+          {val || '—'}
+        </span>
+      ),
     },
     {
       key: 'status',
       label: 'Status',
       render: (val) => (
-        <Badge variant={val === 'active' ? 'success' : 'secondary'} dot>
-          {val}
+        <Badge variant={val === 'active' ? 'success' : 'default'} dot>
+          {val || 'active'}
         </Badge>
       ),
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <Link
-        to="/admin/teachers"
-        className="inline-flex items-center gap-2 text-sm font-medium text-surface-500 hover:text-surface-900 dark:hover:text-white transition"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Teachers
-      </Link>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Navigation Breadcrumb ── */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/admin/teachers"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Faculty Roster
+        </Link>
+
+        <span className="text-xs text-[#6B7280] font-mono">
+          ID: {teacher?._id}
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left — Profile Card */}
-        <Card className="flex flex-col items-center text-center gap-4 p-6">
-          <Avatar
-            src={teacher?.profilePhoto}
-            name={teacher?.fullName}
-            size="xl"
-          />
-          <div>
-            <h2 className="text-xl font-bold text-surface-900 dark:text-white">
+        {/* ── Left Column: Profile Card ── */}
+        <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs overflow-hidden flex flex-col">
+          {/* Card Royal Banner */}
+          <div className="h-20 bg-gradient-to-r from-[#5A0D1A] via-[#701422] to-[#420812] relative flex items-center justify-end px-4">
+            <span className="px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[10px] font-bold uppercase tracking-wider text-[#EEDAA2]">
+              Faculty Profile
+            </span>
+          </div>
+
+          <div className="p-6 pt-0 flex flex-col items-center text-center -mt-10">
+            <div className="p-1 rounded-full bg-white shadow-md">
+              <Avatar
+                src={teacher?.profilePhoto}
+                name={teacher?.fullName}
+                size="xl"
+              />
+            </div>
+
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#111827] mt-3">
               {teacher?.fullName}
             </h2>
-            <Badge
-              variant={teacher?.isActive ? 'success' : 'danger'}
-              dot
-              className="mt-1"
-            >
-              {teacher?.isActive ? 'Active Account' : 'Inactive Account'}
-            </Badge>
-          </div>
-          <div className="w-full text-left space-y-0 divide-y divide-surface-100 dark:divide-surface-700">
-            <InfoRow icon={Mail} label="Email" value={teacher?.email} />
-            <InfoRow icon={Phone} label="Phone" value={teacher?.phone} />
-            <InfoRow icon={IdCard} label="Teacher ID" value={teacher?.teacherId} />
-            <InfoRow icon={Building2} label="Department" value={teacher?.department} />
-            <InfoRow
-              icon={BookOpen}
-              label="Assigned Classes"
-              value={`${teacher?.assignedClassesCount ?? 0} class${teacher?.assignedClassesCount !== 1 ? 'es' : ''}`}
-            />
-            <InfoRow
-              icon={Calendar}
-              label="Registered On"
-              value={
-                teacher?.createdAt
-                  ? new Date(teacher.createdAt).toLocaleDateString()
-                  : 'N/A'
-              }
-            />
-          </div>
 
-          <div className="w-full pt-3 border-t border-surface-200 dark:border-surface-700">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30"
-              leftIcon={<KeyRound className="w-4 h-4 text-amber-600" />}
-              loading={resetPasswordMutation.isPending}
-              onClick={() => {
-                if (window.confirm(`Reset password for ${teacher?.fullName} to default (Teacher@123456)?`)) {
-                  resetPasswordMutation.mutate();
+            <p className="text-xs text-[#6B7280] mt-0.5 font-mono">
+              Staff Code: {teacher?.teacherId || 'N/A'}
+            </p>
+
+            <div className="mt-2.5">
+              <Badge
+                variant={teacher?.isActive ? 'success' : 'danger'}
+                dot
+              >
+                {teacher?.isActive ? 'Active Faculty' : 'Inactive Account'}
+              </Badge>
+            </div>
+
+            {/* Attributes Info List */}
+            <div className="w-full mt-6 space-y-0 border-t border-[#EFE5E0]">
+              <InfoRow icon={Mail} label="Email" value={teacher?.email} />
+              <InfoRow icon={Phone} label="Phone" value={teacher?.phone} />
+              <InfoRow icon={IdCard} label="Staff ID" value={teacher?.teacherId} />
+              <InfoRow
+                icon={Building2}
+                label="Department"
+                value={teacher?.department}
+              />
+              <InfoRow
+                icon={Calendar}
+                label="Joined"
+                value={
+                  teacher?.createdAt
+                    ? new Date(teacher.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : '—'
                 }
-              }}
-            >
-              Reset Password (Teacher@123456)
-            </Button>
-          </div>
-        </Card>
+              />
+            </div>
 
-        {/* Right — Assigned Classes */}
-        <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-            Assigned Classes
-          </h3>
-          <Table
-            columns={classColumns}
-            data={classes}
-            emptyTitle="No Classes Assigned"
-            emptyMessage="This teacher has not been assigned to any classes yet."
-          />
+            {/* Password Reset Action */}
+            <div className="w-full pt-4 mt-2 border-t border-[#EFE5E0]">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-amber-800 border-amber-200 bg-amber-50/50 hover:bg-amber-100/70"
+                leftIcon={<KeyRound className="w-4 h-4 text-amber-700" />}
+                loading={resetPasswordMutation.isPending}
+                onClick={() => {
+                  if (window.confirm(`Reset password for ${teacher?.fullName} to default: Teacher@123456?`)) {
+                    resetPasswordMutation.mutate();
+                  }
+                }}
+              >
+                Reset Password (Teacher@123456)
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right Column: Teaching Assignments ── */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Quick Overview Card */}
+          <div className="bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
+            <h3 className="font-serif text-lg font-bold text-[#5A0D1A] mb-4 flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-[#5A0D1A]" />
+              Academic Appointment Summary
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+                  Department
+                </p>
+                <p className="font-serif text-lg font-bold text-[#111827] mt-1">
+                  {teacher?.department || 'Unassigned'}
+                </p>
+                <p className="text-xs text-[#6B7280] mt-0.5">
+                  Academic Division & Subject Area
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+                  Teaching Allocation
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <p className="font-bold text-sm text-[#111827]">
+                    {classes.length} Assigned {classes.length === 1 ? 'Class' : 'Classes'}
+                  </p>
+                </div>
+                <p className="text-xs text-[#6B7280] mt-0.5">
+                  Authorized for attendance, materials & quizzes
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Assigned Classes Table */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif text-lg font-bold text-[#111827]">
+                Assigned Teaching Cohorts
+              </h3>
+              <span className="text-xs text-[#6B7280]">
+                {classes.length} classes
+              </span>
+            </div>
+
+            <Table
+              columns={classColumns}
+              data={classes}
+              emptyTitle="No Classes Assigned"
+              emptyMessage="This faculty member has not yet been assigned to instruct any classes."
+            />
+          </div>
         </div>
       </div>
     </div>

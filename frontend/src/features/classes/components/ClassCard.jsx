@@ -1,19 +1,19 @@
 import React from 'react';
 import { Card, Badge, Button } from '../../../components/ui';
-import { Users, GraduationCap, ArrowRight, Edit, Calendar, BookOpen, ClipboardCheck } from 'lucide-react';
+import { Users, GraduationCap, ArrowRight, Edit, Calendar, BookOpen } from 'lucide-react';
 import { Link } from 'react-router';
 
 export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
   return (
-    <Card hover className="p-5 flex flex-col justify-between h-full group transition-all duration-200">
+    <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between h-full group font-sans">
       <div>
         {/* Header row: Icon & Status */}
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0 border border-primary-100 dark:border-primary-800/40">
-            <BookOpen className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-[#FAF8F5] text-[#5A0D1A] flex items-center justify-center shrink-0 border border-[#EFE5E0] shadow-2xs group-hover:scale-105 transition-transform">
+            <BookOpen className="w-5 h-5 text-[#5A0D1A]" />
           </div>
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
-            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300">
+            <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A]">
               {cls.code}
             </span>
             <Badge variant={cls.status === 'active' ? 'success' : 'default'} dot size="sm">
@@ -23,37 +23,37 @@ export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-bold text-surface-900 dark:text-white tracking-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
+        <h3 className="font-serif text-base sm:text-lg font-bold text-[#111827] tracking-tight group-hover:text-[#5A0D1A] transition-colors line-clamp-1">
           {cls.name}
         </h3>
 
         {/* Academic Year */}
-        <div className="flex items-center gap-1.5 mt-1 text-xs text-surface-500 dark:text-surface-400">
-          <Calendar className="w-3.5 h-3.5 text-primary-500" />
-          <span>Academic Year: {cls.academicYear}</span>
+        <div className="flex items-center gap-1.5 mt-1 text-xs text-[#6B7280]">
+          <Calendar className="w-3.5 h-3.5 text-[#5A0D1A]" />
+          <span>Academic Year: <strong className="text-[#111827]">{cls.academicYear}</strong></span>
         </div>
 
         {/* Description */}
         {cls.description && (
-          <p className="mt-2.5 text-xs text-surface-600 dark:text-surface-400 line-clamp-2 leading-relaxed">
+          <p className="mt-2.5 text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
             {cls.description}
           </p>
         )}
       </div>
 
       {/* Footer info & CTA */}
-      <div className="mt-5 pt-3.5 border-t border-surface-100 dark:border-surface-700/60">
-        <div className="flex items-center justify-between text-xs text-surface-500 dark:text-surface-400 mb-3.5">
+      <div className="mt-5 pt-3.5 border-t border-[#EFE5E0]">
+        <div className="flex items-center justify-between text-xs text-[#6B7280] mb-3.5">
           <div className="flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-primary-500" />
+            <Users className="w-3.5 h-3.5 text-[#5A0D1A]" />
             <span>
-              <strong className="text-surface-900 dark:text-white">{cls.studentCount ?? 0}</strong> Students
+              <strong className="text-[#111827]">{cls.studentCount ?? 0}</strong> Students
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
+            <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
             <span>
-              <strong className="text-surface-900 dark:text-white">{cls.teacherCount ?? 0}</strong> Faculty
+              <strong className="text-[#111827]">{cls.teacherCount ?? 0}</strong> Faculty
             </span>
           </div>
         </div>
@@ -63,8 +63,8 @@ export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
             <Button
               variant="outline"
               size="sm"
-              className="w-full text-xs font-semibold justify-center"
-              rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+              className="w-full text-xs font-bold justify-center"
+              rightIcon={<ArrowRight className="w-3.5 h-3.5 text-[#5A0D1A]" />}
             >
               Class Portal
             </Button>
@@ -74,7 +74,7 @@ export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
               variant="ghost"
               size="sm"
               onClick={() => onEdit(cls)}
-              className="px-2.5"
+              className="px-2.5 text-[#6B7280] hover:text-[#111827]"
               title="Edit Class Cohort"
             >
               <Edit className="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@ export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
           )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

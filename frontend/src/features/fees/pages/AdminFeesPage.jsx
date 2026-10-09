@@ -3,9 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DollarSign, TrendingUp, AlertCircle, Users2, Plus, Zap,
   Settings, Printer, CreditCard, XCircle, RefreshCw, Search,
-  ChevronDown, Filter,
 } from 'lucide-react';
-import { Card, Badge, Skeleton } from '../../../components/ui';
+import { Card, Badge, Skeleton, Button } from '../../../components/ui';
 import feeApi from '../api/feeApi';
 import { classApi } from '../../classes/api/classApi';
 import ChallanPrintModal from '../components/ChallanPrintModal';
@@ -17,15 +16,15 @@ import FeeStructureModal from '../components/FeeStructureModal';
 const STATUS_CONFIG = {
   unpaid: { label: 'Unpaid', variant: 'warning' },
   paid: { label: 'Paid', variant: 'success' },
-  partial: { label: 'Partial', variant: 'info' },
+  partial: { label: 'Partial', variant: 'default' },
   overdue: { label: 'Overdue', variant: 'danger' },
   cancelled: { label: 'Cancelled', variant: 'default' },
 };
 
 // ─── Summary card ──────────────────────────────────────────────
 const SummaryCard = ({ label, value, icon: Icon, color, loading, sub }) => (
-  <Card bodyClassName="flex items-center gap-4">
-    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+  <div className="bg-white p-4.5 rounded-2xl border border-[#EFE5E0] shadow-xs flex items-center gap-4">
+    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${color}`}>
       <Icon className="w-5 h-5" />
     </div>
     <div className="min-w-0 flex-1">
@@ -36,15 +35,15 @@ const SummaryCard = ({ label, value, icon: Icon, color, loading, sub }) => (
         </>
       ) : (
         <>
-          <p className="text-lg sm:text-xl font-extrabold text-surface-900 dark:text-white leading-tight truncate">
+          <p className="font-serif text-lg sm:text-xl font-extrabold text-[#111827] leading-tight truncate">
             {value ?? '—'}
           </p>
-          <p className="text-xs text-surface-500 dark:text-surface-400 truncate">{label}</p>
-          {sub && <p className="text-xs text-surface-400 dark:text-surface-500 mt-0.5">{sub}</p>}
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] truncate mt-0.5">{label}</p>
+          {sub && <p className="text-xs text-[#9CA3AF] mt-0.5">{sub}</p>}
         </>
       )}
     </div>
-  </Card>
+  </div>
 );
 
 // ─── Main Page ─────────────────────────────────────────────────
@@ -131,52 +130,65 @@ const AdminFeesPage = () => {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">Fee Management</h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-            Manage fee structures, generate challans and record payments
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] border border-[#EFE5E0] text-[10px] font-bold tracking-wider uppercase text-[#5A0D1A]">
+              Treasury & Tuition
+            </span>
+          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
+            Fee & Challan Management
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-[#4B5563]">
+            Configure academic fee structures, generate monthly challans, and reconcile student payments.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-xs font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
-          </button>
-          <button
+            Refresh
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => { setEditStructure(null); setShowStructureModal(true); }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-xs font-semibold hover:brightness-95 transition-colors cursor-pointer"
+            leftIcon={<Settings className="w-3.5 h-3.5 text-[#5A0D1A]" />}
           >
-            <Settings className="w-3.5 h-3.5" /> Fee Structure
-          </button>
-          <button
+            Fee Structure
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setShowGenerate(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            leftIcon={<Zap className="w-3.5 h-3.5" />}
           >
-            <Zap className="w-3.5 h-3.5" /> Generate Challans
-          </button>
+            Generate Challans
+          </Button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard
           label="Total Receivable"
           value={summary.totalReceivable != null ? `PKR ${(summary.totalReceivable).toLocaleString()}` : '—'}
           icon={DollarSign}
-          color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
+          color="bg-gradient-to-br from-[#701422] to-[#4A0914] text-[#EEDAA2]"
           loading={loadingSummary}
           sub={`${summary.totalChallans || 0} challans`}
         />
         <SummaryCard
-          label="Collected"
+          label="Total Collected"
           value={summary.totalCollected != null ? `PKR ${(summary.totalCollected).toLocaleString()}` : '—'}
           icon={TrendingUp}
-          color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+          color="bg-emerald-50 text-emerald-700 border border-emerald-100"
           loading={loadingSummary}
           sub={`${summary.paid || 0} paid`}
         />
@@ -184,7 +196,7 @@ const AdminFeesPage = () => {
           label="Outstanding"
           value={summary.totalOutstanding != null ? `PKR ${(summary.totalOutstanding).toLocaleString()}` : '—'}
           icon={AlertCircle}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
+          color="bg-amber-50 text-amber-700 border border-amber-100"
           loading={loadingSummary}
           sub={`${summary.unpaid || 0} unpaid`}
         />
@@ -192,41 +204,44 @@ const AdminFeesPage = () => {
           label="Defaulters"
           value={summary.defaulters ?? '—'}
           icon={Users2}
-          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+          color="bg-rose-50 text-rose-700 border border-rose-100"
           loading={loadingSummary}
           sub={`${summary.overdue || 0} overdue`}
         />
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-surface-200 dark:border-surface-700 gap-1">
+      <div className="flex border-b border-[#EFE5E0] bg-white rounded-t-2xl px-2">
         {[
-          { id: 'challans', label: 'Challans' },
-          { id: 'structures', label: 'Fee Structures' },
+          { id: 'challans', label: 'Billing Challans' },
+          { id: 'structures', label: 'Class Fee Structures' },
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+            className={`px-5 py-3 text-sm font-bold transition-all cursor-pointer relative ${
               activeTab === tab.id
-                ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
-                : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-200'
+                ? 'text-[#5A0D1A]'
+                : 'text-[#6B7280] hover:text-[#111827]'
             }`}
           >
             {tab.label}
+            {activeTab === tab.id && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#5A0D1A]" />
+            )}
           </button>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 bg-white p-3.5 rounded-2xl border border-[#EFE5E0] shadow-xs">
         {/* Class filter */}
         <select
           value={filters.classId}
           onChange={(e) => setFilters({ ...filters, classId: e.target.value })}
-          className="px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="px-3.5 py-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
         >
-          <option value="">All Classes</option>
+          <option value="">All Academic Classes</option>
           {classes.map((c) => (
             <option key={c._id} value={c._id}>{c.name}</option>
           ))}
@@ -237,7 +252,7 @@ const AdminFeesPage = () => {
           <select
             value={filters.billingMonth}
             onChange={(e) => setFilters({ ...filters, billingMonth: e.target.value })}
-            className="px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-3.5 py-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
           >
             {monthOptions.map((m) => (
               <option key={m.value} value={m.value}>{m.label}</option>
@@ -250,9 +265,9 @@ const AdminFeesPage = () => {
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-3.5 py-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
           >
-            <option value="">All Statuses</option>
+            <option value="">All Payment Statuses</option>
             {Object.entries(STATUS_CONFIG).map(([val, { label }]) => (
               <option key={val} value={val}>{label}</option>
             ))}
@@ -262,13 +277,13 @@ const AdminFeesPage = () => {
         {/* Search (challans only) */}
         {activeTab === 'challans' && (
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search student or challan…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] placeholder:text-[#9CA3AF] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]"
             />
           </div>
         )}
@@ -276,9 +291,9 @@ const AdminFeesPage = () => {
 
       {/* ── CHALLANS TAB ── */}
       {activeTab === 'challans' && (
-        <Card className="!p-0 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#EFE5E0] overflow-hidden shadow-xs">
           {loadingChallans ? (
-            <div className="divide-y divide-surface-100 dark:divide-surface-700">
+            <div className="divide-y divide-[#EFE5E0]">
               {[1,2,3,4,5].map((i) => (
                 <div key={i} className="flex items-center gap-4 px-5 py-4">
                   <Skeleton className="h-4 w-36" />
@@ -290,55 +305,54 @@ const AdminFeesPage = () => {
               ))}
             </div>
           ) : filteredChallans.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-surface-400">
-              <DollarSign className="w-10 h-10 mb-3 opacity-30" />
-              <p className="font-medium">No challans found</p>
-              <p className="text-sm mt-1">Generate challans or adjust your filters</p>
+            <div className="flex flex-col items-center justify-center py-16 text-[#6B7280]">
+              <DollarSign className="w-10 h-10 mb-3 text-[#5A0D1A]/30" />
+              <p className="font-bold text-[#111827]">No Challans Found</p>
+              <p className="text-xs mt-1">Generate fee challans or adjust your active filters above.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-surface-50 dark:bg-surface-700/50 border-b border-surface-200 dark:border-surface-700">
+                <thead className="bg-[#FAF8F5] border-b border-[#EFE5E0]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">Challan</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">Student</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 hidden md:table-cell">Class</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400 hidden lg:table-cell">Month</th>
-                    <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">Amount</th>
-                    <th className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">Status</th>
-                    <th className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">Actions</th>
+                    <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280]">Challan #</th>
+                    <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280]">Student</th>
+                    <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280] hidden md:table-cell">Class</th>
+                    <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280] hidden lg:table-cell">Month</th>
+                    <th className="px-4 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-[#6B7280]">Amount</th>
+                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-[#6B7280]">Status</th>
+                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-[#6B7280]">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                <tbody className="divide-y divide-[#EFE5E0]">
                   {filteredChallans.map((challan) => {
                     const cfg = STATUS_CONFIG[challan.status] || STATUS_CONFIG.unpaid;
-                    const remaining = (challan.totalAmount || 0) - (challan.paidAmount || 0);
                     return (
-                      <tr key={challan._id} className="hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-surface-700 dark:text-surface-300 whitespace-nowrap">
+                      <tr key={challan._id} className="hover:bg-[#FAF8F5] transition-colors">
+                        <td className="px-4 py-3.5 font-mono text-xs font-bold text-[#5A0D1A] whitespace-nowrap">
                           {challan.challanNumber}
                         </td>
-                        <td className="px-4 py-3">
-                          <p className="font-semibold text-surface-900 dark:text-white text-sm">{challan.student?.fullName || '—'}</p>
-                          <p className="text-xs text-surface-400">{challan.student?.email}</p>
+                        <td className="px-4 py-3.5">
+                          <p className="font-bold text-[#111827] text-sm">{challan.student?.fullName || '—'}</p>
+                          <p className="text-xs text-[#6B7280]">{challan.student?.email}</p>
                         </td>
-                        <td className="px-4 py-3 hidden md:table-cell text-surface-700 dark:text-surface-300 text-xs">{challan.class?.name || '—'}</td>
-                        <td className="px-4 py-3 hidden lg:table-cell text-surface-700 dark:text-surface-300 text-xs">{challan.billingMonth}</td>
-                        <td className="px-4 py-3 text-right">
-                          <p className="font-bold text-surface-900 dark:text-white text-sm">PKR {(challan.totalAmount || 0).toLocaleString()}</p>
+                        <td className="px-4 py-3.5 hidden md:table-cell text-[#111827] text-xs font-semibold">{challan.class?.name || '—'}</td>
+                        <td className="px-4 py-3.5 hidden lg:table-cell text-[#6B7280] text-xs">{challan.billingMonth}</td>
+                        <td className="px-4 py-3.5 text-right">
+                          <p className="font-bold text-[#111827] text-sm">PKR {(challan.totalAmount || 0).toLocaleString()}</p>
                           {challan.paidAmount > 0 && (
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400">+{challan.paidAmount.toLocaleString()} paid</p>
+                            <p className="text-xs text-emerald-600 font-semibold">+{challan.paidAmount.toLocaleString()} paid</p>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3.5 text-center">
                           <Badge variant={cfg.variant} dot size="sm">{cfg.label}</Badge>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3.5">
                           <div className="flex items-center justify-center gap-1.5 flex-wrap">
                             <button
                               onClick={() => setPrintChallan(challan)}
                               title="Print Challan"
-                              className="p-1.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-950/60 text-primary-600 dark:text-primary-400 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg hover:bg-[#FAF8F5] text-[#5A0D1A] transition-colors cursor-pointer border border-[#EFE5E0]"
                             >
                               <Printer className="w-4 h-4" />
                             </button>
@@ -346,7 +360,7 @@ const AdminFeesPage = () => {
                               <button
                                 onClick={() => setPayChallan(challan)}
                                 title="Record Payment"
-                                className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer border border-emerald-200"
                               >
                                 <CreditCard className="w-4 h-4" />
                               </button>
@@ -357,7 +371,7 @@ const AdminFeesPage = () => {
                                   if (window.confirm('Cancel this challan?')) cancelMutation.mutate(challan._id);
                                 }}
                                 title="Cancel Challan"
-                                className="p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/60 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer border border-rose-200"
                               >
                                 <XCircle className="w-4 h-4" />
                               </button>
@@ -371,7 +385,7 @@ const AdminFeesPage = () => {
               </table>
             </div>
           )}
-        </Card>
+        </div>
       )}
 
       {/* ── FEE STRUCTURES TAB ── */}
@@ -382,71 +396,65 @@ const AdminFeesPage = () => {
               {[1,2,3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-2xl" />)}
             </div>
           ) : structures.length === 0 ? (
-            <Card>
-              <div className="flex flex-col items-center justify-center py-12 text-surface-400">
-                <Settings className="w-10 h-10 mb-3 opacity-30" />
-                <p className="font-medium">No fee structures yet</p>
-                <p className="text-sm mt-1">Create a fee structure to start generating challans</p>
-                <button
-                  onClick={() => { setEditStructure(null); setShowStructureModal(true); }}
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" /> Create Fee Structure
-                </button>
-              </div>
-            </Card>
+            <div className="bg-white rounded-2xl border border-[#EFE5E0] p-12 text-center shadow-xs">
+              <Settings className="w-10 h-10 mb-3 mx-auto text-[#5A0D1A]/30" />
+              <p className="font-bold text-[#111827]">No Fee Structures Configured</p>
+              <p className="text-xs text-[#6B7280] mt-1">Create a fee structure to start generating class challans.</p>
+              <Button
+                variant="primary"
+                size="sm"
+                className="mt-4"
+                leftIcon={<Plus className="w-4 h-4" />}
+                onClick={() => { setEditStructure(null); setShowStructureModal(true); }}
+              >
+                Create Fee Structure
+              </Button>
+            </div>
           ) : (
             structures.map((s) => {
               const total = s.totalMonthlyFee || (
-                (s.tuitionFee || 0) + (s.examFee || 0) + (s.libraryFee || 0) +
-                (s.transportFee || 0) + (s.sportsFund || 0) + (s.computerFee || 0)
+                (s.tuitionFee || 0) + (s.examFee || 0) + (s.labFee || 0) + (s.libraryFee || 0) + (s.miscellaneousFee || 0)
               );
               return (
-                <Card key={s._id}>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center shrink-0">
-                        <Settings className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-bold text-surface-900 dark:text-white">{s.class?.name || '—'}</h3>
-                          <Badge variant={s.isActive ? 'success' : 'default'} size="sm">{s.isActive ? 'Active' : 'Inactive'}</Badge>
-                          <span className="text-xs text-surface-500 dark:text-surface-400 font-mono">{s.academicYear}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-surface-600 dark:text-surface-400">
-                          {s.tuitionFee > 0 && <span>Tuition: PKR {s.tuitionFee.toLocaleString()}</span>}
-                          {s.transportFee > 0 && <span>Transport: PKR {s.transportFee.toLocaleString()}</span>}
-                          {s.sportsFund > 0 && <span>Sports: PKR {s.sportsFund.toLocaleString()}</span>}
-                          {s.computerFee > 0 && <span>Computer: PKR {s.computerFee.toLocaleString()}</span>}
-                          {s.examFee > 0 && <span>Exam: PKR {s.examFee.toLocaleString()}</span>}
-                          {s.libraryFee > 0 && <span>Library: PKR {s.libraryFee.toLocaleString()}</span>}
-                        </div>
-                      </div>
+                <div key={s._id} className="bg-white p-5 rounded-2xl border border-[#EFE5E0] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-serif text-base font-bold text-[#111827]">{s.class?.name || 'Class Structure'}</span>
+                      <span className="text-xs text-[#6B7280] font-mono">({s.academicYear})</span>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="text-right">
-                        <p className="text-xs text-surface-500 dark:text-surface-400">Monthly Total</p>
-                        <p className="text-base font-extrabold text-primary-600 dark:text-primary-400">PKR {total.toLocaleString()}</p>
-                      </div>
-                      <button
-                        onClick={() => { setEditStructure(s); setShowStructureModal(true); }}
-                        className="px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 text-xs font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (window.confirm('Deactivate this fee structure?'))
-                            deleteStructureMutation.mutate(s._id);
-                        }}
-                        className="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors cursor-pointer"
-                      >
-                        Deactivate
-                      </button>
+                    <div className="flex flex-wrap gap-4 text-xs text-[#6B7280] mt-2">
+                      <span>Tuition: <strong className="text-[#111827]">PKR {s.tuitionFee?.toLocaleString()}</strong></span>
+                      {s.examFee > 0 && <span>Exam: <strong className="text-[#111827]">PKR {s.examFee?.toLocaleString()}</strong></span>}
+                      {s.labFee > 0 && <span>Lab: <strong className="text-[#111827]">PKR {s.labFee?.toLocaleString()}</strong></span>}
+                      {s.libraryFee > 0 && <span>Library: <strong className="text-[#111827]">PKR {s.libraryFee?.toLocaleString()}</strong></span>}
                     </div>
                   </div>
-                </Card>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-xs uppercase tracking-wider font-bold text-[#6B7280]">Total Monthly</p>
+                      <p className="font-serif text-lg font-extrabold text-[#5A0D1A]">PKR {total.toLocaleString()}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="xs"
+                        onClick={() => { setEditStructure(s); setShowStructureModal(true); }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="text-rose-600 hover:bg-rose-50"
+                        onClick={() => {
+                          if (window.confirm('Delete this fee structure?')) deleteStructureMutation.mutate(s._id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               );
             })
           )}
@@ -454,32 +462,48 @@ const AdminFeesPage = () => {
       )}
 
       {/* Modals */}
-      {showGenerate && (
-        <GenerateChallanModal
-          onClose={() => setShowGenerate(false)}
-          onSuccess={(result) => {
-            alert(`✅ ${result?.message || 'Challans generated!'}`);
+      {printChallan && (
+        <ChallanPrintModal
+          isOpen={Boolean(printChallan)}
+          onClose={() => setPrintChallan(null)}
+          challan={printChallan}
+        />
+      )}
+      {payChallan && (
+        <RecordPaymentModal
+          isOpen={Boolean(payChallan)}
+          onClose={() => setPayChallan(null)}
+          challan={payChallan}
+          onSuccess={() => {
+            setPayChallan(null);
+            refetchChallans();
+            refetchSummary();
           }}
         />
       )}
-
-      {showStructureModal && (
-        <FeeStructureModal
-          initialStructure={editStructure}
-          onClose={() => { setShowStructureModal(false); setEditStructure(null); }}
-          onSuccess={() => refetchStructures()}
+      {showGenerate && (
+        <GenerateChallanModal
+          isOpen={showGenerate}
+          onClose={() => setShowGenerate(false)}
+          classes={classes}
+          onSuccess={() => {
+            setShowGenerate(false);
+            refetchChallans();
+            refetchSummary();
+          }}
         />
       )}
-
-      {printChallan && (
-        <ChallanPrintModal challan={printChallan} onClose={() => setPrintChallan(null)} />
-      )}
-
-      {payChallan && (
-        <RecordPaymentModal
-          challan={payChallan}
-          onClose={() => setPayChallan(null)}
-          onSuccess={() => refetchChallans()}
+      {showStructureModal && (
+        <FeeStructureModal
+          isOpen={showStructureModal}
+          onClose={() => { setShowStructureModal(false); setEditStructure(null); }}
+          classes={classes}
+          initialData={editStructure}
+          onSuccess={() => {
+            setShowStructureModal(false);
+            setEditStructure(null);
+            refetchStructures();
+          }}
         />
       )}
     </div>
