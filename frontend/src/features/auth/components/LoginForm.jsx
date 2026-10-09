@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { Link } from 'react-router';
 import { Input, Button } from '../../../components/ui';
 import { useLogin } from '../hooks/useLogin';
-import { Mail, Lock, Users, GraduationCap, ShieldCheck, HeartHandshake, Sparkles } from 'lucide-react';
+import { Mail, Lock, Users, GraduationCap, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
@@ -19,8 +19,7 @@ const ROLES_INFO = [
     icon: HeartHandshake,
     badge: 'Parent & Guardian Access',
     desc: 'Monitor attendance, fee challans, exam schedules & online tuitions',
-    demoEmail: 'parent@girlskingdom.edu',
-    demoPass: 'Parent@123456',
+    emailPlaceholder: 'parent@example.com',
   },
   {
     id: 'student',
@@ -28,8 +27,7 @@ const ROLES_INFO = [
     icon: GraduationCap,
     badge: 'Student Campus',
     desc: 'Classrooms, digital quizzes, timetable & online tuitions',
-    demoEmail: 'ayesha@girlskingdom.edu',
-    demoPass: 'Student@123456',
+    emailPlaceholder: 'student@girlskingdom.edu',
   },
   {
     id: 'teacher',
@@ -37,8 +35,7 @@ const ROLES_INFO = [
     icon: Users,
     badge: 'Teacher Desk',
     desc: 'Grading queue, class roster & curriculum management',
-    demoEmail: 'teacher@girlskingdom.edu',
-    demoPass: 'Teacher@123456',
+    emailPlaceholder: 'teacher@girlskingdom.edu',
   },
   {
     id: 'admin',
@@ -46,8 +43,7 @@ const ROLES_INFO = [
     icon: ShieldCheck,
     badge: 'Administration',
     desc: 'System governance, financials & staff management',
-    demoEmail: 'admin@girlskingdom.edu',
-    demoPass: 'Admin@123456',
+    emailPlaceholder: 'admin@girlskingdom.edu',
   },
 ];
 
@@ -58,13 +54,12 @@ export const LoginForm = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'parent@girlskingdom.edu',
-      password: 'Parent@123456',
+      email: '',
+      password: '',
     },
   });
 
@@ -72,8 +67,6 @@ export const LoginForm = () => {
 
   const handleRoleSelect = (roleItem) => {
     setSelectedRole(roleItem.id);
-    setValue('email', roleItem.demoEmail, { shouldValidate: true });
-    setValue('password', roleItem.demoPass, { shouldValidate: true });
   };
 
   const onSubmit = (data) => {
@@ -124,9 +117,10 @@ export const LoginForm = () => {
         <Input
           label="Email Address"
           type="email"
-          placeholder={activeRoleConfig.demoEmail}
+          placeholder={activeRoleConfig.emailPlaceholder}
           leftIcon={<Mail className="w-4 h-4" />}
           error={errors.email?.message}
+          autoComplete="email"
           {...register('email')}
         />
 
@@ -136,23 +130,9 @@ export const LoginForm = () => {
           placeholder="••••••••"
           leftIcon={<Lock className="w-4 h-4" />}
           error={errors.password?.message}
+          autoComplete="current-password"
           {...register('password')}
         />
-
-        {/* Quick Demo Fill Indicator */}
-        <div className="flex items-center justify-between text-[11px] pt-0.5">
-          <span className="text-[#6B7280]">
-            Demo credentials auto-filled
-          </span>
-          <button
-            type="button"
-            onClick={() => handleRoleSelect(activeRoleConfig)}
-            className="text-[#5A0D1A] hover:underline font-bold cursor-pointer inline-flex items-center gap-1"
-          >
-            <Sparkles className="w-3 h-3 text-amber-500" />
-            Reload {activeRoleConfig.label}
-          </button>
-        </div>
 
         <Button
           type="submit"
