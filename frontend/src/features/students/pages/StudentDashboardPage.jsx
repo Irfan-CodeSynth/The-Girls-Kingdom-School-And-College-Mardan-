@@ -22,7 +22,6 @@ import {
   ArrowRight,
   Wallet,
   Award,
-  MoreVertical,
 } from 'lucide-react';
 
 export const StudentDashboardPage = () => {
@@ -69,7 +68,7 @@ export const StudentDashboardPage = () => {
   const primaryQuiz = available[0] || quizzes[0];
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto font-sans">
       {/* ── 1. Global Hero Welcome Banner ── */}
       <DashboardHero
         name={user?.fullName || 'Ayesha Khan'}
@@ -90,7 +89,7 @@ export const StudentDashboardPage = () => {
         />
         <DashboardStatCard
           icon={ClipboardList}
-          iconBg="bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200"
+          iconBg="bg-gray-100 text-gray-700"
           value={completed}
           label="Quizzes Completed"
           to="/student/quizzes"
@@ -98,7 +97,7 @@ export const StudentDashboardPage = () => {
         />
         <DashboardStatCard
           icon={Trophy}
-          iconBg="bg-[#FEF3C7] dark:bg-amber-950/60 text-[#D97706]"
+          iconBg="bg-[#FEF3C7] text-[#D97706]"
           value={avgScore !== null ? `${avgScore}%` : 'Grade A'}
           label="Academic Average"
           to="/student/results"
@@ -106,7 +105,7 @@ export const StudentDashboardPage = () => {
         />
         <DashboardStatCard
           icon={Wallet}
-          iconBg="bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#059669]"
+          iconBg="bg-[#ECFDF5] text-[#059669]"
           value={outstandingAmount === 0 ? 'Cleared' : `PKR ${outstandingAmount}`}
           label="Fee Voucher Status"
           to="/student/fees"
@@ -118,16 +117,16 @@ export const StudentDashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left: My Class Details */}
-        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-5 border border-[#EFE5E0] shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
-              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
-                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 mb-4">
+              <div className="flex items-center gap-2 text-[#111827] font-bold text-base">
+                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A]" />
                 <span>My Enrolled Class Cohort</span>
               </div>
               <Link
                 to="/student/classes"
-                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#5A0D1A] hover:underline flex items-center gap-1 font-sans"
               >
                 <span>Class Hub</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -145,7 +144,7 @@ export const StudentDashboardPage = () => {
             ) : (
               <Link
                 to="/student/classes"
-                className="block p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] dark:bg-surface-900/40 hover:bg-white dark:hover:bg-surface-900 transition-all group"
+                className="block p-3.5 rounded-xl border border-gray-200 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] hover:bg-white transition-all group"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -153,26 +152,26 @@ export const StudentDashboardPage = () => {
                       <BookOpen className="w-6 h-6 text-[#EEDAA2]" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate group-hover:text-[#5A0D1A] dark:group-hover:text-[#E89CB0] transition-colors">
+                      <h3 className="font-bold text-sm text-[#111827] truncate group-hover:text-[#5A0D1A] transition-colors">
                         {myClass.name}
                       </h3>
-                      <p className="text-[11px] text-surface-400 mt-0.5">
+                      <p className="text-[11px] text-[#6B7280] mt-0.5 font-sans">
                         {myClass.code} • Academic Year {myClass.academicYear || '2025-2026'}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-surface-500 dark:text-surface-400 mt-2">
-                        <span className="flex items-center gap-1 font-medium text-rose-700 dark:text-rose-400">
+                      <div className="flex items-center gap-3 text-xs text-[#4B5563] mt-2 font-sans">
+                        <span className="flex items-center gap-1 font-medium text-rose-700">
                           <Users className="w-3.5 h-3.5" />
                           <span>Active Cohort</span>
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1 font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-surface-400" />
+                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
                           <span>Mon - Sat Routine</span>
                         </span>
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-surface-400 group-hover:text-[#5A0D1A] dark:group-hover:text-white transition-colors shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#5A0D1A] transition-colors shrink-0" />
                 </div>
               </Link>
             )}
@@ -180,16 +179,16 @@ export const StudentDashboardPage = () => {
         </div>
 
         {/* Right: Available Quizzes Container */}
-        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-5 border border-[#EFE5E0] shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
-              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
-                <ClipboardList className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 mb-4">
+              <div className="flex items-center gap-2 text-[#111827] font-bold text-base">
+                <ClipboardList className="w-4.5 h-4.5 text-[#5A0D1A]" />
                 <span>Active Quizzes & Assessments</span>
               </div>
               <Link
                 to="/student/quizzes"
-                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#5A0D1A] hover:underline flex items-center gap-1 font-sans"
               >
                 <span>View all</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -205,19 +204,19 @@ export const StudentDashboardPage = () => {
                 message="You are all caught up! No quizzes are currently due."
               />
             ) : (
-              <div className="p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-[#FAFAFA] dark:bg-surface-900/40">
+              <div className="p-3.5 rounded-xl border border-gray-200 bg-[#FAFAFA]">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-[#701422] text-white flex items-center justify-center shrink-0">
                       <ClipboardList className="w-5 h-5 text-[#EEDAA2]" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate">
+                      <h3 className="font-bold text-sm text-[#111827] truncate">
                         {primaryQuiz.title}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-surface-500 dark:text-surface-400 mt-1">
+                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-[#4B5563] mt-1 font-sans">
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-surface-400" />
+                          <Clock className="w-3 h-3 text-gray-400" />
                           <span>{primaryQuiz.duration || 60} min</span>
                         </span>
                         <span>•</span>
@@ -229,7 +228,7 @@ export const StudentDashboardPage = () => {
                   <div className="flex items-center gap-2 shrink-0">
                     <Link
                       to={`/student/quizzes/${primaryQuiz._id}/preview`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5A0D1A] hover:bg-[#701422] text-[#EEDAA2] text-xs font-bold transition-colors shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5A0D1A] hover:bg-[#701422] text-[#EEDAA2] text-xs font-bold transition-colors shadow-xs font-sans"
                     >
                       <span>Take Quiz</span>
                       <ArrowRight className="w-3 h-3" />
@@ -241,18 +240,18 @@ export const StudentDashboardPage = () => {
           </div>
 
           {/* Bottom Status Counter Pills */}
-          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-surface-100 dark:border-surface-700/60">
-            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-gray-100 font-sans">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] border border-emerald-200">
               <p className="font-bold text-sm text-[#059669] leading-none">{available.length}</p>
               <p className="text-[11px] text-[#059669]/80 mt-0.5 font-medium">Available</p>
             </div>
-            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] border border-rose-200">
               <p className="font-bold text-sm text-[#BE123C] leading-none">{completed}</p>
               <p className="text-[11px] text-[#BE123C]/80 mt-0.5 font-medium">Completed</p>
             </div>
-            <div className="text-center py-2 px-1 rounded-xl bg-surface-100 dark:bg-surface-700/40 border border-surface-200 dark:border-surface-700/60">
-              <p className="font-bold text-sm text-surface-600 dark:text-surface-300 leading-none">{gradedAttempts.length}</p>
-              <p className="text-[11px] text-surface-500 dark:text-surface-400 mt-0.5 font-medium">Graded</p>
+            <div className="text-center py-2 px-1 rounded-xl bg-gray-100 border border-gray-200">
+              <p className="font-bold text-sm text-gray-600 leading-none">{gradedAttempts.length}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 font-medium">Graded</p>
             </div>
           </div>
         </div>

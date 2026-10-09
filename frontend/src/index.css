@@ -49,18 +49,18 @@
   --color-danger-600: #e11d48;
   --color-danger-700: #be123c;
 
-  /* Surface colors (Girls Kingdom Burgundy #591125 theme) */
-  --color-surface-50: #faf5f6;
-  --color-surface-100: #f5eaed;
-  --color-surface-200: #ebd6dc;
-  --color-surface-300: #dcbfc7;
-  --color-surface-400: #b88694;
-  --color-surface-500: #8c5766;
-  --color-surface-600: #6d3a49;
-  --color-surface-700: #6e1730;
-  --color-surface-800: #420c1a;
-  --color-surface-900: #591125;
-  --color-surface-950: #380714;
+  /* Surface colors - Neutral Slate for clean white dashboards and high-contrast cards */
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+  --color-surface-950: #020617;
 }
 
 /* Dark mode base styles */

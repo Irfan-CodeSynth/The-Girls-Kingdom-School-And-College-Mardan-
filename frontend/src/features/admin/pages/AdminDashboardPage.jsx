@@ -69,7 +69,7 @@ export const AdminDashboardPage = () => {
   const primaryQuiz = quizzes[0];
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto font-sans">
       {/* ── 1. Global Hero Welcome Banner ── */}
       <DashboardHero
         name={user?.fullName || 'System Administrator'}
@@ -90,7 +90,7 @@ export const AdminDashboardPage = () => {
         />
         <DashboardStatCard
           icon={GraduationCap}
-          iconBg="bg-[#FEF3C7] dark:bg-amber-950/60 text-[#D97706]"
+          iconBg="bg-[#FEF3C7] text-[#D97706]"
           value={totalTeachers}
           label="Faculty Teachers"
           to="/admin/teachers"
@@ -98,7 +98,7 @@ export const AdminDashboardPage = () => {
         />
         <DashboardStatCard
           icon={BookOpen}
-          iconBg="bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200"
+          iconBg="bg-gray-100 text-gray-700"
           value={totalClasses}
           label="Active Classes"
           to="/admin/classes"
@@ -106,7 +106,7 @@ export const AdminDashboardPage = () => {
         />
         <DashboardStatCard
           icon={FileQuestion}
-          iconBg="bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#059669]"
+          iconBg="bg-[#ECFDF5] text-[#059669]"
           value={activeQuizzes}
           label="Live Assessments"
           to="/admin/quizzes"
@@ -118,16 +118,16 @@ export const AdminDashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left: Class Cohorts Container */}
-        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-5 border border-[#EFE5E0] shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
-              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
-                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 mb-4">
+              <div className="flex items-center gap-2 text-[#111827] font-bold text-base">
+                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A]" />
                 <span>Active Class Cohorts</span>
               </div>
               <Link
                 to="/admin/classes"
-                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#5A0D1A] hover:underline flex items-center gap-1 font-sans"
               >
                 <span>View all</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -151,7 +151,7 @@ export const AdminDashboardPage = () => {
                   <Link
                     key={cls._id}
                     to={`/admin/classes/${cls._id}`}
-                    className="block p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] dark:bg-surface-900/40 hover:bg-white dark:hover:bg-surface-900 transition-all group"
+                    className="block p-3.5 rounded-xl border border-gray-200 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] hover:bg-white transition-all group"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3.5 min-w-0">
@@ -159,26 +159,26 @@ export const AdminDashboardPage = () => {
                           <BookOpen className="w-5 h-5 text-[#EEDAA2]" />
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate group-hover:text-[#5A0D1A] dark:group-hover:text-[#E89CB0] transition-colors">
+                          <h3 className="font-bold text-sm text-[#111827] truncate group-hover:text-[#5A0D1A] transition-colors">
                             {cls.name}
                           </h3>
-                          <p className="text-[11px] text-surface-400 mt-0.5">
+                          <p className="text-[11px] text-[#6B7280] mt-0.5 font-sans">
                             {cls.code} • {cls.academicYear || '2025-2026'}
                           </p>
-                          <div className="flex items-center gap-3 text-xs text-surface-500 dark:text-surface-400 mt-1.5">
-                            <span className="flex items-center gap-1 font-medium text-rose-700 dark:text-rose-400">
+                          <div className="flex items-center gap-3 text-xs text-[#4B5563] mt-1.5 font-sans">
+                            <span className="flex items-center gap-1 font-medium text-rose-700">
                               <Users className="w-3.5 h-3.5" />
                               <span>{cls.studentCount || 0} students</span>
                             </span>
                             <span>•</span>
                             <span className="flex items-center gap-1 font-medium">
-                              <Calendar className="w-3.5 h-3.5 text-surface-400" />
+                              <Calendar className="w-3.5 h-3.5 text-gray-400" />
                               <span>{cls.status || 'Active'}</span>
                             </span>
                           </div>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-surface-400 group-hover:text-[#5A0D1A] dark:group-hover:text-white transition-colors shrink-0" />
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#5A0D1A] transition-colors shrink-0" />
                     </div>
                   </Link>
                 ))}
@@ -188,16 +188,16 @@ export const AdminDashboardPage = () => {
         </div>
 
         {/* Right: Quizzes & Assessment Overview */}
-        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-5 border border-[#EFE5E0] shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
-              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
-                <FileQuestion className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 mb-4">
+              <div className="flex items-center gap-2 text-[#111827] font-bold text-base">
+                <FileQuestion className="w-4.5 h-4.5 text-[#5A0D1A]" />
                 <span>Quizzes & Assessments Hub</span>
               </div>
               <Link
                 to="/admin/quizzes"
-                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#5A0D1A] hover:underline flex items-center gap-1 font-sans"
               >
                 <span>Manage</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -213,19 +213,19 @@ export const AdminDashboardPage = () => {
                 message="Faculty has not published any quizzes yet."
               />
             ) : (
-              <div className="p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-[#FAFAFA] dark:bg-surface-900/40">
+              <div className="p-3.5 rounded-xl border border-gray-200 bg-[#FAFAFA]">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-[#701422] text-white flex items-center justify-center shrink-0">
                       <FileQuestion className="w-5 h-5 text-[#EEDAA2]" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate">
+                      <h3 className="font-bold text-sm text-[#111827] truncate">
                         {primaryQuiz.title}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-surface-500 dark:text-surface-400 mt-1">
+                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-[#4B5563] mt-1 font-sans">
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-surface-400" />
+                          <Clock className="w-3 h-3 text-gray-400" />
                           <span>{primaryQuiz.duration || 60} min</span>
                         </span>
                         <span>•</span>
@@ -237,11 +237,11 @@ export const AdminDashboardPage = () => {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-emerald-200 dark:border-emerald-800/40">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-emerald-200 font-sans">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
                       <span>{primaryQuiz.status || 'Published'}</span>
                     </span>
-                    <button type="button" className="p-1 text-surface-400 hover:text-surface-600">
+                    <button type="button" className="p-1 text-gray-400 hover:text-gray-600">
                       <MoreVertical className="w-4 h-4" />
                     </button>
                   </div>
@@ -251,18 +251,18 @@ export const AdminDashboardPage = () => {
           </div>
 
           {/* Bottom 3 Status Counter Pills */}
-          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-surface-100 dark:border-surface-700/60">
-            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40">
+          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-gray-100 font-sans">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] border border-rose-200">
               <p className="font-bold text-sm text-[#BE123C] leading-none">{draftQuizzes}</p>
               <p className="text-[11px] text-[#BE123C]/80 mt-0.5 font-medium">Draft</p>
             </div>
-            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] border border-emerald-200">
               <p className="font-bold text-sm text-[#059669] leading-none">{activeQuizzes}</p>
               <p className="text-[11px] text-[#059669]/80 mt-0.5 font-medium">Published</p>
             </div>
-            <div className="text-center py-2 px-1 rounded-xl bg-surface-100 dark:bg-surface-700/40 border border-surface-200 dark:border-surface-700/60">
-              <p className="font-bold text-sm text-surface-600 dark:text-surface-300 leading-none">{closedQuizzes}</p>
-              <p className="text-[11px] text-surface-500 dark:text-surface-400 mt-0.5 font-medium">Closed</p>
+            <div className="text-center py-2 px-1 rounded-xl bg-gray-100 border border-gray-200">
+              <p className="font-bold text-sm text-gray-600 leading-none">{closedQuizzes}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 font-medium">Closed</p>
             </div>
           </div>
         </div>

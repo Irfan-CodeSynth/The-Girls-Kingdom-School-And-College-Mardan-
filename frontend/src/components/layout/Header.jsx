@@ -39,13 +39,13 @@ export const Header = ({ onToggleSidebar }) => {
     : 'TG';
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-surface-200 dark:border-surface-700/80 bg-white/95 dark:bg-surface-800/95 px-4 sm:px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 font-sans">
       {/* ── Left: Hamburger Menu & Global Search ── */}
       <div className="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
         <button
           type="button"
           onClick={onToggleSidebar}
-          className="lg:hidden rounded-lg p-2 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 focus:outline-none"
+          className="lg:hidden rounded-lg p-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
           title="Toggle Navigation"
         >
           <Menu className="w-5 h-5" />
@@ -53,13 +53,13 @@ export const Header = ({ onToggleSidebar }) => {
 
         {/* Global Search Bar */}
         <div className="relative w-full max-w-md hidden sm:block">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-surface-400">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
             <Search className="w-4 h-4" />
           </div>
           <input
             type="text"
             placeholder="Search classes, quizzes, students..."
-            className="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm rounded-full bg-[#F8F6F4] dark:bg-surface-900 border border-surface-200 dark:border-surface-700 text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-600 transition-all"
+            className="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm rounded-full bg-[#F8F9FA] border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] transition-all"
           />
         </div>
       </div>
@@ -70,20 +70,20 @@ export const Header = ({ onToggleSidebar }) => {
         <button
           type="button"
           onClick={toggleTheme}
-          className="rounded-full p-2 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+          className="rounded-full p-2 text-gray-500 hover:bg-gray-100 transition-colors"
           title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? (
-            <Sun className="w-4.5 h-4.5 text-amber-400" />
+            <Sun className="w-4.5 h-4.5 text-amber-500" />
           ) : (
-            <Moon className="w-4.5 h-4.5 text-surface-600" />
+            <Moon className="w-4.5 h-4.5 text-gray-600" />
           )}
         </button>
 
         {/* Notification bell with numeric counter badge */}
         <button
           type="button"
-          className="relative rounded-full p-2 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+          className="relative rounded-full p-2 text-gray-500 hover:bg-gray-100 transition-colors"
           title="Notifications"
         >
           <Bell className="w-4.5 h-4.5" />
@@ -103,15 +103,15 @@ export const Header = ({ onToggleSidebar }) => {
 
               {/* User details */}
               <div className="hidden md:flex flex-col text-left">
-                <span className="text-xs font-bold text-surface-900 dark:text-white leading-tight">
+                <span className="text-xs font-bold text-[#111827] leading-tight font-sans">
                   {user?.fullName || 'User Account'}
                 </span>
-                <span className="text-[10px] font-medium text-surface-500 dark:text-surface-400 capitalize">
+                <span className="text-[10px] font-medium text-[#6B7280] capitalize font-sans">
                   {user?.role || 'Member'}
                 </span>
               </div>
 
-              <ChevronDown className="w-3.5 h-3.5 text-surface-400 group-hover:text-surface-600 dark:group-hover:text-surface-300 transition-colors" />
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-colors" />
             </div>
           }
           items={userMenuItems}
