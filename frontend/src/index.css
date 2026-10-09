@@ -63,9 +63,9 @@
   --color-surface-950: #020617;
 }
 
-/* Dark mode base styles */
+/* Enforce clean academic white/ivory theme */
 .dark {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 /* Scrollbar styling */
@@ -81,10 +81,6 @@
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #6e1730;
 }
 
 /* Custom utilities */
