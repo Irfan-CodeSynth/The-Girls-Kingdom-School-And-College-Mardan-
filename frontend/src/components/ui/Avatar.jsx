@@ -32,7 +32,7 @@ export const Avatar = ({
         />
       ) : (
         <div
-          className={`${sizeMap[size]} rounded-full bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 font-semibold flex items-center justify-center border border-primary-200 dark:border-primary-800`}
+          className={`${sizeMap[size]} rounded-full bg-gradient-to-br from-[#701422] to-[#4A0914] text-[#EEDAA2] font-bold flex items-center justify-center border border-[#D4AF37]/50 shadow-xs`}
         >
           {getInitials(name)}
         </div>

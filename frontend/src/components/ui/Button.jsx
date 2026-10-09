@@ -3,11 +3,11 @@ import { motion } from 'motion/react';
 import { Loader2 } from 'lucide-react';
 
 const variants = {
-  primary: 'bg-primary-600 hover:bg-primary-700 text-white dark:bg-primary-500 dark:hover:bg-primary-600',
-  secondary: 'bg-surface-100 text-surface-700 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-100 dark:hover:bg-surface-600',
-  danger: 'bg-danger-600 hover:bg-danger-700 text-white',
-  ghost: 'hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200',
-  outline: 'border border-surface-300 hover:bg-surface-50 text-surface-700 dark:border-surface-600 dark:hover:bg-surface-700 dark:text-surface-200',
+  primary: 'bg-[#5A0D1A] hover:bg-[#420812] text-white shadow-xs',
+  secondary: 'bg-[#FAF8F5] text-[#111827] border border-[#EFE5E0] hover:bg-[#F3EFEA]',
+  danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-xs',
+  ghost: 'hover:bg-gray-100 text-gray-700',
+  outline: 'border border-[#EFE5E0] bg-white hover:bg-[#FAF8F5] text-[#111827] shadow-2xs',
 };
 
 const sizes = {

@@ -15,13 +15,13 @@ export const Input = React.forwardRef(({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-1">
+        <label htmlFor={inputId} className="block text-xs font-bold uppercase tracking-wider text-[#374151] mb-1.5 font-sans">
           {label}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-surface-400">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
             {leftIcon}
           </div>
         )}
@@ -43,7 +43,7 @@ export const Input = React.forwardRef(({
         />
       </div>
       {(error || helperText) && (
-        <p className={`mt-1 text-sm ${error ? 'text-danger-500' : 'text-surface-500 dark:text-surface-400'}`}>
+        <p className={`mt-1 text-xs ${error ? 'text-danger-600 font-medium' : 'text-gray-500'}`}>
           {error || helperText}
         </p>
       )}

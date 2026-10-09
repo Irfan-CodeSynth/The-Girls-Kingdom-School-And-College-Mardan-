@@ -20,8 +20,8 @@ export const ConfirmDialog = ({
         <div
           className={`p-3 rounded-full shrink-0 ${
             variant === 'danger'
-              ? 'bg-danger-50 text-danger-600 dark:bg-danger-500/10 dark:text-danger-400'
-              : 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400'
+              ? 'bg-rose-50 text-rose-600 border border-rose-100'
+              : 'bg-[#FAF8F5] text-[#5A0D1A] border border-[#EFE5E0]'
           }`}
         >
           {variant === 'danger' ? (
@@ -31,10 +31,10 @@ export const ConfirmDialog = ({
           )}
         </div>
         <div>
-          <h4 className="text-base font-semibold text-surface-900 dark:text-white">
+          <h4 className="text-base font-bold text-[#111827]">
             {title}
           </h4>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <p className="mt-1 text-sm text-[#4B5563] leading-relaxed">
             {message}
           </p>
         </div>

@@ -6,11 +6,21 @@ import {
   Table,
   Badge,
   Button,
-  Input,
   Avatar,
   ConfirmDialog,
 } from '../../../components/ui';
-import { Search, Users, UserX, UserCheck, Eye, AlertTriangle, RefreshCw, Plus } from 'lucide-react';
+import {
+  Search,
+  Users,
+  UserX,
+  UserCheck,
+  Eye,
+  AlertTriangle,
+  RefreshCw,
+  Plus,
+  GraduationCap,
+  Sparkles,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import AddStudentModal from '../components/AddStudentModal';
 
@@ -20,6 +30,7 @@ export const StudentsListPage = () => {
   const [search, setSearch] = useState('');
   const [confirmToggle, setConfirmToggle] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['students', search],
     queryFn: () => studentApi.getStudents({ search }),
@@ -39,6 +50,10 @@ export const StudentsListPage = () => {
     },
   });
 
+  const students = data?.students || [];
+  const totalCount = data?.pagination?.total ?? students.length;
+  const activeCount = students.filter((s) => s.isActive).length;
+
   const columns = [
     {
       key: 'fullName',
@@ -47,8 +62,10 @@ export const StudentsListPage = () => {
         <div className="flex items-center gap-3">
           <Avatar src={row.profilePhoto} name={val} size="sm" />
           <div>
-            <p className="font-semibold text-surface-900 dark:text-white text-sm">{val}</p>
-            <p className="text-xs text-surface-500">{row.email}</p>
+            <p className="font-bold text-[#111827] text-sm hover:text-[#5A0D1A] transition-colors cursor-pointer" onClick={() => navigate(`/admin/students/${row._id}`)}>
+              {val}
+            </p>
+            <p className="text-xs text-[#6B7280]">{row.email}</p>
           </div>
         </div>
       ),
@@ -57,7 +74,7 @@ export const StudentsListPage = () => {
       key: 'studentId',
       label: 'Reg #',
       render: (val) => (
-        <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300">
+        <span className="font-mono text-xs px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#5A0D1A] font-bold">
           {val || 'N/A'}
         </span>
       ),
@@ -67,11 +84,11 @@ export const StudentsListPage = () => {
       label: 'Enrolled Class',
       render: (val) =>
         val ? (
-          <span className="text-sm font-medium text-surface-900 dark:text-white">
+          <span className="text-sm font-semibold text-[#111827]">
             {val.name}
           </span>
         ) : (
-          <span className="text-xs text-surface-400 italic">Not enrolled</span>
+          <span className="text-xs text-[#9CA3AF] italic">Unassigned</span>
         ),
     },
     {
@@ -86,7 +103,11 @@ export const StudentsListPage = () => {
     {
       key: 'createdAt',
       label: 'Registered',
-      render: (val) => new Date(val).toLocaleDateString(),
+      render: (val) => (
+        <span className="text-xs text-[#6B7280]">
+          {val ? new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+        </span>
+      ),
     },
     {
       key: 'actions',
@@ -94,23 +115,24 @@ export const StudentsListPage = () => {
       className: 'text-right',
       cellClassName: 'text-right',
       render: (_, row) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-1.5">
           <Button
-            variant="ghost"
-            size="sm"
-            leftIcon={<Eye className="w-4 h-4" />}
+            variant="outline"
+            size="xs"
+            leftIcon={<Eye className="w-3.5 h-3.5 text-[#5A0D1A]" />}
             onClick={() => navigate(`/admin/students/${row._id}`)}
           >
             View
           </Button>
           <Button
             variant="ghost"
-            size="sm"
+            size="xs"
             className={
               row.isActive
-                ? 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20'
-                : 'text-success-600 hover:bg-success-50 dark:hover:bg-emerald-900/20'
+                ? 'text-rose-600 hover:bg-rose-50'
+                : 'text-emerald-700 hover:bg-emerald-50'
             }
+            title={row.isActive ? 'Deactivate account' : 'Activate account'}
             onClick={() =>
               setConfirmToggle({
                 id: row._id,
@@ -130,50 +152,93 @@ export const StudentsListPage = () => {
     },
   ];
 
-  const students = data?.students || [];
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 font-sans">
+      {/* ── Page Header Banner ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white tracking-tight">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] border border-[#EFE5E0] text-[10px] font-bold tracking-wider uppercase text-[#5A0D1A]">
+              Academic Records
+            </span>
+          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
             Student Management
           </h1>
-          <p className="text-sm text-surface-500 dark:text-surface-400">
-            {data?.pagination?.total ?? 0} registered students
+          <p className="text-xs sm:text-sm text-[#4B5563] mt-1">
+            Comprehensive register of enrolled students, portal access, and academic records.
           </p>
         </div>
-        <Button
-          variant="primary"
-          leftIcon={<Plus className="w-4 h-4" />}
-          onClick={() => setIsAddModalOpen(true)}
-        >
-          Add Student
-        </Button>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="primary"
+            leftIcon={<Plus className="w-4 h-4" />}
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Enroll New Student
+          </Button>
+        </div>
       </div>
 
-      {/* Search */}
-      <div className="max-w-md">
-        <Input
-          placeholder="Search students by name or email..."
-          leftIcon={<Search className="w-4 h-4" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* ── Metric Snapshot & Search Row ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Metric 1: Total Students */}
+        <div className="bg-white p-4 rounded-2xl border border-[#EFE5E0] shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#701422] to-[#4A0914] text-[#EEDAA2] flex items-center justify-center shrink-0 shadow-2xs">
+            <GraduationCap className="w-5 h-5 text-[#EEDAA2]" />
+          </div>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+              Total Enrolled
+            </p>
+            <p className="font-serif text-2xl font-bold text-[#111827]">
+              {totalCount}
+            </p>
+          </div>
+        </div>
+
+        {/* Metric 2: Active Accounts */}
+        <div className="bg-white p-4 rounded-2xl border border-[#EFE5E0] shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0">
+            <Users className="w-5 h-5 text-emerald-700" />
+          </div>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+              Active Portal Users
+            </p>
+            <p className="font-serif text-2xl font-bold text-[#111827]">
+              {activeCount}
+            </p>
+          </div>
+        </div>
+
+        {/* Search Input Box */}
+        <div className="bg-white p-2.5 px-3.5 rounded-2xl border border-[#EFE5E0] shadow-xs flex items-center">
+          <div className="relative w-full">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by student name or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl bg-[#FAF8F5] border border-[#EFE5E0] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] transition-all"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Session/Error Alert */}
+      {/* ── Error / Session Warning Banner ── */}
       {isError && (
-        <div className="rounded-xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+        <div className="rounded-2xl border border-amber-300 bg-amber-50/70 p-4 flex items-start gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 text-sm">
-            <p className="font-semibold text-amber-900 dark:text-amber-200">
+            <p className="font-bold text-amber-900">
               {error?.response?.status === 403
                 ? 'Administrator Access Required'
                 : 'Unable to Load Students'}
             </p>
-            <p className="text-amber-700 dark:text-amber-300 mt-0.5">
+            <p className="text-amber-800 text-xs mt-1">
               {error?.response?.status === 403
                 ? 'Your active session is not recognized as an Administrator (received 403 Forbidden). If you recently registered or logged in as a student in another tab, please sign back in as Admin.'
                 : error?.response?.data?.message || error?.message || 'An unexpected error occurred.'}
@@ -201,16 +266,16 @@ export const StudentsListPage = () => {
         </div>
       )}
 
-      {/* Table */}
+      {/* ── Student Data Table ── */}
       <Table
         columns={columns}
         data={students}
         loading={isPending}
         emptyTitle="No Students Registered"
-        emptyMessage="Students will appear here once they register through the student portal."
+        emptyMessage="Students will appear here once registered through this portal."
       />
 
-      {/* Confirm toggle dialog */}
+      {/* ── Confirm Deactivation Dialog ── */}
       <ConfirmDialog
         isOpen={Boolean(confirmToggle)}
         onClose={() => setConfirmToggle(null)}
@@ -219,7 +284,7 @@ export const StudentsListPage = () => {
             ? 'Activate Student Account?'
             : 'Deactivate Student Account?'
         }
-        message={`Are you sure you want to ${confirmToggle?.isActive ? 'activate' : 'deactivate'} the account for ${confirmToggle?.name}?`}
+        message={`Are you sure you want to ${confirmToggle?.isActive ? 'activate' : 'deactivate'} the account for ${confirmToggle?.name}? Deactivating will suspend portal login.`}
         confirmText={confirmToggle?.isActive ? 'Activate' : 'Deactivate'}
         variant={confirmToggle?.isActive ? 'primary' : 'danger'}
         loading={toggleActiveMutation.isPending}
@@ -231,6 +296,7 @@ export const StudentsListPage = () => {
         }
       />
 
+      {/* ── Modal: Enroll New Student ── */}
       <AddStudentModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

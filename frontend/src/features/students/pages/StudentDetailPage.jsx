@@ -10,24 +10,26 @@ import {
   BookOpen,
   Calendar,
   IdCard,
-  Lock,
   KeyRound,
+  GraduationCap,
+  ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const InfoRow = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start gap-3 py-3 border-b border-surface-100 dark:border-surface-700/60 last:border-0">
-    <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center shrink-0 mt-0.5">
-      <Icon className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-    </div>
-    <div>
-      <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+  <div className="flex items-center justify-between py-3 border-b border-[#EFE5E0] last:border-0 font-sans">
+    <div className="flex items-center gap-2.5">
+      <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#EFE5E0] flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4 text-[#5A0D1A]" />
+      </div>
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
         {label}
       </p>
-      <p className="text-sm font-semibold text-surface-900 dark:text-white mt-0.5">
-        {value || 'N/A'}
-      </p>
     </div>
+    <p className="text-sm font-bold text-[#111827] text-right">
+      {value || '—'}
+    </p>
   </div>
 );
 
@@ -52,10 +54,10 @@ export const StudentDetailPage = () => {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-8 w-48 rounded-xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="col-span-2 h-64 w-full" />
+          <Skeleton className="h-96 w-full rounded-2xl" />
+          <Skeleton className="col-span-2 h-96 w-full rounded-2xl" />
         </div>
       </div>
     );
@@ -68,16 +70,24 @@ export const StudentDetailPage = () => {
     {
       key: 'class',
       label: 'Class',
-      render: (val) => val?.name || 'N/A',
+      render: (val) => (
+        <span className="font-bold text-[#111827] text-sm">
+          {val?.name || 'N/A'}
+        </span>
+      ),
     },
     {
       key: 'enrolledAt',
-      label: 'Enrolled',
-      render: (val) => new Date(val).toLocaleDateString(),
+      label: 'Enrolled On',
+      render: (val) => (
+        <span className="text-xs text-[#6B7280]">
+          {val ? new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+        </span>
+      ),
     },
     {
       key: 'status',
-      label: 'Status',
+      label: 'Enrollment Status',
       render: (val) => (
         <Badge
           variant={
@@ -85,91 +95,165 @@ export const StudentDetailPage = () => {
           }
           dot
         >
-          {val}
+          {val || 'Active'}
         </Badge>
       ),
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <Link
-        to="/admin/students"
-        className="inline-flex items-center gap-2 text-sm font-medium text-surface-500 hover:text-surface-900 dark:hover:text-white transition"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Students
-      </Link>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Navigation Breadcrumb ── */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/admin/students"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#5A0D1A] hover:text-[#420812] transition-colors bg-white px-3.5 py-1.5 rounded-xl border border-[#EFE5E0] shadow-xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Students Register
+        </Link>
+
+        <span className="text-xs text-[#6B7280] font-mono">
+          ID: {student?._id}
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left — Profile Card */}
-        <Card className="flex flex-col items-center text-center gap-4 p-6">
-          <Avatar
-            src={student?.profilePhoto}
-            name={student?.fullName}
-            size="xl"
-          />
-          <div>
-            <h2 className="text-xl font-bold text-surface-900 dark:text-white">
+        {/* ── Left Column: Profile Card ── */}
+        <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs overflow-hidden flex flex-col">
+          {/* Card Royal Banner Accent */}
+          <div className="h-20 bg-gradient-to-r from-[#5A0D1A] via-[#701422] to-[#420812] relative flex items-center justify-end px-4">
+            <span className="px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[10px] font-bold uppercase tracking-wider text-[#EEDAA2]">
+              Student Profile
+            </span>
+          </div>
+
+          <div className="p-6 pt-0 flex flex-col items-center text-center -mt-10">
+            <div className="p-1 rounded-full bg-white shadow-md">
+              <Avatar
+                src={student?.profilePhoto}
+                name={student?.fullName}
+                size="xl"
+              />
+            </div>
+
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#111827] mt-3">
               {student?.fullName}
             </h2>
-            <Badge
-              variant={student?.isActive ? 'success' : 'danger'}
-              dot
-              className="mt-1"
-            >
-              {student?.isActive ? 'Active Account' : 'Inactive Account'}
-            </Badge>
-          </div>
-          <div className="w-full text-left space-y-0 divide-y divide-surface-100 dark:divide-surface-700">
-            <InfoRow icon={Mail} label="Email" value={student?.email} />
-            <InfoRow icon={Phone} label="Phone" value={student?.phone} />
-            <InfoRow icon={IdCard} label="Student ID" value={student?.studentId} />
-            <InfoRow
-              icon={BookOpen}
-              label="Enrolled Class"
-              value={student?.enrolledClass?.name}
-            />
-            <InfoRow
-              icon={Calendar}
-              label="Registered On"
-              value={
-                student?.createdAt
-                  ? new Date(student.createdAt).toLocaleDateString()
-                  : 'N/A'
-              }
-            />
-          </div>
 
-          <div className="w-full pt-3 border-t border-surface-200 dark:border-surface-700">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30"
-              leftIcon={<KeyRound className="w-4 h-4 text-amber-600" />}
-              loading={resetPasswordMutation.isPending}
-              onClick={() => {
-                if (window.confirm(`Reset password for ${student?.fullName} to default (Student@123456)?`)) {
-                  resetPasswordMutation.mutate();
+            <p className="text-xs text-[#6B7280] mt-0.5 font-mono">
+              Reg # {student?.studentId || 'N/A'}
+            </p>
+
+            <div className="mt-2.5">
+              <Badge
+                variant={student?.isActive ? 'success' : 'danger'}
+                dot
+              >
+                {student?.isActive ? 'Active Student' : 'Inactive Account'}
+              </Badge>
+            </div>
+
+            {/* Attributes Info List */}
+            <div className="w-full mt-6 space-y-0 border-t border-[#EFE5E0]">
+              <InfoRow icon={Mail} label="Email" value={student?.email} />
+              <InfoRow icon={Phone} label="Phone" value={student?.phone} />
+              <InfoRow icon={IdCard} label="Reg Number" value={student?.studentId} />
+              <InfoRow
+                icon={BookOpen}
+                label="Class"
+                value={student?.enrolledClass?.name}
+              />
+              <InfoRow
+                icon={Calendar}
+                label="Joined"
+                value={
+                  student?.createdAt
+                    ? new Date(student.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : '—'
                 }
-              }}
-            >
-              Reset Password (Student@123456)
-            </Button>
-          </div>
-        </Card>
+              />
+            </div>
 
-        {/* Right — Enrollment History */}
-        <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-            Enrollment History
-          </h3>
-          <Table
-            columns={historyColumns}
-            data={history}
-            emptyTitle="No Enrollment History"
-            emptyMessage="This student has not been enrolled in any class yet."
-          />
+            {/* Password Reset Action */}
+            <div className="w-full pt-4 mt-2 border-t border-[#EFE5E0]">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-amber-800 border-amber-200 bg-amber-50/50 hover:bg-amber-100/70"
+                leftIcon={<KeyRound className="w-4 h-4 text-amber-700" />}
+                loading={resetPasswordMutation.isPending}
+                onClick={() => {
+                  if (window.confirm(`Reset password for ${student?.fullName} to default: Student@123456?`)) {
+                    resetPasswordMutation.mutate();
+                  }
+                }}
+              >
+                Reset Password (Student@123456)
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right Column: Academic Details & Enrollment History ── */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Quick Academic Overview Card */}
+          <div className="bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
+            <h3 className="font-serif text-lg font-bold text-[#5A0D1A] mb-4 flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-[#5A0D1A]" />
+              Academic Status Overview
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+                  Currently Enrolled In
+                </p>
+                <p className="font-serif text-lg font-bold text-[#111827] mt-1">
+                  {student?.enrolledClass?.name || 'No Class Assigned'}
+                </p>
+                {student?.enrolledClass?.code && (
+                  <p className="text-xs text-[#6B7280] font-mono mt-0.5">
+                    Section / Code: {student.enrolledClass.code}
+                  </p>
+                )}
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+                  Portal Access Status
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <p className="font-bold text-sm text-[#111827]">
+                    {student?.isActive ? 'Granted (Active)' : 'Suspended'}
+                  </p>
+                </div>
+                <p className="text-xs text-[#6B7280] mt-0.5">
+                  Allows participation in quizzes, timetable and notices
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Enrollment History Table */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif text-lg font-bold text-[#111827]">
+                Enrollment History
+              </h3>
+              <span className="text-xs text-[#6B7280]">
+                {history.length} records
+              </span>
+            </div>
+
+            <Table
+              columns={historyColumns}
+              data={history}
+              emptyTitle="No Prior Enrollment History"
+              emptyMessage="This student does not have any previous class transition records."
+            />
+          </div>
         </div>
       </div>
     </div>
