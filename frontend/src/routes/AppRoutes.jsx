@@ -78,6 +78,14 @@ import AdminSchedulePage from '../features/schedule/pages/AdminSchedulePage';
 import TeacherSchedulePage from '../features/schedule/pages/TeacherSchedulePage';
 import StudentSchedulePage from '../features/schedule/pages/StudentSchedulePage';
 
+// Stage 13 — Online Tuitions (LMS)
+import AdminTuitionsPage from '../features/tuitions/pages/AdminTuitionsPage';
+import TeacherTuitionsPage from '../features/tuitions/pages/TeacherTuitionsPage';
+import TeacherTuitionManagePage from '../features/tuitions/pages/TeacherTuitionManagePage';
+import TeacherTuitionRosterPage from '../features/tuitions/pages/TeacherTuitionRosterPage';
+import StudentTuitionsPage from '../features/tuitions/pages/StudentTuitionsPage';
+import StudentTuitionLearnPage from '../features/tuitions/pages/StudentTuitionLearnPage';
+
 // Dynamic dashboard redirect component
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -141,6 +149,9 @@ export const AppRoutes = () => {
 
             {/* Timetable & Exam Scheduler */}
             <Route path="/admin/schedule" element={<AdminSchedulePage />} />
+
+            {/* Online Tuitions Governance */}
+            <Route path="/admin/tuitions" element={<AdminTuitionsPage />} />
           </Route>
 
           {/* ─── Teacher Routes ─── */}
@@ -170,6 +181,11 @@ export const AppRoutes = () => {
             <Route path="/teacher/quizzes/:id/attempts" element={<TeacherQuizAttemptsPage />} />
             <Route path="/teacher/quizzes/:quizId/grade/:attemptId" element={<TeacherGradingPage />} />
             <Route path="/teacher/grading" element={<TeacherGradingQueuePage />} />
+
+            {/* Online Tuitions Module */}
+            <Route path="/teacher/tuitions" element={<TeacherTuitionsPage />} />
+            <Route path="/teacher/tuitions/:courseId/manage" element={<TeacherTuitionManagePage />} />
+            <Route path="/teacher/tuitions/:courseId/roster" element={<TeacherTuitionRosterPage />} />
           </Route>
 
           {/* ─── Student Routes ─── */}
@@ -205,6 +221,10 @@ export const AppRoutes = () => {
 
             {/* Fee Account */}
             <Route path="/student/fees" element={<StudentFeesPage />} />
+
+            {/* Online Tuitions Learning Portal */}
+            <Route path="/student/tuitions" element={<StudentTuitionsPage />} />
+            <Route path="/student/tuitions/:id" element={<StudentTuitionLearnPage />} />
           </Route>
         </Route>
 

@@ -26,6 +26,7 @@ export const QUESTION_TYPES = {
 export const SIDEBAR_ITEMS = {
   [ROLES.ADMIN]: [
     { name: 'Dashboard', path: '/admin/dashboard', icon: 'LayoutDashboard' },
+    { name: 'Online Tuitions', path: '/admin/tuitions', icon: 'Video' },
     { name: 'Students', path: '/admin/students', icon: 'Users' },
     { name: 'Teachers', path: '/admin/teachers', icon: 'GraduationCap' },
     { name: 'Classes', path: '/admin/classes', icon: 'BookOpen' },
@@ -38,6 +39,7 @@ export const SIDEBAR_ITEMS = {
   ],
   [ROLES.TEACHER]: [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: 'LayoutDashboard' },
+    { name: 'Online Tuitions', path: '/teacher/tuitions', icon: 'Video' },
     { name: 'My Classes', path: '/teacher/classes', icon: 'BookOpen' },
     { name: 'Quizzes', path: '/teacher/quizzes', icon: 'FileText' },
     { name: 'Grading', path: '/teacher/grading', icon: 'Edit3' },
@@ -47,6 +49,7 @@ export const SIDEBAR_ITEMS = {
   ],
   [ROLES.STUDENT]: [
     { name: 'Dashboard', path: '/student/dashboard', icon: 'LayoutDashboard' },
+    { name: 'Online Tuitions', path: '/student/tuitions', icon: 'Video' },
     { name: 'My Class', path: '/student/classes', icon: 'BookOpen' },
     { name: 'Attendance', path: '/student/attendance', icon: 'CheckCircle' },
     { name: 'Quizzes', path: '/student/quizzes', icon: 'FileQuestion' },

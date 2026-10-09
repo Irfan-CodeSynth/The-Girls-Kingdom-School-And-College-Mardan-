@@ -26,6 +26,7 @@ import {
   Mail,
   Megaphone,
   Edit3,
+  Video,
 } from 'lucide-react';
 
 const iconMap = {
@@ -48,6 +49,7 @@ const iconMap = {
   Mail,
   Megaphone,
   Edit3,
+  Video,
 };
 
 export const Sidebar = ({ isOpen, onClose }) => {
