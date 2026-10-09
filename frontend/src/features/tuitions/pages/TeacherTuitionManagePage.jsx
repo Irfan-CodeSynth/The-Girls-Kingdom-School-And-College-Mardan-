@@ -25,9 +25,11 @@ export const TeacherTuitionManagePage = () => {
 
   // Modals state
   const [showSectionModal, setShowSectionModal] = useState(false);
+  const [editingSection, setEditingSection] = useState(null);
   const [sectionForm, setSectionForm] = useState({ title: '', description: '' });
 
   const [showLectureModal, setShowLectureModal] = useState(false);
+  const [editingLecture, setEditingLecture] = useState(null);
   const [targetSectionId, setTargetSectionId] = useState(null);
   const [lectureForm, setLectureForm] = useState({
     title: '',
@@ -80,12 +82,23 @@ export const TeacherTuitionManagePage = () => {
   });
   const lectures = lecturesData?.lectures || [];
 
-  // Mutations
+  // Section Mutations
   const createSectionMutation = useMutation({
     mutationFn: (data) => tuitionApi.createSection(courseId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tuitionSections', courseId] });
       setShowSectionModal(false);
+      setEditingSection(null);
+      setSectionForm({ title: '', description: '' });
+    },
+  });
+
+  const updateSectionMutation = useMutation({
+    mutationFn: ({ sectionId, data }) => tuitionApi.updateSection(sectionId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tuitionSections', courseId] });
+      setShowSectionModal(false);
+      setEditingSection(null);
       setSectionForm({ title: '', description: '' });
     },
   });
@@ -98,12 +111,24 @@ export const TeacherTuitionManagePage = () => {
     },
   });
 
+  // Lecture Mutations
   const createLectureMutation = useMutation({
     mutationFn: (payload) =>
       tuitionApi.createLecture(courseId, payload.sectionId, payload.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tuitionLectures', courseId] });
       setShowLectureModal(false);
+      setEditingLecture(null);
+      resetLectureForm();
+    },
+  });
+
+  const updateLectureMutation = useMutation({
+    mutationFn: ({ lectureId, data }) => tuitionApi.updateLecture(lectureId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tuitionLectures', courseId] });
+      setShowLectureModal(false);
+      setEditingLecture(null);
       resetLectureForm();
     },
   });
@@ -115,6 +140,7 @@ export const TeacherTuitionManagePage = () => {
     },
   });
 
+  // Form Resetters & Openers
   const resetLectureForm = () => {
     setLectureForm({
       title: '',
@@ -145,10 +171,64 @@ export const TeacherTuitionManagePage = () => {
     });
   };
 
+  const openCreateSection = () => {
+    setEditingSection(null);
+    setSectionForm({ title: '', description: '' });
+    setShowSectionModal(true);
+  };
+
+  const openEditSection = (sec) => {
+    setEditingSection(sec);
+    setSectionForm({
+      title: sec.title || '',
+      description: sec.description || '',
+    });
+    setShowSectionModal(true);
+  };
+
   const openAddLecture = (sectionId) => {
+    setEditingLecture(null);
     setTargetSectionId(sectionId);
-    const existingCount = lectures.filter((l) => l.section === sectionId).length;
+    resetLectureForm();
+    const existingCount = lectures.filter((l) => (l.section?._id || l.section) === sectionId).length;
     setLectureForm((prev) => ({ ...prev, order: existingCount + 1 }));
+    setShowLectureModal(true);
+  };
+
+  const openEditLecture = (lec) => {
+    setEditingLecture(lec);
+    setTargetSectionId(lec.section?._id || lec.section);
+    setLectureForm({
+      title: lec.title || '',
+      description: lec.description || '',
+      order: lec.order || 1,
+      video: {
+        provider: lec.video?.provider || 'youtube',
+        videoId: lec.video?.videoId || '',
+        durationSeconds: lec.video?.durationSeconds || 600,
+        minWatchPercentage: lec.video?.minWatchPercentage || 90,
+      },
+      notes: (lec.notes || []).map((n) => ({
+        title: n.title,
+        fileUrl: n.fileUrl,
+        fileType: n.fileType || 'pdf',
+        fileSize: n.fileSize || 0,
+      })),
+      quiz: {
+        title: lec.quiz?.title || 'Lecture Assessment',
+        questions: (lec.quiz?.questions || []).map((q) => ({
+          questionText: q.questionText,
+          type: q.type || 'mcq',
+          marks: q.marks || 1,
+          options: (q.options || []).map((o) => ({
+            text: o.text,
+            isCorrect: Boolean(o.isCorrect),
+          })),
+        })),
+      },
+      isPublished: lec.isPublished !== undefined ? lec.isPublished : true,
+    });
+    setNewNote({ title: '', fileUrl: '', fileType: 'pdf' });
     setShowLectureModal(true);
   };
 
@@ -205,6 +285,31 @@ export const TeacherTuitionManagePage = () => {
     }));
   };
 
+  const handleSaveSection = () => {
+    if (editingSection) {
+      updateSectionMutation.mutate({
+        sectionId: editingSection._id,
+        data: sectionForm,
+      });
+    } else {
+      createSectionMutation.mutate(sectionForm);
+    }
+  };
+
+  const handleSaveLecture = () => {
+    if (editingLecture) {
+      updateLectureMutation.mutate({
+        lectureId: editingLecture._id,
+        data: lectureForm,
+      });
+    } else {
+      createLectureMutation.mutate({
+        sectionId: targetSectionId,
+        data: lectureForm,
+      });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
@@ -232,7 +337,7 @@ export const TeacherTuitionManagePage = () => {
         </div>
 
         <Button
-          onClick={() => setShowSectionModal(true)}
+          onClick={openCreateSection}
           className="bg-[#5A0D1A] hover:bg-[#430913] text-white gap-2 font-medium"
         >
           <Plus className="w-4 h-4" />
@@ -254,7 +359,7 @@ export const TeacherTuitionManagePage = () => {
               Organize this tuition course by creating weekly modules or thematic chapters.
             </p>
             <Button
-              onClick={() => setShowSectionModal(true)}
+              onClick={openCreateSection}
               className="bg-[#5A0D1A] text-white"
             >
               Add First Section
@@ -297,11 +402,18 @@ export const TeacherTuitionManagePage = () => {
                       Add Lecture
                     </Button>
                     <button
+                      onClick={() => openEditSection(section)}
+                      className="p-2 rounded-lg text-[#5A0D1A] hover:bg-[#FAF8F5] border border-[#EFE5E0] transition-colors"
+                      title="Edit Section"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => deleteSectionMutation.mutate(section._id)}
-                      className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="p-2 rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors"
                       title="Delete Section"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -355,8 +467,15 @@ export const TeacherTuitionManagePage = () => {
 
                         <div className="flex items-center gap-2 self-end md:self-center">
                           <button
+                            onClick={() => openEditLecture(lec)}
+                            className="p-2 rounded-lg text-[#5A0D1A] hover:bg-[#FAF8F5] border border-[#EFE5E0] transition-colors"
+                            title="Edit Lecture"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => deleteLectureMutation.mutate(lec._id)}
-                            className="p-2 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                            className="p-2 rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors"
                             title="Delete Lecture"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -372,16 +491,19 @@ export const TeacherTuitionManagePage = () => {
         )}
       </div>
 
-      {/* ─── MODAL 1: Create Section ─── */}
+      {/* ─── MODAL 1: Create / Edit Section ─── */}
       {showSectionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-3xl border border-[#EFE5E0] max-w-md w-full p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#EFE5E0]">
               <h3 className="font-serif text-lg font-bold text-[#111827]">
-                Add Course Section
+                {editingSection ? 'Edit Course Section' : 'Add Course Section'}
               </h3>
               <button
-                onClick={() => setShowSectionModal(false)}
+                onClick={() => {
+                  setShowSectionModal(false);
+                  setEditingSection(null);
+                }}
                 className="text-[#6B7280] hover:text-[#111827]"
               >
                 <X className="w-5 h-5" />
@@ -424,38 +546,48 @@ export const TeacherTuitionManagePage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowSectionModal(false)}
+                onClick={() => {
+                  setShowSectionModal(false);
+                  setEditingSection(null);
+                }}
               >
                 Cancel
               </Button>
               <Button
                 size="sm"
                 className="bg-[#5A0D1A] text-white"
-                disabled={!sectionForm.title}
-                onClick={() => createSectionMutation.mutate(sectionForm)}
+                disabled={
+                  !sectionForm.title ||
+                  createSectionMutation.isPending ||
+                  updateSectionMutation.isPending
+                }
+                onClick={handleSaveSection}
               >
-                Create Section
+                {editingSection ? 'Update Section' : 'Create Section'}
               </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ─── MODAL 2: Create Lecture with Video, Notes & Quiz ─── */}
+      {/* ─── MODAL 2: Create / Edit Lecture with Video, Notes & Quiz ─── */}
       {showLectureModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl border border-[#EFE5E0] max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#EFE5E0]">
               <div>
                 <h3 className="font-serif text-xl font-bold text-[#111827]">
-                  Add Lecture Lesson
+                  {editingLecture ? 'Edit Lecture Lesson' : 'Add Lecture Lesson'}
                 </h3>
                 <p className="text-xs text-[#6B7280]">
                   Configure video stream, attachments, and gatekeeper quiz
                 </p>
               </div>
               <button
-                onClick={() => setShowLectureModal(false)}
+                onClick={() => {
+                  setShowLectureModal(false);
+                  setEditingLecture(null);
+                }}
                 className="text-[#6B7280] hover:text-[#111827]"
               >
                 <X className="w-5 h-5" />
@@ -496,6 +628,21 @@ export const TeacherTuitionManagePage = () => {
                     className="w-full p-2.5 rounded-xl border border-[#EFE5E0] bg-white"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-[#111827] block mb-1">
+                  Lecture Description / Summary
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Outline key concepts explained in this video..."
+                  value={lectureForm.description}
+                  onChange={(e) =>
+                    setLectureForm({ ...lectureForm, description: e.target.value })
+                  }
+                  className="w-full p-2.5 rounded-xl border border-[#EFE5E0] bg-white"
+                />
               </div>
 
               {/* 2. Video Stream Details */}
@@ -722,22 +869,24 @@ export const TeacherTuitionManagePage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowLectureModal(false)}
+                onClick={() => {
+                  setShowLectureModal(false);
+                  setEditingLecture(null);
+                }}
               >
                 Cancel
               </Button>
               <Button
                 size="sm"
                 className="bg-[#5A0D1A] text-white"
-                disabled={!lectureForm.title}
-                onClick={() =>
-                  createLectureMutation.mutate({
-                    sectionId: targetSectionId,
-                    data: lectureForm,
-                  })
+                disabled={
+                  !lectureForm.title ||
+                  createLectureMutation.isPending ||
+                  updateLectureMutation.isPending
                 }
+                onClick={handleSaveLecture}
               >
-                Save Lecture to Course
+                {editingLecture ? 'Update Lecture' : 'Save Lecture to Course'}
               </Button>
             </div>
           </div>
