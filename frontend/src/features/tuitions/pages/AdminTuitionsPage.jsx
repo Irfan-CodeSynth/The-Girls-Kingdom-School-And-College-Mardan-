@@ -130,13 +130,14 @@ export const AdminTuitionsPage = () => {
             </p>
           </div>
 
-          <Button
+          <button
+            type="button"
             onClick={() => setShowCourseModal(true)}
-            className="bg-white hover:bg-[#FAF8F5] text-[#5A0D1A] font-bold shadow-md self-start md:self-center gap-2"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white hover:bg-[#FAF8F5] text-[#5A0D1A] shadow-md transition-all self-start md:self-center shrink-0 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            Create Tuition Course
-          </Button>
+            <Plus className="w-4 h-4 text-[#5A0D1A]" />
+            <span className="text-[#5A0D1A] font-bold">Create Tuition Course</span>
+          </button>
         </div>
       </div>
 
