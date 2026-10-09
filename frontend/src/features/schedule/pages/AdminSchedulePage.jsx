@@ -20,14 +20,14 @@ const STATUS_VARIANT = { draft: 'warning', published: 'success', archived: 'defa
 const fmt = (d) => d ? new Date(d).toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 const selectCls =
-  'w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500';
+  'w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]';
 const inputCls =
-  'w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500';
-const labelCls = 'block text-xs font-semibold text-surface-600 dark:text-surface-400 mb-1';
+  'w-full px-3.5 py-2.5 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5] text-[#111827] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]';
+const labelCls = 'block text-[11px] font-bold uppercase tracking-wider text-[#6B7280] mb-1 font-sans';
 const btnPrimary =
-  'inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-60';
+  'inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer disabled:opacity-60';
 const btnGhost =
-  'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-sm font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer';
+  'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#EFE5E0] bg-white text-[#111827] text-xs font-bold hover:bg-[#FAF8F5] transition-colors cursor-pointer';
 
 // ─── Default periods ────────────────────────────────────────────
 const makeDefaultPeriods = () => [
@@ -79,15 +79,15 @@ const CreateTimetableModal = ({ onClose, onSuccess, classes, teachers, initialCl
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs font-sans">
+      <div className="bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] w-full max-w-4xl max-h-[95vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5] shrink-0">
           <div className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-            <h2 className="text-base font-bold text-surface-900 dark:text-white">Setup Weekly Timetable</h2>
+            <Settings className="w-5 h-5 text-[#5A0D1A]" />
+            <h2 className="font-serif text-lg font-bold text-[#111827]">Setup Weekly Timetable</h2>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 cursor-pointer">
+          <button onClick={onClose} className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -202,7 +202,7 @@ const CreateTimetableModal = ({ onClose, onSuccess, classes, teachers, initialCl
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-5 py-4 border-t border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/80 shrink-0">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#EFE5E0] bg-[#FAF8F5] shrink-0">
           <button onClick={onClose} className={btnGhost}>Cancel</button>
           <button onClick={handleSave} disabled={mutation.isPending} className={btnPrimary}>
             {mutation.isPending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
@@ -556,51 +556,58 @@ const AdminSchedulePage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center shrink-0 mt-0.5">
-            <Calendar className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+    <div className="space-y-6 font-sans">
+      {/* ── Page Header Banner ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] border border-[#EFE5E0] text-[10px] font-bold tracking-wider uppercase text-[#5A0D1A]">
+              Timetable & Examinations
+            </span>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
-              Class Timetable &amp; Exam Scheduler
-            </h1>
-            <p className="mt-0.5 text-sm text-surface-500 dark:text-surface-400">
-              Manage weekly timetables and examination datesheets for all classes
-            </p>
-          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
+            Academic Schedule & Datesheets
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-[#4B5563]">
+            Configure weekly master period schedules and publish examination datesheets for all cohorts.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => { setEditDatesheet(null); setShowDatesheetModal(true); }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-xs font-semibold hover:brightness-95 transition-colors cursor-pointer"
+            leftIcon={<Plus className="w-3.5 h-3.5 text-[#5A0D1A]" />}
           >
-            <Plus className="w-3.5 h-3.5" /> Create Datesheet
-          </button>
-          <button
+            Create Datesheet
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setShowTimetableModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            leftIcon={<Plus className="w-3.5 h-3.5" />}
           >
-            <Plus className="w-3.5 h-3.5" /> Setup Timetable
-          </button>
+            Setup Timetable
+          </Button>
         </div>
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex border-b border-surface-200 dark:border-surface-700 gap-1">
+      <div className="flex border-b border-[#EFE5E0] bg-white rounded-t-2xl px-2">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+            className={`px-5 py-3 text-sm font-bold transition-all cursor-pointer relative ${
               activeTab === tab.id
-                ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
-                : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-200'
+                ? 'text-[#5A0D1A]'
+                : 'text-[#6B7280] hover:text-[#111827]'
             }`}
           >
             {tab.label}
+            {activeTab === tab.id && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#5A0D1A]" />
+            )}
           </button>
         ))}
       </div>

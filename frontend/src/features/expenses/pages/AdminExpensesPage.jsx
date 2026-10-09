@@ -5,7 +5,7 @@ import {
   Wallet, FileText, AlertCircle, Edit2, Printer, XCircle,
   ChevronLeft, ChevronRight, RefreshCw, Calendar, PieChart
 } from 'lucide-react';
-import { Card, Badge, Skeleton } from '../../../components/ui';
+import { Card, Badge, Skeleton, Button } from '../../../components/ui';
 import expenseApi from '../api/expenseApi';
 import RecordExpenseModal from '../components/RecordExpenseModal';
 import PaymentVoucherPrintModal from '../components/PaymentVoucherPrintModal';
@@ -71,8 +71,8 @@ const fmtK = (n) => {
 
 // ─── Standardized Institutional Summary Card ─────────────────────────
 const SummaryCard = ({ label, value, icon: Icon, color, sub, loading }) => (
-  <Card bodyClassName="flex items-center gap-4 p-4 sm:p-5">
-    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+  <div className="bg-white p-4.5 rounded-2xl border border-[#EFE5E0] shadow-xs flex items-center gap-4">
+    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${color}`}>
       <Icon className="w-5 h-5" />
     </div>
     <div className="min-w-0 flex-1">
@@ -83,30 +83,33 @@ const SummaryCard = ({ label, value, icon: Icon, color, sub, loading }) => (
         </>
       ) : (
         <>
-          <p className="text-lg sm:text-xl font-extrabold text-surface-900 dark:text-white leading-tight truncate">
+          <p className="font-serif text-lg sm:text-xl font-extrabold text-[#111827] leading-tight truncate">
             {value ?? '—'}
           </p>
-          <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mt-0.5 truncate">{label}</p>
-          {sub && <p className="text-xs font-semibold text-surface-400 dark:text-surface-500 mt-1 truncate">{sub}</p>}
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] truncate mt-0.5">{label}</p>
+          {sub && <p className="text-xs text-[#9CA3AF] mt-0.5 truncate">{sub}</p>}
         </>
       )}
     </div>
-  </Card>
+  </div>
 );
 
 // ─── Main Expenses Page ──────────────────────────────────────────────
 export default function AdminExpensesPage() {
   const qc = useQueryClient();
 
-  const thisMonth = new Date().toISOString().slice(0, 7);
-  const [billingMonth, setBillingMonth] = useState(thisMonth);
+  const [billingMonth, setBillingMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+
   const [category, setCategory] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const limit = 15;
 
-  // Modals state
   const [showRecord, setShowRecord] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [printTarget, setPrintTarget] = useState(null);
@@ -123,12 +126,20 @@ export default function AdminExpensesPage() {
   });
 
   const expensesQuery = useQuery({
-    queryKey: ['expenses', { billingMonth, category, paymentMethod, status, search, page }],
+    queryKey: ['expenses', { billingMonth, category, paymentMethod, status, search, page, limit }],
     queryFn: () =>
-      expenseApi.getExpenses({ billingMonth, category, paymentMethod, status, search, page, limit: 12 }),
-    keepPreviousData: true,
+      expenseApi.getExpenses({
+        billingMonth,
+        category: category || undefined,
+        paymentMethod: paymentMethod || undefined,
+        status: status || undefined,
+        search: search || undefined,
+        page,
+        limit,
+      }),
   });
 
+  // Cancel mutation
   const cancelMutation = useMutation({
     mutationFn: (id) => expenseApi.cancelExpense(id),
     onSuccess: () => {
@@ -138,15 +149,15 @@ export default function AdminExpensesPage() {
     },
   });
 
-  const summary = summaryQuery.data || {};
-  const overview = overviewQuery.data || {};
-  const listData = expensesQuery.data || { expenses: [], pagination: { total: 0, pages: 1 } };
-
   const handleRefresh = () => {
-    summaryQuery.refetch();
-    overviewQuery.refetch();
-    expensesQuery.refetch();
+    qc.invalidateQueries({ queryKey: ['expense-summary'] });
+    qc.invalidateQueries({ queryKey: ['financial-overview'] });
+    qc.invalidateQueries({ queryKey: ['expenses'] });
   };
+
+  const summary = summaryQuery.data || { grandTotal: 0, voucherCount: 0, categories: [] };
+  const overview = overviewQuery.data || { totalFeeIncome: 0, totalSalaryOutflow: 0, totalOpEx: 0, totalOutflow: 0, netCashFlow: 0 };
+  const listData = expensesQuery.data || { expenses: [], pagination: { total: 0, page: 1, pages: 1 } };
 
   const maxCatTotal = useMemo(
     () => Math.max(...(summary.categories || []).map((c) => c.total), 1),
@@ -182,66 +193,70 @@ export default function AdminExpensesPage() {
   };
 
   return (
-    <div className="space-y-6">
-
+    <div className="space-y-6 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-950/60 border border-primary-200/60 dark:border-primary-800/40 flex items-center justify-center shrink-0">
-            <Receipt className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] border border-[#EFE5E0] text-[10px] font-bold tracking-wider uppercase text-[#5A0D1A]">
+              Operational Expenditure
+            </span>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">Expenses & OpEx</h1>
-            <p className="mt-0.5 text-sm text-surface-500 dark:text-surface-400">
-              Institutional operational expenditure, payment vouchers & cash flow management
-            </p>
-          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#5A0D1A] tracking-tight">
+            Institutional Expenses & OpEx
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-[#4B5563]">
+            Track operational spending, issue payment vouchers, and review monthly cash flow balance.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-1.5 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl px-3 py-1.5 shadow-sm">
-            <Calendar className="w-4 h-4 text-surface-400" />
+          <div className="flex items-center gap-1.5 bg-[#FAF8F5] border border-[#EFE5E0] rounded-xl px-3 py-1.5 shadow-xs">
+            <Calendar className="w-4 h-4 text-gray-400" />
             <input
               type="month"
               value={billingMonth}
               onChange={(e) => { setBillingMonth(e.target.value); setPage(1); }}
-              className="bg-transparent text-xs font-semibold text-surface-700 dark:text-surface-200 focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs font-bold text-[#111827] focus:outline-none cursor-pointer"
             />
           </div>
 
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-xs font-semibold hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors shadow-sm cursor-pointer"
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
-          </button>
+            Refresh
+          </Button>
 
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => { setShowRecord(true); setEditTarget(null); }}
-            className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            leftIcon={<Plus className="w-4 h-4" />}
           >
-            <Plus className="w-4 h-4" />
             Record Expense
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* ── Summary Metric Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard
           label="Total Monthly OpEx"
           value={summaryQuery.isLoading ? null : `PKR ${fmtK(summary.grandTotal || 0)}`}
           icon={TrendingDown}
-          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40"
+          color="bg-rose-50 text-rose-700 border border-rose-100"
           sub={`${summary.voucherCount || 0} vouchers recorded`}
           loading={summaryQuery.isLoading}
         />
         <SummaryCard
-          label="Leading Expense Category"
+          label="Leading Expense"
           value={summaryQuery.isLoading ? null : leadingCatDisplay}
           icon={PieChart}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/40"
-          sub={leadingCatObj ? `${fmt(leadingCatObj.total)} spent` : 'No expenses this month'}
+          color="bg-amber-50 text-amber-700 border border-amber-100"
+          sub={leadingCatObj ? `${fmt(leadingCatObj.total)} spent` : 'No expenses'}
           loading={summaryQuery.isLoading}
         />
         <SummaryCard
@@ -249,35 +264,35 @@ export default function AdminExpensesPage() {
           value={overviewQuery.isLoading ? null : `PKR ${fmtK(Math.abs(overview.netCashFlow || 0))}`}
           icon={overview.netCashFlow >= 0 ? TrendingUp : TrendingDown}
           color={overview.netCashFlow >= 0
-            ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/40"
-            : "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40"
+            ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+            : "bg-rose-50 text-rose-700 border border-rose-100"
           }
           sub={overview.netCashFlow < 0 ? '⚠️ Deficit (Outflow > Fees)' : '✅ Healthy Surplus'}
           loading={overviewQuery.isLoading}
         />
         <SummaryCard
-          label="Fee Income vs Total Outflow"
+          label="Fee Income vs Outflow"
           value={overviewQuery.isLoading ? null : `PKR ${fmtK(overview.totalFeeIncome || 0)}`}
           icon={Wallet}
-          color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/50 dark:border-primary-900/40"
+          color="bg-[#FAF8F5] text-[#5A0D1A] border border-[#EFE5E0]"
           sub={`Outflow: PKR ${fmtK(overview.totalOutflow || 0)}`}
           loading={overviewQuery.isLoading}
         />
       </div>
 
-      {/* ── Category Breakdown Progress Bars ── */}
+      {/* ── Category Breakdown ── */}
       {summary.categories?.length > 0 && (
-        <Card>
+        <div className="bg-white p-5 rounded-2xl border border-[#EFE5E0] shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-bold text-surface-900 dark:text-white uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-[#111827] uppercase tracking-wider font-sans">
                 Expenditure Distribution — {billingMonth}
               </h2>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 Relative percentage distribution of departmental operational expenses
               </p>
             </div>
-            <span className="text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/60 px-2.5 py-1 rounded-lg">
+            <span className="text-xs font-bold text-[#5A0D1A] bg-[#FAF8F5] border border-[#EFE5E0] px-2.5 py-1 rounded-lg">
               {summary.categories.filter(c => c.total > 0).length} Active Categories
             </span>
           </div>
@@ -292,23 +307,23 @@ export default function AdminExpensesPage() {
                   : 0;
                 const width = Math.round((cat.total / maxCatTotal) * 100);
                 return (
-                  <div key={cat.category} className="bg-surface-50 dark:bg-surface-800/60 p-3 rounded-xl border border-surface-200/60 dark:border-surface-700/60">
+                  <div key={cat.category} className="bg-[#FAF8F5] p-3 rounded-xl border border-[#EFE5E0]">
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-bold text-surface-800 dark:text-surface-200 flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
                         <span className="text-base">{CATEGORY_ICONS[cat.category]}</span>
                         {CATEGORY_LABELS[cat.category] || cat.category}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-surface-400 font-medium">({percentOfTotal}%)</span>
-                        <span className="text-xs font-extrabold text-surface-900 dark:text-white">{fmt(cat.total)}</span>
+                        <span className="text-xs text-[#6B7280] font-medium">({percentOfTotal}%)</span>
+                        <span className="text-xs font-extrabold text-[#111827]">{fmt(cat.total)}</span>
                       </div>
                     </div>
-                    <div className="h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${width}%`,
-                          backgroundColor: CATEGORY_COLORS[cat.category] || '#7c2d37',
+                          backgroundColor: CATEGORY_COLORS[cat.category] || '#5A0D1A',
                         }}
                       />
                     </div>
@@ -316,22 +331,22 @@ export default function AdminExpensesPage() {
                 );
               })}
           </div>
-        </Card>
+        </div>
       )}
 
       {/* ── Vouchers Table with Integrated Filters ── */}
-      <Card bodyClassName="p-0 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EFE5E0] overflow-hidden shadow-xs">
         {/* Toolbar */}
-        <div className="p-4 border-b border-surface-200 dark:border-surface-700 bg-surface-50/70 dark:bg-surface-800/50 flex flex-wrap items-center gap-3">
+        <div className="p-4 border-b border-[#EFE5E0] bg-[#FAF8F5] flex flex-wrap items-center gap-3">
           {/* Search */}
           <div className="relative flex-1 min-w-[220px]">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search title, payee, voucher #..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-xs text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all shadow-sm"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-[#EFE5E0] rounded-xl text-xs text-[#111827] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] transition-all shadow-xs"
             />
           </div>
 
@@ -339,7 +354,7 @@ export default function AdminExpensesPage() {
           <select
             value={category}
             onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-            className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl px-3 py-2 text-xs font-medium text-surface-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm cursor-pointer"
+            className="bg-white border border-[#EFE5E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] shadow-xs cursor-pointer"
           >
             <option value="">All Categories</option>
             {Object.entries(CATEGORY_LABELS).map(([v, l]) => (
@@ -351,7 +366,7 @@ export default function AdminExpensesPage() {
           <select
             value={paymentMethod}
             onChange={(e) => { setPaymentMethod(e.target.value); setPage(1); }}
-            className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl px-3 py-2 text-xs font-medium text-surface-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm cursor-pointer"
+            className="bg-white border border-[#EFE5E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] shadow-xs cursor-pointer"
           >
             <option value="">All Payment Modes</option>
             {Object.entries(PM_LABELS).map(([v, l]) => (
@@ -363,7 +378,7 @@ export default function AdminExpensesPage() {
           <select
             value={status}
             onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-            className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl px-3 py-2 text-xs font-medium text-surface-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm cursor-pointer"
+            className="bg-white border border-[#EFE5E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A] shadow-xs cursor-pointer"
           >
             <option value="">All Statuses</option>
             <option value="paid">Paid</option>
@@ -381,54 +396,54 @@ export default function AdminExpensesPage() {
               ))}
             </div>
           ) : listData.expenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-surface-400">
-              <div className="w-16 h-16 rounded-2xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-3">
-                <Receipt className="w-8 h-8 text-surface-400 opacity-60" />
+            <div className="flex flex-col items-center justify-center py-16 text-[#6B7280]">
+              <div className="w-16 h-16 rounded-2xl bg-[#FAF8F5] border border-[#EFE5E0] flex items-center justify-center mb-3">
+                <Receipt className="w-8 h-8 text-[#5A0D1A]/40" />
               </div>
-              <p className="text-sm font-bold text-surface-700 dark:text-surface-300">No Expense Vouchers Found</p>
-              <p className="text-xs text-surface-400 mt-1 max-w-sm text-center">
-                No expense vouchers recorded for the selected month and filters. Click "+ Record Expense" above to create one.
+              <p className="text-sm font-bold text-[#111827]">No Expense Vouchers Found</p>
+              <p className="text-xs text-[#6B7280] mt-1 max-w-sm text-center">
+                No expense vouchers recorded for the selected month and filters. Click "+ Record Expense" to create one.
               </p>
             </div>
           ) : (
             <table className="w-full text-left text-xs">
-              <thead className="bg-surface-50 dark:bg-surface-800/80 border-b border-surface-200 dark:border-surface-700 text-surface-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-[#FAF8F5] border-b border-[#EFE5E0] text-[#6B7280] uppercase tracking-wider font-bold">
                 <tr>
                   <th className="px-4 py-3.5">Voucher #</th>
                   <th className="px-4 py-3.5">Title & Payee</th>
                   <th className="px-4 py-3.5">Category</th>
                   <th className="px-4 py-3.5">Date</th>
-                  <th className="px-4 py-3.5">Payment Method</th>
+                  <th className="px-4 py-3.5">Mode</th>
                   <th className="px-4 py-3.5 text-right">Amount</th>
                   <th className="px-4 py-3.5 text-center">Status</th>
                   <th className="px-4 py-3.5 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+              <tbody className="divide-y divide-[#EFE5E0]">
                 {listData.expenses.map((exp) => (
-                  <tr key={exp._id} className="hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-colors">
+                  <tr key={exp._id} className="hover:bg-[#FAF8F5] transition-colors">
                     <td className="px-4 py-3.5 font-mono">
-                      <span className="font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/60 px-2 py-1 rounded-md border border-primary-200/50 dark:border-primary-800/40">
+                      <span className="font-bold text-[#5A0D1A] bg-[#FAF8F5] px-2 py-1 rounded-md border border-[#EFE5E0]">
                         {exp.voucherNumber}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <p className="font-bold text-surface-900 dark:text-white max-w-[200px] truncate">
+                      <p className="font-bold text-[#111827] max-w-[200px] truncate text-sm">
                         {exp.title}
                       </p>
-                      <p className="text-surface-500 dark:text-surface-400 text-[11px] truncate mt-0.5">
-                        Payee: <span className="font-medium text-surface-700 dark:text-surface-300">{exp.paidTo}</span>
+                      <p className="text-[#6B7280] text-[11px] truncate mt-0.5">
+                        Payee: <span className="font-semibold text-[#111827]">{exp.paidTo}</span>
                       </p>
                     </td>
                     <td className="px-4 py-3.5">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 font-medium">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#EFE5E0] text-[#111827] font-semibold">
                         <span>{CATEGORY_ICONS[exp.category]}</span>
                         <span className="truncate max-w-[130px]">{CATEGORY_LABELS[exp.category] || exp.category}</span>
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 text-surface-600 dark:text-surface-300 font-medium">
+                    <td className="px-4 py-3.5 text-[#6B7280] font-medium">
                       {exp.expenseDate
-                        ? new Date(exp.expenseDate).toLocaleDateString('en-PK', {
+                        ? new Date(exp.expenseDate).toLocaleDateString('en-US', {
                             day: '2-digit',
                             month: 'short',
                             year: 'numeric',
@@ -436,15 +451,15 @@ export default function AdminExpensesPage() {
                         : '—'}
                     </td>
                     <td className="px-4 py-3.5">
-                      <span className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 font-medium">
+                      <span className="px-2 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFE5E0] text-[#6B7280] font-medium text-[11px]">
                         {PM_LABELS[exp.paymentMethod] || exp.paymentMethod}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 text-right font-extrabold text-surface-900 dark:text-white text-sm">
+                    <td className="px-4 py-3.5 text-right font-bold text-[#111827] text-sm">
                       {fmt(exp.amount)}
                     </td>
                     <td className="px-4 py-3.5 text-center">
-                      <Badge variant={STATUS_CONFIG[exp.status]?.variant || 'default'}>
+                      <Badge variant={STATUS_CONFIG[exp.status]?.variant || 'default'} dot size="sm">
                         {STATUS_CONFIG[exp.status]?.label || exp.status}
                       </Badge>
                     </td>
@@ -454,7 +469,7 @@ export default function AdminExpensesPage() {
                           <button
                             onClick={() => handleEdit(exp)}
                             title="Edit Voucher"
-                            className="p-1.5 rounded-lg text-surface-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/60 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#5A0D1A] hover:bg-[#FAF8F5] transition-colors cursor-pointer border border-[#EFE5E0]"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
@@ -462,7 +477,7 @@ export default function AdminExpensesPage() {
                         <button
                           onClick={() => handlePrint(exp)}
                           title="Print Payment Voucher"
-                          className="p-1.5 rounded-lg text-surface-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/60 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-[#6B7280] hover:text-amber-700 hover:bg-amber-50 transition-colors cursor-pointer border border-[#EFE5E0]"
                         >
                           <Printer className="w-3.5 h-3.5" />
                         </button>
@@ -471,7 +486,7 @@ export default function AdminExpensesPage() {
                             onClick={() => handleCancel(exp._id)}
                             title="Cancel Voucher"
                             disabled={cancelMutation.isPending}
-                            className="p-1.5 rounded-lg text-surface-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors disabled:opacity-40 cursor-pointer"
+                            className="p-1.5 rounded-lg text-[#6B7280] hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-40 cursor-pointer border border-[#EFE5E0]"
                           >
                             <XCircle className="w-3.5 h-3.5" />
                           </button>
@@ -487,33 +502,33 @@ export default function AdminExpensesPage() {
 
         {/* Pagination Bar */}
         {listData.pagination.pages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-surface-200 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-800/50">
-            <p className="text-xs text-surface-500">
-              Showing <span className="font-bold text-surface-700 dark:text-surface-300">{listData.expenses.length}</span> of{' '}
-              <span className="font-bold text-surface-700 dark:text-surface-300">{listData.pagination.total}</span> vouchers
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[#EFE5E0] bg-[#FAF8F5]">
+            <p className="text-xs text-[#6B7280]">
+              Showing <span className="font-bold text-[#111827]">{listData.expenses.length}</span> of{' '}
+              <span className="font-bold text-[#111827]">{listData.pagination.total}</span> vouchers
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-1.5 rounded-lg border border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-30 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#EFE5E0] bg-white text-[#111827] hover:bg-[#FAF8F5] disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs font-semibold text-surface-700 dark:text-surface-200">
+              <span className="text-xs font-semibold text-[#111827]">
                 Page {page} of {listData.pagination.pages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(listData.pagination.pages, p + 1))}
                 disabled={page === listData.pagination.pages}
-                className="p-1.5 rounded-lg border border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-30 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#EFE5E0] bg-white text-[#111827] hover:bg-[#FAF8F5] disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         )}
-      </Card>
+      </div>
 
       {/* ── Modals ── */}
       {showRecord && (
