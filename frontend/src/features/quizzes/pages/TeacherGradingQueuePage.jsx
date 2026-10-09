@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import quizApi from '../api/quizApi';
 import { Card, Badge, Button, Skeleton, EmptyState } from '../../../components/ui';
+import { DashboardStatCard } from '../../../components/dashboard';
 import {
   CheckCircle2,
   Hourglass,
@@ -51,15 +52,15 @@ export const TeacherGradingQueuePage = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white flex items-center gap-2">
-            <CheckCircle2 className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <h1 className="text-2xl font-bold tracking-tight text-[#111827] flex items-center gap-2">
+            <CheckCircle2 className="w-6 h-6 text-[#5A0D1A]" />
             Grading &amp; Assessment Queue
           </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <p className="mt-1 text-sm text-[#4B5563]">
             Review student submissions, evaluate written answers, and finalize grades
           </p>
         </div>
@@ -71,59 +72,40 @@ export const TeacherGradingQueuePage = () => {
         </Link>
       </div>
 
-      {/* Summary Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-            <Pencil className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-white">
-              {isPending ? '—' : quizzesWithManualGrading.length}
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Written / Manual Grading</p>
-          </div>
-        </Card>
-
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-            <Clock className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-white">
-              {isPending ? '—' : closedQuizzes.length}
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Closed Quizzes</p>
-          </div>
-        </Card>
-
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-white">
-              {isPending ? '—' : liveQuizzes.length}
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Live &amp; Active</p>
-          </div>
-        </Card>
-
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 flex items-center justify-center shrink-0">
-            <FileQuestion className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-white">
-              {isPending ? '—' : quizzes.length}
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Total Quizzes</p>
-          </div>
-        </Card>
+      {/* Summary Stat Cards (Exact Dashboard Style) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DashboardStatCard
+          icon={Pencil}
+          iconBg="bg-[#FEF3C7] text-[#D97706]"
+          value={isPending ? '—' : quizzesWithManualGrading.length}
+          label="Written / Manual Grading"
+          loading={isPending}
+        />
+        <DashboardStatCard
+          icon={Clock}
+          iconBg="bg-[#EFF6FF] text-[#2563EB]"
+          value={isPending ? '—' : closedQuizzes.length}
+          label="Closed Quizzes"
+          loading={isPending}
+        />
+        <DashboardStatCard
+          icon={CheckCircle2}
+          iconBg="bg-[#ECFDF5] text-[#059669]"
+          value={isPending ? '—' : liveQuizzes.length}
+          label="Live &amp; Active"
+          loading={isPending}
+        />
+        <DashboardStatCard
+          icon={FileQuestion}
+          iconBg="bg-[#FAF5F5] text-[#5A0D1A]"
+          value={isPending ? '—' : quizzes.length}
+          label="Total Quizzes"
+          loading={isPending}
+        />
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-surface-200 dark:border-surface-700 pb-2">
+      <div className="flex gap-2 border-b border-[#EFE5E0] pb-2 overflow-x-auto scrollbar-hide">
         {[
           { id: 'all',           label: 'All Quizzes',             count: quizzes.length },
           { id: 'needs_grading', label: 'Needs Manual Review',     count: quizzesWithManualGrading.length },
@@ -133,15 +115,15 @@ export const TeacherGradingQueuePage = () => {
           <button
             key={t.id}
             onClick={() => setFilter(t.id)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filter === t.id
-                ? 'bg-primary-600 text-white'
-                : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+                ? 'bg-[#5A0D1A] text-white shadow-xs'
+                : 'bg-white border border-[#EFE5E0] text-[#4B5563] hover:bg-[#FAF8F5]'
             }`}
           >
             {t.label}
             {!isPending && (
-              <span className="ml-1.5 text-xs opacity-75">({t.count})</span>
+              <span className="ml-1.5 opacity-80">({t.count})</span>
             )}
           </button>
         ))}
@@ -158,14 +140,10 @@ export const TeacherGradingQueuePage = () => {
         <EmptyState
           icon={FileQuestion}
           title="No Quizzes Found"
-          message={
-            filter === 'needs_grading'
-              ? 'Great news! No quizzes currently have pending comprehensive questions awaiting manual grading.'
-              : 'No quizzes found in this category.'
-          }
+          message="No quizzes match your selected filter criteria."
         />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {filteredQuizzes.map((quiz) => {
             const hasComprehensive = quiz.questions?.some((q) => q.type === 'comprehensive');
             const compCount = quiz.questions?.filter((q) => q.type === 'comprehensive').length || 0;
@@ -173,10 +151,10 @@ export const TeacherGradingQueuePage = () => {
             const cfg = STATUS_CONFIG[quiz.status] || STATUS_CONFIG.draft;
 
             return (
-              <Card key={quiz._id} hover className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5">
+              <Card key={quiz._id} hover className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white border border-[#EFE5E0] shadow-xs">
                 <div className="space-y-2 flex-1 min-w-0">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="text-base font-bold text-surface-900 dark:text-white truncate">
+                    <h2 className="text-base font-bold text-[#111827] truncate font-sans">
                       {quiz.title}
                     </h2>
                     <Badge variant={cfg.variant} size="sm" dot>
@@ -189,9 +167,9 @@ export const TeacherGradingQueuePage = () => {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-surface-500 dark:text-surface-400">
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="w-3.5 h-3.5 text-primary-500" />
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#4B5563]">
+                    <span className="flex items-center gap-1 font-medium">
+                      <BookOpen className="w-3.5 h-3.5 text-[#5A0D1A]" />
                       {quiz.class?.name || 'Class Assigned'} ({quiz.class?.code || '—'})
                     </span>
                     <span>•</span>

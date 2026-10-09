@@ -47,25 +47,25 @@ export const Modal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full ${sizeMap[size]} bg-white dark:bg-surface-800 rounded-xl shadow-2xl border border-surface-200 dark:border-surface-700 z-10 overflow-hidden`}
+            className={`relative w-full ${sizeMap[size]} bg-white rounded-2xl shadow-2xl border border-[#EFE5E0] z-10 overflow-hidden font-sans`}
           >
             {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFE5E0] bg-[#FAF8F5]">
+                <h3 className="text-lg font-bold text-[#111827]">
                   {title}
                 </h3>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-lg p-1 text-surface-400 hover:text-surface-500 dark:hover:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 transition"
+                  className="rounded-lg p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             )}
-            <div className="p-6 text-surface-700 dark:text-surface-200">{children}</div>
+            <div className="p-6 text-[#1E293B]">{children}</div>
             {footer && (
-              <div className="flex items-center justify-end gap-3 px-6 py-4 bg-surface-50 dark:bg-surface-900/50 border-t border-surface-200 dark:border-surface-700">
+              <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#FAF8F5] border-t border-[#EFE5E0]">
                 {footer}
               </div>
             )}

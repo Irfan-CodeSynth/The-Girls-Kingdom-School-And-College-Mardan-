@@ -14,7 +14,7 @@ export const Table = ({
 }) => {
   if (loading) {
     return (
-      <div className="w-full bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+      <div className="w-full bg-white rounded-2xl border border-[#EFE5E0] overflow-hidden shadow-xs">
         <div className="p-4 space-y-3">
           <Skeleton className="h-8 w-full" />
           <Skeleton className="h-10 w-full" />
@@ -27,28 +27,28 @@ export const Table = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="w-full bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-8">
+      <div className="w-full bg-white rounded-2xl border border-[#EFE5E0] p-8 shadow-xs">
         <EmptyState title={emptyTitle} description={emptyMessage} />
       </div>
     );
   }
 
   return (
-    <div className="w-full overflow-x-auto bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-xs">
-      <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700 text-left text-sm">
-        <thead className="bg-surface-50 dark:bg-surface-900/50">
+    <div className="w-full overflow-x-auto bg-white rounded-2xl border border-[#EFE5E0] shadow-xs">
+      <table className="min-w-full divide-y divide-[#EFE5E0] text-left text-sm font-sans">
+        <thead className="bg-[#FAF8F5]">
           <tr>
             {columns.map((col, idx) => (
               <th
                 key={col.key || idx}
-                className={`px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400 ${col.className || ''}`}
+                className={`px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#6B7280] ${col.className || ''}`}
               >
                 {col.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+        <tbody className="divide-y divide-[#EFE5E0] bg-white">
           {data.map((row, rowIdx) => {
             const key = row[rowKey] || rowIdx;
             const isClickable = Boolean(onRowClick);
@@ -58,14 +58,14 @@ export const Table = ({
                 onClick={isClickable ? () => onRowClick(row) : undefined}
                 className={`
                   transition-colors
-                  ${striped && rowIdx % 2 === 1 ? 'bg-surface-50/50 dark:bg-surface-900/20' : ''}
-                  ${isClickable ? 'cursor-pointer hover:bg-surface-100/70 dark:hover:bg-surface-700/50' : 'hover:bg-surface-50/70 dark:hover:bg-surface-700/20'}
+                  ${striped && rowIdx % 2 === 1 ? 'bg-[#FAFAFA]' : 'bg-white'}
+                  ${isClickable ? 'cursor-pointer hover:bg-[#FDFBF7]' : 'hover:bg-[#FAF8F5]'}
                 `}
               >
                 {columns.map((col, colIdx) => (
                   <td
                     key={col.key || colIdx}
-                    className={`px-6 py-4 whitespace-nowrap text-surface-900 dark:text-surface-100 ${col.cellClassName || ''}`}
+                    className={`px-6 py-4 whitespace-nowrap text-[#111827] ${col.cellClassName || ''}`}
                   >
                     {col.render ? col.render(row[col.key], row, rowIdx) : row[col.key]}
                   </td>

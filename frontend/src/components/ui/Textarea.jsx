@@ -32,14 +32,14 @@ export const Textarea = React.forwardRef(({
         maxLength={maxLength}
         value={value}
         className={`
-          block w-full rounded-lg border bg-white dark:bg-surface-800 
-          text-surface-900 dark:text-white sm:text-sm transition-colors
-          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-          disabled:opacity-50 disabled:bg-surface-50 dark:disabled:bg-surface-900
-          px-3 py-2
+          block w-full rounded-xl border bg-white 
+          text-[#111827] sm:text-sm transition-colors font-sans
+          focus:outline-none focus:ring-2 focus:ring-[#5A0D1A]/20 focus:border-[#5A0D1A]
+          disabled:opacity-50 disabled:bg-[#FAFAFA]
+          px-3.5 py-2.5
           ${error 
             ? 'border-danger-500 text-danger-900 placeholder-danger-300 focus:ring-danger-500' 
-            : 'border-surface-300 dark:border-surface-600 placeholder-surface-400'}
+            : 'border-[#EFE5E0] placeholder:text-gray-400'}
           ${className}
         `}
         {...props}

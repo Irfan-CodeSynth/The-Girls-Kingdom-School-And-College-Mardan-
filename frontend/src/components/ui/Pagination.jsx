@@ -14,12 +14,12 @@ export const Pagination = ({
   if (pages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700 sm:px-6 rounded-b-xl">
-      <div className="text-sm text-surface-500 dark:text-surface-400">
+    <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-[#EFE5E0] sm:px-6 rounded-b-2xl font-sans">
+      <div className="text-sm text-[#4B5563]">
         {total !== undefined && (
           <span>
-            Showing page <span className="font-semibold text-surface-900 dark:text-white">{page}</span> of{' '}
-            <span className="font-semibold text-surface-900 dark:text-white">{pages}</span> ({total} total results)
+            Showing page <span className="font-semibold text-[#111827]">{page}</span> of{' '}
+            <span className="font-semibold text-[#111827]">{pages}</span> ({total} total results)
           </span>
         )}
       </div>

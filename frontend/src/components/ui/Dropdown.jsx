@@ -34,7 +34,7 @@ export const Dropdown = ({
             exit={{ opacity: 0, scale: 0.95, y: 5 }}
             transition={{ duration: 0.15 }}
             className={`
-              absolute z-40 mt-2 w-52 rounded-xl bg-white dark:bg-surface-800 shadow-lg border border-surface-200 dark:border-surface-700 py-1.5 focus:outline-none
+              absolute z-40 mt-2 w-52 rounded-2xl bg-white shadow-xl border border-[#EFE5E0] py-1.5 focus:outline-none font-sans
               ${align === 'right' ? 'right-0' : 'left-0'}
             `}
           >
@@ -43,7 +43,7 @@ export const Dropdown = ({
                 return (
                   <div
                     key={`div-${index}`}
-                    className="my-1 border-t border-surface-200 dark:border-surface-700"
+                    className="my-1 border-t border-[#EFE5E0]"
                   />
                 );
               }
