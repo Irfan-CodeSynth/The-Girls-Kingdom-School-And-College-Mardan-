@@ -5,107 +5,45 @@ import { studentApi } from '../../students/api/studentApi';
 import { teacherApi } from '../../teachers/api/teacherApi';
 import { classApi } from '../../classes/api/classApi';
 import quizApi from '../../quizzes/api/quizApi';
-import { Card, Badge, Avatar, Skeleton } from '../../../components/ui';
+import { useAuth } from '../../../hooks/useAuth';
+import { Skeleton, EmptyState } from '../../../components/ui';
+import {
+  DashboardHero,
+  DashboardStatCard,
+  DashboardActionCard,
+} from '../../../components/dashboard';
 import {
   Users,
   GraduationCap,
   BookOpen,
-  ClipboardList,
-  ChevronRight,
-  TrendingUp,
   FileQuestion,
-  CheckCircle2,
-  Clock,
-  ArchiveX,
-  RefreshCw,
+  ChevronRight,
+  ArrowRight,
+  Calendar,
   Wallet,
-  Banknote,
-  Receipt,
+  Clock,
+  MoreVertical,
 } from 'lucide-react';
 
-// ─── Modern Responsive Stat Card ─────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext, isAction }) => {
-  const content = (
-    <Card
-      hover={Boolean(to)}
-      className="p-4 flex flex-col justify-between h-full border border-surface-200 dark:border-white/10 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 group"
-    >
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold text-surface-600 dark:text-surface-300 tracking-wide leading-tight">
-          {label}
-        </span>
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
-          <Icon className="w-4 h-4" />
-        </div>
-      </div>
-
-      <div className="flex items-baseline justify-between gap-2 mt-auto">
-        {loading ? (
-          <Skeleton className="h-7 w-16" />
-        ) : isAction ? (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
-            <span>{value}</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </span>
-        ) : (
-          <p className="text-2xl font-black text-surface-900 dark:text-white tracking-tight">
-            {value ?? '—'}
-          </p>
-        )}
-        {subtext && (
-          <span className="text-[11px] text-surface-400 dark:text-surface-400 font-medium">
-            {subtext}
-          </span>
-        )}
-      </div>
-    </Card>
-  );
-
-  return to ? <Link to={to} className="block h-full">{content}</Link> : content;
-};
-
-// ─── Section Header ───────────────────────────────────────────
-const SectionHeader = ({ title, linkTo, linkLabel }) => (
-  <div className="flex items-center justify-between mb-3">
-    <h2 className="text-base font-semibold text-surface-900 dark:text-white">{title}</h2>
-    {linkTo && (
-      <Link
-        to={linkTo}
-        className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1"
-      >
-        {linkLabel}
-        <ChevronRight className="w-4 h-4" />
-      </Link>
-    )}
-  </div>
-);
-
-// ─── Quiz Status Badge colours ─────────────────────────────────
-const QUIZ_BADGE = {
-  draft: 'warning',
-  published: 'success',
-  closed: 'info',
-  archived: 'default',
-};
-
-// ─── Main Page ────────────────────────────────────────────────
 export const AdminDashboardPage = () => {
-  const { data: studentsData, isPending: loadingStudents, refetch: refetchStudents } = useQuery({
+  const { user } = useAuth();
+
+  const { data: studentsData, isPending: loadingStudents } = useQuery({
     queryKey: ['students', 'adminDash'],
     queryFn: () => studentApi.getStudents({ limit: 5 }),
   });
 
-  const { data: teachersData, isPending: loadingTeachers, refetch: refetchTeachers } = useQuery({
+  const { data: teachersData, isPending: loadingTeachers } = useQuery({
     queryKey: ['teachers', 'adminDash'],
     queryFn: () => teacherApi.getTeachers({ limit: 5 }),
   });
 
-  const { data: classesData, isPending: loadingClasses, refetch: refetchClasses } = useQuery({
+  const { data: classesData, isPending: loadingClasses } = useQuery({
     queryKey: ['classes', 'adminDash'],
     queryFn: () => classApi.getClasses({ limit: 20 }),
   });
 
-  const { data: quizzesData, isPending: loadingQuizzes, refetch: refetchQuizzes } = useQuery({
+  const { data: quizzesData, isPending: loadingQuizzes } = useQuery({
     queryKey: ['quizzes', 'adminDash'],
     queryFn: () => quizApi.getQuizzes({ limit: 100 }),
   });
@@ -123,323 +61,236 @@ export const AdminDashboardPage = () => {
     return acc;
   }, {});
 
-  const activeQuizzes = (quizByStatus.published || 0);
+  const activeQuizzes = quizByStatus.published || 0;
+  const draftQuizzes  = quizByStatus.draft || 0;
+  const closedQuizzes = quizByStatus.closed || 0;
 
-  const handleRefreshAll = () => {
-    refetchStudents();
-    refetchTeachers();
-    refetchClasses();
-    refetchQuizzes();
-  };
+  const recentClasses = classes.slice(0, 2);
+  const primaryQuiz = quizzes[0];
 
   return (
-    <div className="space-y-8">
-      {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
-            Admin Executive Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-            System-wide overview of The Girls Kingdom School and College Mardan Portal
-          </p>
-        </div>
-        <button
-          onClick={handleRefreshAll}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-semibold shadow-sm transition-colors self-start sm:self-auto cursor-pointer"
-        >
-          <RefreshCw className="w-3.5 h-3.5 text-primary-500" />
-          Refresh Stats
-        </button>
-      </div>
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+      {/* ── 1. Global Hero Welcome Banner ── */}
+      <DashboardHero
+        name={user?.fullName || 'System Administrator'}
+        roleTitle="Admin Executive Dashboard"
+        subtitle="System-wide institutional overview of The Girls Kingdom School & College Mardan."
+        quote="“Guiding the Leaders of Tomorrow with Wisdom and Grace”"
+      />
 
-      {/* ── Stat cards ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
-        <StatCard
-          label="Registered Students"
-          value={totalStudents}
-          subtext="Students"
+      {/* ── 2. Four Circular-Badge Quick Stat Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DashboardStatCard
           icon={Users}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
-          loading={loadingStudents}
+          iconBg="bg-[#701422] text-white"
+          value={totalStudents}
+          label="Registered Students"
           to="/admin/students"
+          loading={loadingStudents}
         />
-        <StatCard
-          label="Faculty Members"
-          value={totalTeachers}
-          subtext="Teachers"
+        <DashboardStatCard
           icon={GraduationCap}
-          color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
-          loading={loadingTeachers}
+          iconBg="bg-[#FEF3C7] dark:bg-amber-950/60 text-[#D97706]"
+          value={totalTeachers}
+          label="Faculty Teachers"
           to="/admin/teachers"
+          loading={loadingTeachers}
         />
-        <StatCard
-          label="Active Classes"
-          value={totalClasses}
-          subtext="Cohorts"
+        <DashboardStatCard
           icon={BookOpen}
-          color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
-          loading={loadingClasses}
+          iconBg="bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200"
+          value={totalClasses}
+          label="Active Classes"
           to="/admin/classes"
+          loading={loadingClasses}
         />
-        <StatCard
-          label="Live Quizzes"
+        <DashboardStatCard
+          icon={FileQuestion}
+          iconBg="bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#059669]"
           value={activeQuizzes}
-          subtext="Published"
-          icon={ClipboardList}
-          color="bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400"
-          loading={loadingQuizzes}
+          label="Live Assessments"
           to="/admin/quizzes"
-        />
-        <StatCard
-          label="Attendance Audit"
-          value="Roll-Call Hub"
-          isAction
-          icon={CheckCircle2}
-          color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
-          to="/admin/attendance"
-        />
-        <StatCard
-          label="Fee Management"
-          value="Fee Challans"
-          isAction
-          icon={Wallet}
-          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
-          to="/admin/fees"
-        />
-        <StatCard
-          label="Staff Payroll"
-          value="Salary Hub"
-          isAction
-          icon={Banknote}
-          color="bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400"
-          to="/admin/salary"
-        />
-        <StatCard
-          label="Expenses & OpEx"
-          value="Vouchers"
-          isAction
-          icon={Receipt}
-          color="bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400"
-          to="/admin/expenses"
+          loading={loadingQuizzes}
         />
       </div>
 
-      {/* ── Bottom grid: Students + Faculty + Classes + Quiz Activity ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-        {/* Recent Students */}
-        <div>
-          <SectionHeader title="Recent Students" linkTo="/admin/students" linkLabel="View all" />
-          <Card className="!p-0 overflow-hidden">
-            {loadingStudents ? (
-              <div className="divide-y divide-surface-100 dark:divide-surface-700">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-center gap-3 px-5 py-3">
-                    <Skeleton variant="circle" className="w-9 h-9 flex-shrink-0" />
-                    <div className="flex-1 space-y-1">
-                      <Skeleton className="h-3.5 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  </div>
-                ))}
+      {/* ── 3. Middle Section: Class Cohorts & Assessment Overview ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Left: Class Cohorts Container */}
+        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
+              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
+                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+                <span>Active Class Cohorts</span>
               </div>
-            ) : students.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-surface-400">
-                <Users className="w-8 h-8 mb-2 opacity-40" />
-                <p className="text-sm">No students yet</p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-surface-100 dark:divide-surface-700">
-                {students.slice(0, 5).map((s) => (
-                  <li key={s._id}>
-                    <Link
-                      to={`/admin/students/${s._id}`}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
-                    >
-                      <Avatar name={s.fullName} src={s.profilePhoto} size="sm" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                          {s.fullName}
-                        </p>
-                        <p className="text-xs text-surface-400 truncate">{s.email}</p>
-                      </div>
-                      <Badge variant={s.isActive ? 'success' : 'danger'} dot size="sm">
-                        {s.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        </div>
-
-        {/* Faculty Members */}
-        <div>
-          <SectionHeader title="Faculty Members" linkTo="/admin/teachers" linkLabel="View all" />
-          <Card className="!p-0 overflow-hidden">
-            {loadingTeachers ? (
-              <div className="divide-y divide-surface-100 dark:divide-surface-700">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-center gap-3 px-5 py-3">
-                    <Skeleton variant="circle" className="w-9 h-9 flex-shrink-0" />
-                    <div className="flex-1 space-y-1">
-                      <Skeleton className="h-3.5 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : teachers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-surface-400">
-                <GraduationCap className="w-8 h-8 mb-2 opacity-40" />
-                <p className="text-sm">No faculty members yet</p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-surface-100 dark:divide-surface-700">
-                {teachers.slice(0, 5).map((t) => (
-                  <li key={t._id}>
-                    <Link
-                      to={`/admin/teachers/${t._id}`}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
-                    >
-                      <Avatar name={t.fullName} src={t.profilePhoto} size="sm" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                          {t.fullName}
-                        </p>
-                        <p className="text-xs text-surface-400 truncate">
-                          {t.department && t.department !== 'N/A' ? t.department : t.email}
-                        </p>
-                      </div>
-                      <Badge variant={t.isActive ? 'success' : 'danger'} dot size="sm">
-                        {t.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        </div>
-
-        {/* Class Overview */}
-        <div>
-          <SectionHeader title="Class Overview" linkTo="/admin/classes" linkLabel="Manage" />
-          <Card className="!p-0 overflow-hidden">
-            {loadingClasses ? (
-              <div className="divide-y divide-surface-100 dark:divide-surface-700">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="px-5 py-3 space-y-1.5">
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-24" />
-                  </div>
-                ))}
-              </div>
-            ) : classes.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-surface-400">
-                <BookOpen className="w-8 h-8 mb-2 opacity-40" />
-                <p className="text-sm">No classes created yet</p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-surface-100 dark:divide-surface-700">
-                {classes.slice(0, 6).map((cls) => (
-                  <li key={cls._id}>
-                    <Link
-                      to={`/admin/classes/${cls._id}`}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
-                    >
-                      <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center flex-shrink-0">
-                        <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                          {cls.name}
-                        </p>
-                        <p className="text-xs text-surface-400">{cls.code} · {cls.academicYear}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-surface-300 flex-shrink-0" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        </div>
-
-        {/* Quiz Activity */}
-        <div>
-          <SectionHeader title="Quiz Activity" linkTo="/admin/quizzes" linkLabel="View all" />
-          <Card>
-            {loadingQuizzes ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-8" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {[
-                  { status: 'published', label: 'Live / Published', icon: TrendingUp, color: 'text-emerald-600 dark:text-emerald-400', bar: 'bg-emerald-500' },
-                  { status: 'draft', label: 'Draft', icon: FileQuestion, color: 'text-amber-600 dark:text-amber-400', bar: 'bg-amber-400' },
-                  { status: 'closed', label: 'Closed', icon: CheckCircle2, color: 'text-blue-600 dark:text-blue-400', bar: 'bg-blue-400' },
-                  { status: 'archived', label: 'Archived', icon: ArchiveX, color: 'text-surface-400', bar: 'bg-surface-300 dark:bg-surface-600' },
-                ].map(({ status, label, icon: Icon, color, bar }) => {
-                  const count = quizByStatus[status] || 0;
-                  const total = quizzes.length || 1;
-                  const pct = Math.round((count / total) * 100);
-                  return (
-                    <div key={status}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className={`flex items-center gap-2 text-sm font-medium ${color}`}>
-                          <Icon className="w-4 h-4" />
-                          {label}
-                        </span>
-                        <span className="text-sm font-bold text-surface-900 dark:text-white">
-                          {count}
-                        </span>
-                      </div>
-                      <div className="h-1.5 rounded-full bg-surface-100 dark:bg-surface-700 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${bar} transition-all duration-500`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-                <p className="text-xs text-surface-400 pt-2 border-t border-surface-100 dark:border-surface-700">
-                  {quizzes.length} total quiz{quizzes.length !== 1 ? 'zes' : ''} across all classes
-                </p>
-              </div>
-            )}
-          </Card>
-
-          {/* Quick links */}
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            {[
-              { label: 'Students', to: '/admin/students', icon: Users, color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50' },
-              { label: 'Teachers', to: '/admin/teachers', icon: GraduationCap, color: 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50' },
-              { label: 'Classes', to: '/admin/classes', icon: BookOpen, color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50' },
-              { label: 'Quizzes', to: '/admin/quizzes', icon: ClipboardList, color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50' },
-              { label: 'Fees', to: '/admin/fees', icon: Wallet, color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50' },
-              { label: 'Payroll', to: '/admin/salary', icon: Banknote, color: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50' },
-            ].map(({ label, to, icon: Icon, color }) => (
               <Link
-                key={to}
-                to={to}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors hover:brightness-95 ${color}`}
+                to="/admin/classes"
+                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
               >
-                <Icon className="w-4 h-4" />
-                {label}
+                <span>View all</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-            ))}
+            </div>
+
+            {loadingClasses ? (
+              <div className="space-y-3">
+                <Skeleton className="h-20 rounded-xl" />
+                <Skeleton className="h-20 rounded-xl" />
+              </div>
+            ) : recentClasses.length === 0 ? (
+              <EmptyState
+                icon={BookOpen}
+                title="No Classes Configured"
+                message="Start by adding class cohorts in the Class Manager."
+              />
+            ) : (
+              <div className="space-y-3">
+                {recentClasses.map((cls) => (
+                  <Link
+                    key={cls._id}
+                    to={`/admin/classes/${cls._id}`}
+                    className="block p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] dark:bg-surface-900/40 hover:bg-white dark:hover:bg-surface-900 transition-all group"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#701422] to-[#4A0914] text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <BookOpen className="w-5 h-5 text-[#EEDAA2]" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate group-hover:text-[#5A0D1A] dark:group-hover:text-[#E89CB0] transition-colors">
+                            {cls.name}
+                          </h3>
+                          <p className="text-[11px] text-surface-400 mt-0.5">
+                            {cls.code} • {cls.academicYear || '2025-2026'}
+                          </p>
+                          <div className="flex items-center gap-3 text-xs text-surface-500 dark:text-surface-400 mt-1.5">
+                            <span className="flex items-center gap-1 font-medium text-rose-700 dark:text-rose-400">
+                              <Users className="w-3.5 h-3.5" />
+                              <span>{cls.studentCount || 0} students</span>
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1 font-medium">
+                              <Calendar className="w-3.5 h-3.5 text-surface-400" />
+                              <span>{cls.status || 'Active'}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-surface-400 group-hover:text-[#5A0D1A] dark:group-hover:text-white transition-colors shrink-0" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Right: Quizzes & Assessment Overview */}
+        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
+              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
+                <FileQuestion className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+                <span>Quizzes & Assessments Hub</span>
+              </div>
+              <Link
+                to="/admin/quizzes"
+                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+              >
+                <span>Manage</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {loadingQuizzes ? (
+              <Skeleton className="h-28 rounded-xl" />
+            ) : !primaryQuiz ? (
+              <EmptyState
+                icon={FileQuestion}
+                title="No Quizzes Recorded"
+                message="Faculty has not published any quizzes yet."
+              />
+            ) : (
+              <div className="p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-[#FAFAFA] dark:bg-surface-900/40">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#701422] text-white flex items-center justify-center shrink-0">
+                      <FileQuestion className="w-5 h-5 text-[#EEDAA2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate">
+                        {primaryQuiz.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-surface-500 dark:text-surface-400 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-surface-400" />
+                          <span>{primaryQuiz.duration || 60} min</span>
+                        </span>
+                        <span>•</span>
+                        <span>{primaryQuiz.totalMarks || 1} marks</span>
+                        <span>•</span>
+                        <span>{primaryQuiz.attemptCount || 0} attempts</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-emerald-200 dark:border-emerald-800/40">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                      <span>{primaryQuiz.status || 'Published'}</span>
+                    </span>
+                    <button type="button" className="p-1 text-surface-400 hover:text-surface-600">
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom 3 Status Counter Pills */}
+          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-surface-100 dark:border-surface-700/60">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40">
+              <p className="font-bold text-sm text-[#BE123C] leading-none">{draftQuizzes}</p>
+              <p className="text-[11px] text-[#BE123C]/80 mt-0.5 font-medium">Draft</p>
+            </div>
+            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+              <p className="font-bold text-sm text-[#059669] leading-none">{activeQuizzes}</p>
+              <p className="text-[11px] text-[#059669]/80 mt-0.5 font-medium">Published</p>
+            </div>
+            <div className="text-center py-2 px-1 rounded-xl bg-surface-100 dark:bg-surface-700/40 border border-surface-200 dark:border-surface-700/60">
+              <p className="font-bold text-sm text-surface-600 dark:text-surface-300 leading-none">{closedQuizzes}</p>
+              <p className="text-[11px] text-surface-500 dark:text-surface-400 mt-0.5 font-medium">Closed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 4. Bottom Row: Three Action Navigation Cards ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <DashboardActionCard
+          title="Student Admissions"
+          description="Manage student enrollments, profiles, and attendance."
+          to="/admin/students"
+          theme="crimson"
+          watermarkIcon={Users}
+        />
+        <DashboardActionCard
+          title="Faculty & Classes"
+          description="Configure teachers, department assignments, and timetables."
+          to="/admin/classes"
+          theme="slate"
+          watermarkIcon={BookOpen}
+        />
+        <DashboardActionCard
+          title="Finance & Fees"
+          description="Process student fee challans, salaries, and operating expenses."
+          to="/admin/fees"
+          theme="gold"
+          watermarkIcon={Wallet}
+        />
       </div>
     </div>
   );

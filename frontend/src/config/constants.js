@@ -39,10 +39,10 @@ export const SIDEBAR_ITEMS = {
   [ROLES.TEACHER]: [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: 'LayoutDashboard' },
     { name: 'My Classes', path: '/teacher/classes', icon: 'BookOpen' },
-    { name: 'Attendance', path: '/teacher/attendance', icon: 'CheckCircle' },
-    { name: 'Quizzes', path: '/teacher/quizzes', icon: 'FileQuestion' },
-    { name: 'Grading', path: '/teacher/grading', icon: 'CheckCircle' },
-    { name: 'My Schedule', path: '/teacher/schedule', icon: 'Calendar' },
+    { name: 'Quizzes', path: '/teacher/quizzes', icon: 'FileText' },
+    { name: 'Grading', path: '/teacher/grading', icon: 'Edit3' },
+    { name: 'Attendance', path: '/teacher/attendance', icon: 'CheckSquare' },
+    { name: 'Timetable', path: '/teacher/schedule', icon: 'Calendar' },
     { name: 'My Salary', path: '/teacher/salary', icon: 'Banknote' },
   ],
   [ROLES.STUDENT]: [

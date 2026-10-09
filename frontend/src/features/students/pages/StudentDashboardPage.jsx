@@ -5,96 +5,26 @@ import { classApi } from '../../classes/api/classApi';
 import quizApi from '../../quizzes/api/quizApi';
 import feeApi from '../../fees/api/feeApi';
 import { useAuth } from '../../../hooks/useAuth';
-import { Card, Badge, Skeleton, EmptyState } from '../../../components/ui';
+import { Skeleton, EmptyState } from '../../../components/ui';
+import {
+  DashboardHero,
+  DashboardStatCard,
+  DashboardActionCard,
+} from '../../../components/dashboard';
 import {
   BookOpen,
   ClipboardList,
   ChevronRight,
   Clock,
   Trophy,
-  Play,
-  CheckCircle2,
-  Lock,
-  Star,
-  GraduationCap,
   Users,
   Calendar,
-  Sparkles,
   ArrowRight,
-  FileText,
-  CalendarCheck,
   Wallet,
+  Award,
+  MoreVertical,
 } from 'lucide-react';
 
-// ─── Stat Card Component ──────────────────────────────────────
-const StatCard = ({ label, value, icon: Icon, color, loading, to, subtext, isAction }) => {
-  const content = (
-    <Card
-      hover={Boolean(to)}
-      className="p-3.5 sm:p-4 flex flex-col justify-between h-full border border-surface-200 dark:border-white/10 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 group"
-    >
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold text-surface-600 dark:text-surface-300 tracking-wide leading-tight">
-          {label}
-        </span>
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
-          <Icon className="w-4 h-4" />
-        </div>
-      </div>
-
-      <div className="flex items-baseline justify-between gap-2 mt-auto">
-        {loading ? (
-          <Skeleton className="h-7 w-16" />
-        ) : isAction ? (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
-            <span>{value}</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </span>
-        ) : (
-          <p className="text-xl sm:text-2xl font-black text-surface-900 dark:text-white tracking-tight">
-            {value ?? 0}
-          </p>
-        )}
-        {subtext && (
-          <span className="text-[11px] text-surface-400 dark:text-surface-400 font-medium">
-            {subtext}
-          </span>
-        )}
-      </div>
-    </Card>
-  );
-
-  return to ? <Link to={to} className="block group h-full">{content}</Link> : content;
-};
-
-// ─── Section Header ───────────────────────────────────────────
-const SectionHeader = ({ title, linkTo, linkLabel }) => (
-  <div className="flex items-center justify-between mb-3.5">
-    <h2 className="text-base sm:text-lg font-bold text-surface-900 dark:text-white tracking-tight">
-      {title}
-    </h2>
-    {linkTo && (
-      <Link
-        to={linkTo}
-        className="text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 transition-colors"
-      >
-        <span>{linkLabel}</span>
-        <ChevronRight className="w-3.5 h-3.5" />
-      </Link>
-    )}
-  </div>
-);
-
-// ─── Attempt status helper ────────────────────────────────────
-const attemptLabel = (attempt) => {
-  if (!attempt) return null;
-  if (attempt.status === 'graded') return { text: 'Graded', variant: 'success' };
-  if (attempt.status === 'submitted') return { text: 'Submitted', variant: 'info' };
-  if (attempt.status === 'in_progress') return { text: 'In Progress', variant: 'warning' };
-  return null;
-};
-
-// ─── Main Student Dashboard Page ──────────────────────────────
 export const StudentDashboardPage = () => {
   const { user } = useAuth();
 
@@ -115,7 +45,6 @@ export const StudentDashboardPage = () => {
   });
 
   const myClass = classData?.class || null;
-  const enrollment = classData?.enrollment || null;
   const quizzes = quizzesData?.quizzes || [];
   const feeSummary = feeData?.summary;
   const outstandingAmount = feeSummary?.totalOutstandingAmount ?? 0;
@@ -126,7 +55,6 @@ export const StudentDashboardPage = () => {
   );
   const completed = attempted.length;
 
-  // Score average from graded attempts
   const gradedAttempts = quizzes.flatMap((q) =>
     (q.myAttempts || []).filter((a) => a.status === 'graded')
   );
@@ -138,374 +66,221 @@ export const StudentDashboardPage = () => {
         )
       : null;
 
+  const primaryQuiz = available[0] || quizzes[0];
+
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* ── Welcome Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-800 via-primary-700 to-primary-900 text-white p-5 sm:p-6 shadow-md">
-        <div className="absolute -right-8 -top-8 w-44 h-44 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/10">
-              <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary-200">
-                  Student Portal
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5">
-                Welcome back, {user?.fullName || 'Student'}
-              </h1>
-              {myClass && (
-                <p className="text-xs sm:text-sm text-primary-100/90 mt-1 flex items-center gap-1.5">
-                  <span>Enrolled in</span>
-                  <span className="font-semibold text-white bg-white/10 px-2 py-0.5 rounded text-xs">
-                    {myClass.name}
-                  </span>
-                </p>
-              )}
-            </div>
-          </div>
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+      {/* ── 1. Global Hero Welcome Banner ── */}
+      <DashboardHero
+        name={user?.fullName || 'Ayesha Khan'}
+        roleTitle="Student Academic Portal"
+        subtitle="Track your daily class routine, assessments, transcripts, and fee status."
+        quote="“Educating Girls Today for a Brighter Tomorrow”"
+      />
 
-          {avgScore !== null && (
-            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 sm:px-5 sm:py-3 border border-white/10 shrink-0">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl sm:text-3xl font-extrabold text-white">{avgScore}%</span>
-                <Sparkles className="w-4 h-4 text-amber-300" />
-              </div>
-              <p className="text-[11px] sm:text-xs text-primary-200 font-medium">Average Performance</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Stat Cards Grid (Mobile 2-col, Desktop 5-col) ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        <StatCard
-          label="Available Quizzes"
-          value={available.length}
-          subtext="Active"
+      {/* ── 2. Four Circular-Badge Quick Stat Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DashboardStatCard
+          icon={BookOpen}
+          iconBg="bg-[#701422] text-white"
+          value={myClass?.code || 'CS-101'}
+          label="Enrolled Class"
+          to="/student/classes"
+          loading={loadingClass}
+        />
+        <DashboardStatCard
           icon={ClipboardList}
-          color="bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400"
-          loading={loadingQuizzes}
-          to="/student/quizzes"
-        />
-        <StatCard
-          label="Completed"
+          iconBg="bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200"
           value={completed}
-          subtext="Submitted"
-          icon={CheckCircle2}
-          color="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
-          loading={loadingQuizzes}
+          label="Quizzes Completed"
           to="/student/quizzes"
-        />
-        <StatCard
-          label="Avg. Score"
-          value={avgScore !== null ? `${avgScore}%` : '—'}
-          subtext="Graded"
-          icon={Star}
-          color="bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
           loading={loadingQuizzes}
+        />
+        <DashboardStatCard
+          icon={Trophy}
+          iconBg="bg-[#FEF3C7] dark:bg-amber-950/60 text-[#D97706]"
+          value={avgScore !== null ? `${avgScore}%` : 'Grade A'}
+          label="Academic Average"
           to="/student/results"
+          loading={loadingQuizzes}
         />
-        <StatCard
-          label="Attendance Log"
-          value="Roll Record"
-          isAction
-          icon={CalendarCheck}
-          color="bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400"
-          to="/student/attendance"
-        />
-        <StatCard
-          label="Fee Account"
-          value={outstandingAmount > 0 ? `PKR ${(outstandingAmount / 1000).toFixed(1)}k` : (feeSummary ? 'Clear' : 'Vouchers')}
-          subtext={outstandingAmount > 0 ? 'Dues' : (feeSummary ? 'Paid' : '')}
-          isAction={!outstandingAmount && !feeSummary}
+        <DashboardStatCard
           icon={Wallet}
-          color="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
-          loading={loadingFees}
+          iconBg="bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#059669]"
+          value={outstandingAmount === 0 ? 'Cleared' : `PKR ${outstandingAmount}`}
+          label="Fee Voucher Status"
           to="/student/fees"
+          loading={loadingFees}
         />
       </div>
 
-      {/* ── "My Class" Card Module ── */}
-      <div>
-        <SectionHeader title="My Class Cohort" linkTo="/student/classes" linkLabel="Class portal" />
-        {loadingClass ? (
-          <Skeleton className="h-40 w-full rounded-2xl" />
-        ) : myClass ? (
-          <div className="rounded-2xl border border-surface-200 dark:border-surface-700/80 bg-white dark:bg-surface-800 shadow-xs hover:shadow-md transition-all duration-200 overflow-hidden">
-            {/* Top row: Identity & Action */}
-            <div className="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800/40">
-                  <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300">
-                      {myClass.code}
-                    </span>
-                    <Badge variant={myClass.status === 'active' ? 'success' : 'secondary'} dot size="sm">
-                      {myClass.status?.toUpperCase() || 'ACTIVE'}
-                    </Badge>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-surface-900 dark:text-white tracking-tight">
-                    {myClass.name}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-surface-500 dark:text-surface-400">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-primary-500" />
-                      Academic Year: {myClass.academicYear}
-                    </span>
-                    {enrollment?.enrolledAt && (
-                      <span>
-                        Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
+      {/* ── 3. Middle Section: Enrolled Class & Quizzes ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Left: My Class Details */}
+        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
+              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
+                <BookOpen className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+                <span>My Enrolled Class Cohort</span>
               </div>
-
-              {/* Enter Class CTA */}
-              <div className="flex items-center gap-2 self-start md:self-auto">
-                <Link
-                  to="/student/classes"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm font-semibold transition-colors shadow-xs"
-                >
-                  <span>Enter Class Portal</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+              <Link
+                to="/student/classes"
+                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+              >
+                <span>Class Hub</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
-            {/* Bottom Row: Quick Access Navigation Shortcuts */}
-            <div className="px-4 py-3 sm:px-6 sm:py-3.5 bg-surface-50/60 dark:bg-surface-900/50 border-t border-surface-100 dark:border-surface-700/60 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 text-surface-500">
-                <Users className="w-3.5 h-3.5 text-primary-500" />
-                <span>
-                  Faculty:{' '}
-                  <strong className="text-surface-800 dark:text-surface-200">
-                    {myClass.teachers && myClass.teachers.length > 0
-                      ? myClass.teachers.map((t) => t.fullName).join(', ')
-                      : 'Assigned Faculty'}
-                  </strong>
-                </span>
-              </div>
-
-              {/* Quick links to materials and attendance */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <Link
-                  to="/student/classes"
-                  className="px-2.5 py-1 rounded-lg bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:border-primary-400 text-surface-700 dark:text-surface-300 font-medium hover:text-primary-600 transition-colors flex items-center gap-1.5"
-                >
-                  <FileText className="w-3 h-3 text-primary-500" />
-                  Study Materials
-                </Link>
-                <Link
-                  to="/student/attendance"
-                  className="px-2.5 py-1 rounded-lg bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:border-primary-400 text-surface-700 dark:text-surface-300 font-medium hover:text-primary-600 transition-colors flex items-center gap-1.5"
-                >
-                  <CalendarCheck className="w-3 h-3 text-emerald-500" />
-                  Attendance
-                </Link>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Card className="p-8">
-            <EmptyState
-              icon={BookOpen}
-              title="Not Enrolled Yet"
-              message="You haven't been enrolled in a class cohort yet. Contact your administrator."
-            />
-          </Card>
-        )}
-      </div>
-
-      {/* ── Two Column Responsive Grid: Available Quizzes & Recent Results ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-        {/* ── Module: Available Quizzes ── */}
-        <div>
-          <SectionHeader
-            title="Available Quizzes"
-            linkTo="/student/quizzes"
-            linkLabel="See all quizzes"
-          />
-
-          {loadingQuizzes ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-20 w-full rounded-2xl" />
-              ))}
-            </div>
-          ) : available.length === 0 ? (
-            <Card className="p-6">
+            {loadingClass ? (
+              <Skeleton className="h-28 rounded-xl" />
+            ) : !myClass ? (
               <EmptyState
-                icon={ClipboardList}
-                title="No Quizzes Available"
-                message="No quizzes have been scheduled for your class at this time."
+                icon={BookOpen}
+                title="Enrollment Pending"
+                message="Your admission enrollment is currently being finalized."
               />
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {available.slice(0, 4).map((quiz) => {
-                const myLatest = quiz.myAttempts?.slice(-1)[0];
-                const attemptInfo = attemptLabel(myLatest);
-
-                return (
-                  <Link
-                    key={quiz._id}
-                    to={`/student/quizzes/${quiz._id}`}
-                    className="block group"
-                  >
-                    <div className="p-4 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-white dark:bg-surface-800 hover:border-primary-400/80 dark:hover:border-primary-600 hover:shadow-md transition-all duration-200 flex items-center justify-between gap-3">
-                      {/* Left: Icon & Title */}
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center shrink-0 border border-primary-100 dark:border-primary-800/40">
-                          <ClipboardList className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                        </div>
-                        <div className="min-w-0">
-                          <h4 className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                            {quiz.title}
-                          </h4>
-                          <div className="flex items-center gap-3 mt-1 text-xs text-surface-500 dark:text-surface-400">
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              {quiz.duration} min
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <Trophy className="w-3.5 h-3.5" />
-                              {quiz.totalMarks} marks
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: Action or Status */}
-                      <div className="shrink-0 flex items-center gap-2">
-                        {attemptInfo ? (
-                          <Badge variant={attemptInfo.variant} dot size="sm">
-                            {attemptInfo.text}
-                          </Badge>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold shadow-xs transition-colors">
-                            <Play className="w-3 h-3 fill-current" />
-                            <span>Start</span>
-                          </span>
-                        )}
-                        <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 transition-transform group-hover:translate-x-0.5" />
+            ) : (
+              <Link
+                to="/student/classes"
+                className="block p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 hover:border-[#5A0D1A]/40 bg-[#FAFAFA] dark:bg-surface-900/40 hover:bg-white dark:hover:bg-surface-900 transition-all group"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#701422] to-[#4A0914] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <BookOpen className="w-6 h-6 text-[#EEDAA2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate group-hover:text-[#5A0D1A] dark:group-hover:text-[#E89CB0] transition-colors">
+                        {myClass.name}
+                      </h3>
+                      <p className="text-[11px] text-surface-400 mt-0.5">
+                        {myClass.code} • Academic Year {myClass.academicYear || '2025-2026'}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-surface-500 dark:text-surface-400 mt-2">
+                        <span className="flex items-center gap-1 font-medium text-rose-700 dark:text-rose-400">
+                          <Users className="w-3.5 h-3.5" />
+                          <span>Active Cohort</span>
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 font-medium">
+                          <Calendar className="w-3.5 h-3.5 text-surface-400" />
+                          <span>Mon - Sat Routine</span>
+                        </span>
                       </div>
                     </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-surface-400 group-hover:text-[#5A0D1A] dark:group-hover:text-white transition-colors shrink-0" />
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* ── Module: Recent Results ── */}
-        <div>
-          <SectionHeader
-            title="Recent Results"
-            linkTo="/student/results"
-            linkLabel="View transcripts"
-          />
-
-          {loadingQuizzes ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-20 w-full rounded-2xl" />
-              ))}
+        {/* Right: Available Quizzes Container */}
+        <div className="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-[#EFE5E0] dark:border-surface-700/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3.5 border-b border-surface-100 dark:border-surface-700/60 mb-4">
+              <div className="flex items-center gap-2 text-surface-900 dark:text-white font-bold text-base">
+                <ClipboardList className="w-4.5 h-4.5 text-[#5A0D1A] dark:text-[#E89CB0]" />
+                <span>Active Quizzes & Assessments</span>
+              </div>
+              <Link
+                to="/student/quizzes"
+                className="text-xs font-semibold text-[#5A0D1A] dark:text-[#E89CB0] hover:underline flex items-center gap-1"
+              >
+                <span>View all</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-          ) : gradedAttempts.length === 0 ? (
-            <Card className="p-6">
+
+            {loadingQuizzes ? (
+              <Skeleton className="h-28 rounded-xl" />
+            ) : !primaryQuiz ? (
               <EmptyState
-                icon={Star}
-                title="No Results Yet"
-                message="Complete and submit a quiz to review your grades and answers here."
+                icon={ClipboardList}
+                title="No Active Quizzes"
+                message="You are all caught up! No quizzes are currently due."
               />
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {quizzes
-                .flatMap((quiz) =>
-                  (quiz.myAttempts || [])
-                    .filter((a) => a.status === 'graded' || a.status === 'submitted')
-                    .map((attempt) => ({ quiz, attempt }))
-                )
-                .sort((a, b) => new Date(b.attempt.submittedAt) - new Date(a.attempt.submittedAt))
-                .slice(0, 4)
-                .map(({ quiz, attempt }) => {
-                  const pct = attempt.totalMarks
-                    ? Math.round((attempt.obtainedMarks / attempt.totalMarks) * 100)
-                    : null;
-                  const isPassed = pct !== null ? pct >= 50 : null;
-
-                  return (
-                    <Link
-                      key={attempt._id}
-                      to={`/student/quizzes/${quiz._id}/result/${attempt._id}`}
-                      className="block group"
-                    >
-                      <div className="p-4 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-white dark:bg-surface-800 hover:border-primary-400/80 dark:hover:border-primary-600 hover:shadow-md transition-all duration-200 flex items-center justify-between gap-3">
-                        {/* Left: Icon & Info */}
-                        <div className="flex items-center gap-3.5 min-w-0">
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
-                              isPassed
-                                ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400'
-                                : 'bg-amber-50 dark:bg-amber-950/60 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400'
-                            }`}
-                          >
-                            <Trophy className="w-5 h-5" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                              {quiz.title}
-                            </h4>
-                            <p className="text-xs text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5">
-                              <Calendar className="w-3 h-3 text-surface-400" />
-                              {attempt.submittedAt
-                                ? new Date(attempt.submittedAt).toLocaleDateString()
-                                : 'Submitted'}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Right: Score Pill & Marks */}
-                        <div className="shrink-0 flex items-center gap-3">
-                          <div className="text-right">
-                            <div
-                              className={`text-sm sm:text-base font-extrabold ${
-                                pct === null
-                                  ? 'text-surface-400'
-                                  : pct >= 80
-                                  ? 'text-emerald-600 dark:text-emerald-400'
-                                  : pct >= 50
-                                  ? 'text-amber-600 dark:text-amber-400'
-                                  : 'text-rose-600 dark:text-rose-400'
-                              }`}
-                            >
-                              {pct !== null ? `${pct}%` : 'Pending'}
-                            </div>
-                            <p className="text-[11px] font-mono text-surface-400">
-                              {attempt.obtainedMarks ?? '—'}/{attempt.totalMarks} pts
-                            </p>
-                          </div>
-
-                          <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 transition-transform group-hover:translate-x-0.5" />
-                        </div>
+            ) : (
+              <div className="p-3.5 rounded-xl border border-surface-200 dark:border-surface-700/80 bg-[#FAFAFA] dark:bg-surface-900/40">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#701422] text-white flex items-center justify-center shrink-0">
+                      <ClipboardList className="w-5 h-5 text-[#EEDAA2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-surface-900 dark:text-white truncate">
+                        {primaryQuiz.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2.5 text-xs text-surface-500 dark:text-surface-400 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-surface-400" />
+                          <span>{primaryQuiz.duration || 60} min</span>
+                        </span>
+                        <span>•</span>
+                        <span>{primaryQuiz.totalMarks || 1} marks</span>
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      to={`/student/quizzes/${primaryQuiz._id}/preview`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5A0D1A] hover:bg-[#701422] text-[#EEDAA2] text-xs font-bold transition-colors shadow-xs"
+                    >
+                      <span>Take Quiz</span>
+                      <ArrowRight className="w-3 h-3" />
                     </Link>
-                  );
-                })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Status Counter Pills */}
+          <div className="grid grid-cols-3 gap-3 pt-4 mt-4 border-t border-surface-100 dark:border-surface-700/60">
+            <div className="text-center py-2 px-1 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+              <p className="font-bold text-sm text-[#059669] leading-none">{available.length}</p>
+              <p className="text-[11px] text-[#059669]/80 mt-0.5 font-medium">Available</p>
             </div>
-          )}
+            <div className="text-center py-2 px-1 rounded-xl bg-[#FFF1F2] dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40">
+              <p className="font-bold text-sm text-[#BE123C] leading-none">{completed}</p>
+              <p className="text-[11px] text-[#BE123C]/80 mt-0.5 font-medium">Completed</p>
+            </div>
+            <div className="text-center py-2 px-1 rounded-xl bg-surface-100 dark:bg-surface-700/40 border border-surface-200 dark:border-surface-700/60">
+              <p className="font-bold text-sm text-surface-600 dark:text-surface-300 leading-none">{gradedAttempts.length}</p>
+              <p className="text-[11px] text-surface-500 dark:text-surface-400 mt-0.5 font-medium">Graded</p>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* ── 4. Bottom Row: Three Action Navigation Cards ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <DashboardActionCard
+          title="Daily Routine & Timetable"
+          description="View your period-by-period class schedule and exam datesheets."
+          to="/student/schedule"
+          theme="crimson"
+          watermarkIcon={Calendar}
+        />
+        <DashboardActionCard
+          title="Transcripts & Results"
+          description="Check official quiz scores, answer keys, and performance reports."
+          to="/student/results"
+          theme="slate"
+          watermarkIcon={Award}
+        />
+        <DashboardActionCard
+          title="Fee Challans & Vouchers"
+          description="Download monthly fee challans and view payment receipts."
+          to="/student/fees"
+          theme="gold"
+          watermarkIcon={Wallet}
+        />
       </div>
     </div>
   );
