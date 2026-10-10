@@ -68,6 +68,80 @@ const getChildTuitions = async (req, res, next) => {
   }
 };
 
+// ─── ADMIN CONTROLLERS ────────────────────────────────────────────────────────
+
+const createParent = async (req, res, next) => {
+  try {
+    const parent = await parentService.createParentAccount(req.body);
+    return ApiResponse.created(res, { parent }, 'Parent account created successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getAllParents = async (req, res, next) => {
+  try {
+    const result = await parentService.getAllParents(req.query);
+    return ApiResponse.success(res, result, 'Parents retrieved successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getParentsByStudent = async (req, res, next) => {
+  try {
+    const parents = await parentService.getParentsByStudent(req.params.studentId);
+    return ApiResponse.success(res, { parents }, 'Student parents retrieved successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const linkStudentToParent = async (req, res, next) => {
+  try {
+    const result = await parentService.linkStudentToParent(req.params.parentId, req.body);
+    return ApiResponse.success(res, result, 'Student linked to parent successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const unlinkStudentFromParent = async (req, res, next) => {
+  try {
+    const result = await parentService.unlinkStudentFromParent(
+      req.params.parentId,
+      req.params.studentId
+    );
+    return ApiResponse.success(res, result, 'Student unlinked successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const resetParentPassword = async (req, res, next) => {
+  try {
+    const result = await parentService.resetParentPassword(
+      req.params.parentId,
+      req.body.password || 'Parent@123456'
+    );
+    return ApiResponse.success(res, result, 'Parent password reset successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const toggleParentStatus = async (req, res, next) => {
+  try {
+    const result = await parentService.toggleParentStatus(
+      req.params.parentId,
+      req.body.isActive
+    );
+    return ApiResponse.success(res, result, 'Parent status updated.');
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getMyChildren,
   getChildSummary,
@@ -76,4 +150,11 @@ module.exports = {
   getChildQuizzes,
   getChildExams,
   getChildTuitions,
+  createParent,
+  getAllParents,
+  getParentsByStudent,
+  linkStudentToParent,
+  unlinkStudentFromParent,
+  resetParentPassword,
+  toggleParentStatus,
 };

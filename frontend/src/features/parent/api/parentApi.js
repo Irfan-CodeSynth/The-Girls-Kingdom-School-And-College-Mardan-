@@ -42,6 +42,42 @@ const parentApi = {
     const res = await api.get(`/parent/children/${studentId}/tuitions`);
     return res.data?.data || res.data;
   },
+
+  // ─── ADMIN: Parent Account Management & Student Linking ──────
+  getAllParents: async (params) => {
+    const res = await api.get('/parent/admin/all', { params });
+    return res.data?.data || res.data;
+  },
+
+  createParent: async (data) => {
+    const res = await api.post('/parent/admin/create', data);
+    return res.data?.data || res.data;
+  },
+
+  getParentsByStudent: async (studentId) => {
+    const res = await api.get(`/parent/admin/student/${studentId}`);
+    return res.data?.data?.parents || res.data?.parents || [];
+  },
+
+  linkStudentToParent: async (parentId, data) => {
+    const res = await api.post(`/parent/admin/${parentId}/link`, data);
+    return res.data?.data || res.data;
+  },
+
+  unlinkStudentFromParent: async (parentId, studentId) => {
+    const res = await api.delete(`/parent/admin/${parentId}/link/${studentId}`);
+    return res.data?.data || res.data;
+  },
+
+  resetParentPassword: async (parentId, password) => {
+    const res = await api.post(`/parent/admin/${parentId}/reset-password`, { password });
+    return res.data?.data || res.data;
+  },
+
+  toggleParentStatus: async (parentId, isActive) => {
+    const res = await api.patch(`/parent/admin/${parentId}/status`, { isActive });
+    return res.data?.data || res.data;
+  },
 };
 
 export default parentApi;

@@ -29,6 +29,7 @@ import StudentDashboardPage from '../features/students/pages/StudentDashboardPag
 // Admin — Students
 import StudentsListPage from '../features/students/pages/StudentsListPage';
 import StudentDetailPage from '../features/students/pages/StudentDetailPage';
+import AdminParentsPage from '../features/admin/pages/AdminParentsPage';
 
 // Admin — Teachers
 import TeachersListPage from '../features/teachers/pages/TeachersListPage';
@@ -133,6 +134,7 @@ export const AppRoutes = () => {
             {/* Student Management */}
             <Route path="/admin/students" element={<StudentsListPage />} />
             <Route path="/admin/students/:id" element={<StudentDetailPage />} />
+            <Route path="/admin/parents" element={<AdminParentsPage />} />
 
             {/* Teacher Management */}
             <Route path="/admin/teachers" element={<TeachersListPage />} />

@@ -5,19 +5,25 @@ const authorize = require('../../middleware/authorize');
 const { ROLES } = require('../../utils/constants');
 const ctrl = require('./parent.controller');
 
-// All parent routes require authentication and PARENT role
+// All routes require authentication
 router.use(protect);
-router.use(authorize(ROLES.PARENT));
 
-// ─── Child selector & summary ────────────────────────────────────────────────
-router.get('/children', ctrl.getMyChildren);
-router.get('/children/:studentId/summary', ctrl.getChildSummary);
+// ─── ADMIN: Parent Account Management & Student Linking ──────────────────────
+router.get('/admin/all', authorize(ROLES.ADMIN), ctrl.getAllParents);
+router.post('/admin/create', authorize(ROLES.ADMIN), ctrl.createParent);
+router.get('/admin/student/:studentId', authorize(ROLES.ADMIN), ctrl.getParentsByStudent);
+router.post('/admin/:parentId/link', authorize(ROLES.ADMIN), ctrl.linkStudentToParent);
+router.delete('/admin/:parentId/link/:studentId', authorize(ROLES.ADMIN), ctrl.unlinkStudentFromParent);
+router.post('/admin/:parentId/reset-password', authorize(ROLES.ADMIN), ctrl.resetParentPassword);
+router.patch('/admin/:parentId/status', authorize(ROLES.ADMIN), ctrl.toggleParentStatus);
 
-// ─── Specialized child tracking hubs ──────────────────────────────────────────
-router.get('/children/:studentId/attendance', ctrl.getChildAttendance);
-router.get('/children/:studentId/fees', ctrl.getChildFees);
-router.get('/children/:studentId/quizzes', ctrl.getChildQuizzes);
-router.get('/children/:studentId/exams', ctrl.getChildExams);
-router.get('/children/:studentId/tuitions', ctrl.getChildTuitions);
+// ─── PARENT: Child Selector & Academic Tracking Hubs ─────────────────────────
+router.get('/children', authorize(ROLES.PARENT), ctrl.getMyChildren);
+router.get('/children/:studentId/summary', authorize(ROLES.PARENT), ctrl.getChildSummary);
+router.get('/children/:studentId/attendance', authorize(ROLES.PARENT), ctrl.getChildAttendance);
+router.get('/children/:studentId/fees', authorize(ROLES.PARENT), ctrl.getChildFees);
+router.get('/children/:studentId/quizzes', authorize(ROLES.PARENT), ctrl.getChildQuizzes);
+router.get('/children/:studentId/exams', authorize(ROLES.PARENT), ctrl.getChildExams);
+router.get('/children/:studentId/tuitions', authorize(ROLES.PARENT), ctrl.getChildTuitions);
 
 module.exports = router;

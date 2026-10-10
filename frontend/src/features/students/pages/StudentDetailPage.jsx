@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentApi } from '../api/studentApi';
-import { Card, Badge, Avatar, Skeleton, Table, Button } from '../../../components/ui';
+import parentApi from '../../parent/api/parentApi';
+import { Card, Badge, Avatar, Skeleton, Table, Button, Input, Modal } from '../../../components/ui';
 import {
   ArrowLeft,
   Mail,
@@ -14,6 +15,11 @@ import {
   GraduationCap,
   ShieldCheck,
   CheckCircle2,
+  HeartHandshake,
+  UserPlus,
+  Plus,
+  X,
+  AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -35,10 +41,28 @@ const InfoRow = ({ icon: Icon, label, value }) => (
 
 export const StudentDetailPage = () => {
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const [isCreateParentModalOpen, setIsCreateParentModalOpen] = useState(false);
+  const [parentForm, setParentForm] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    phone: '',
+    relationship: 'father',
+    cnic: '',
+    occupation: '',
+    address: '',
+  });
 
   const { data, isPending } = useQuery({
     queryKey: ['student', id],
     queryFn: () => studentApi.getStudentById(id),
+  });
+
+  const { data: parentsList, refetch: refetchParents } = useQuery({
+    queryKey: ['studentParents', id],
+    queryFn: () => parentApi.getParentsByStudent(id),
+    enabled: Boolean(id),
   });
 
   const resetPasswordMutation = useMutation({
@@ -48,6 +72,45 @@ export const StudentDetailPage = () => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || 'Failed to reset password.');
+    },
+  });
+
+  const createParentMutation = useMutation({
+    mutationFn: (formData) =>
+      parentApi.createParent({
+        ...formData,
+        studentId: id,
+      }),
+    onSuccess: () => {
+      toast.success('Parent Portal ID created and linked to student!');
+      setIsCreateParentModalOpen(false);
+      setParentForm({
+        fullName: '',
+        email: '',
+        password: '',
+        phone: '',
+        relationship: 'father',
+        cnic: '',
+        occupation: '',
+        address: '',
+      });
+      refetchParents();
+      queryClient.invalidateQueries({ queryKey: ['adminParents'] });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to create parent account.');
+    },
+  });
+
+  const unlinkParentMutation = useMutation({
+    mutationFn: (parentId) => parentApi.unlinkStudentFromParent(parentId, id),
+    onSuccess: () => {
+      toast.success('Parent unlinked from student.');
+      refetchParents();
+      queryClient.invalidateQueries({ queryKey: ['adminParents'] });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to unlink parent.');
     },
   });
 
@@ -65,6 +128,7 @@ export const StudentDetailPage = () => {
 
   const student = data?.student;
   const history = student?.enrollmentHistory || [];
+  const linkedParents = parentsList || [];
 
   const historyColumns = [
     {
@@ -195,7 +259,7 @@ export const StudentDetailPage = () => {
           </div>
         </div>
 
-        {/* ── Right Column: Academic Details & Enrollment History ── */}
+        {/* ── Right Column: Academic Details & Parent Portal & Enrollment History ── */}
         <div className="lg:col-span-2 space-y-6">
           {/* Quick Academic Overview Card */}
           <div className="bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
@@ -236,6 +300,100 @@ export const StudentDetailPage = () => {
             </div>
           </div>
 
+          {/* ── Parent Portal Access Card (NEW) ── */}
+          <div className="bg-white p-6 rounded-2xl border border-[#EFE5E0] shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <HeartHandshake className="w-5 h-5 text-[#5A0D1A]" />
+                <h3 className="font-serif text-lg font-bold text-[#111827]">
+                  Parent &amp; Guardian Portal Access
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsCreateParentModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs font-bold transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+              >
+                <UserPlus className="w-3.5 h-3.5 text-amber-300" />
+                Create Parent Portal ID
+              </button>
+            </div>
+
+            {linkedParents.length === 0 ? (
+              <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <AlertCircle className="w-5 h-5 text-amber-700 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-amber-900">
+                      No Parent Portal ID Linked
+                    </p>
+                    <p className="text-[11px] text-amber-800">
+                      Parents cannot monitor attendance, fee slips, or tuitions until credentials are created.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsCreateParentModalOpen(true)}
+                  className="px-3 py-1.5 rounded-lg bg-[#5A0D1A] text-white text-xs font-bold hover:bg-[#420812] transition-colors cursor-pointer self-start sm:self-auto"
+                >
+                  Create ID Now
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {linkedParents.map((parent) => (
+                  <div
+                    key={parent._id}
+                    className="p-4 rounded-xl border border-[#EFE5E0] bg-[#FAF8F5]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-[#111827]">
+                          {parent.fullName}
+                        </span>
+                        <Badge variant="outline" className="text-[10px] capitalize">
+                          {parent.relationship}
+                        </Badge>
+                        <Badge
+                          variant={parent.isActive ? 'success' : 'danger'}
+                          className="text-[10px]"
+                        >
+                          {parent.isActive ? 'Active' : 'Suspended'}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-[#6B7280] mt-1 space-x-3">
+                        <span><strong>Login Email:</strong> {parent.email}</span>
+                        {parent.phone && <span><strong>Phone:</strong> {parent.phone}</span>}
+                        {parent.cnic && <span><strong>CNIC:</strong> {parent.cnic}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Unlink ${parent.fullName} from ${student?.fullName}?`
+                            )
+                          ) {
+                            unlinkParentMutation.mutate(parent._id);
+                          }
+                        }}
+                        className="px-2.5 py-1 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Unlink
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Enrollment History Table */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -256,6 +414,101 @@ export const StudentDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Modal: Create Parent Portal Account for this Student ── */}
+      <Modal
+        isOpen={isCreateParentModalOpen}
+        onClose={() => setIsCreateParentModalOpen(false)}
+        title={`Create Parent Portal ID for ${student?.fullName || 'Student'}`}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            createParentMutation.mutate(parentForm);
+          }}
+          className="space-y-4 text-xs"
+        >
+          <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#EFE5E0] text-[11px] text-[#5A0D1A] font-semibold">
+            🎓 Linked Student: <strong>{student?.fullName}</strong> ({student?.studentId || 'Reg N/A'}) — {student?.enrolledClass?.name || 'Class 11'}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Parent / Guardian Name *"
+              required
+              placeholder="e.g. Muhammad Tariq Khan"
+              value={parentForm.fullName}
+              onChange={(e) => setParentForm({ ...parentForm, fullName: e.target.value })}
+            />
+            <Input
+              label="Parent Login Email *"
+              type="email"
+              required
+              placeholder="e.g. parent@example.com"
+              value={parentForm.email}
+              onChange={(e) => setParentForm({ ...parentForm, email: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Portal Password *"
+              type="password"
+              required
+              placeholder="At least 6 characters"
+              value={parentForm.password}
+              onChange={(e) => setParentForm({ ...parentForm, password: e.target.value })}
+            />
+            <Input
+              label="Contact Phone Number"
+              placeholder="e.g. +92-300-1234567"
+              value={parentForm.phone}
+              onChange={(e) => setParentForm({ ...parentForm, phone: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="font-bold text-[#111827] block mb-1">
+                Relationship to Student:
+              </label>
+              <select
+                value={parentForm.relationship}
+                onChange={(e) => setParentForm({ ...parentForm, relationship: e.target.value })}
+                className="w-full p-2.5 rounded-xl border border-[#EFE5E0] bg-white text-xs font-semibold text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#5A0D1A]"
+              >
+                <option value="father">Father</option>
+                <option value="mother">Mother</option>
+                <option value="guardian">Legal Guardian</option>
+              </select>
+            </div>
+
+            <Input
+              label="National CNIC Number"
+              placeholder="e.g. 16101-1234567-1"
+              value={parentForm.cnic}
+              onChange={(e) => setParentForm({ ...parentForm, cnic: e.target.value })}
+            />
+          </div>
+
+          <div className="pt-3 border-t border-[#EFE5E0] flex items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setIsCreateParentModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-[#EFE5E0] text-xs font-bold text-[#6B7280] hover:bg-gray-50 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={createParentMutation.isPending}
+              className="px-4 py-2 rounded-xl bg-[#5A0D1A] hover:bg-[#420812] text-white text-xs font-bold cursor-pointer disabled:opacity-50"
+            >
+              {createParentMutation.isPending ? 'Creating...' : 'Create & Link Parent ID'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

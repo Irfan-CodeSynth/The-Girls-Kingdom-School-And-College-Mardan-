@@ -408,6 +408,288 @@ const getChildTuitions = async (parentId, studentId) => {
   return { courses: coursesWithProgress };
 };
 
+// ─── ADMIN: PARENT MANAGEMENT & LINKING ──────────────────────────────────────
+
+const createParentAccount = async (data) => {
+  const {
+    fullName,
+    email,
+    password,
+    phone,
+    studentId,
+    studentIds,
+    relationship = 'guardian',
+    cnic = '',
+    occupation = '',
+    address = '',
+    emergencyContact = '',
+  } = data;
+
+  if (!fullName || !fullName.trim()) throw ApiError.badRequest('Parent full name is required.');
+  if (!email || !email.trim()) throw ApiError.badRequest('Parent email is required.');
+  if (!password || password.length < 6) throw ApiError.badRequest('Password must be at least 6 characters.');
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const existingUser = await User.findOne({ email: normalizedEmail });
+  if (existingUser) {
+    throw ApiError.badRequest(`A user with email "${normalizedEmail}" already exists.`);
+  }
+
+  // Gather children student ids
+  const targetStudentIds = [];
+  if (studentId && isValidObjectId(studentId)) {
+    targetStudentIds.push(studentId.toString());
+  }
+  if (Array.isArray(studentIds)) {
+    studentIds.forEach((id) => {
+      if (isValidObjectId(id) && !targetStudentIds.includes(id.toString())) {
+        targetStudentIds.push(id.toString());
+      }
+    });
+  }
+
+  // Verify that all students exist and have STUDENT role
+  if (targetStudentIds.length > 0) {
+    const verifiedStudents = await User.find({
+      _id: { $in: targetStudentIds },
+      role: ROLES.STUDENT,
+    });
+    if (verifiedStudents.length !== targetStudentIds.length) {
+      throw ApiError.badRequest('One or more selected student IDs are invalid or not registered as students.');
+    }
+  }
+
+  // Create User
+  const user = await User.create({
+    fullName: fullName.trim(),
+    email: normalizedEmail,
+    password: password,
+    role: ROLES.PARENT,
+    phone: phone ? phone.trim() : '',
+    isActive: true,
+  });
+
+  // Create Parent Profile
+  const children = targetStudentIds.map((sId, index) => ({
+    student: sId,
+    relationship: relationship || 'guardian',
+    isPrimaryContact: index === 0,
+  }));
+
+  const profile = await ParentProfile.create({
+    user: user._id,
+    children,
+    cnic: cnic ? cnic.trim() : '',
+    occupation: occupation ? occupation.trim() : '',
+    address: address ? address.trim() : '',
+    emergencyContact: emergencyContact ? emergencyContact.trim() : (phone || ''),
+  });
+
+  return {
+    _id: user._id,
+    fullName: user.fullName,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    profileId: profile._id,
+    childrenCount: children.length,
+  };
+};
+
+const getAllParents = async (query = {}) => {
+  const page = Math.max(1, Number(query.page) || 1);
+  const limit = Math.min(Math.max(1, Number(query.limit) || 20), 100);
+  const skip = (page - 1) * limit;
+
+  let userFilter = { role: ROLES.PARENT };
+  if (query.search) {
+    const searchRegex = new RegExp(query.search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    userFilter.$or = [{ fullName: searchRegex }, { email: searchRegex }, { phone: searchRegex }];
+  }
+
+  const [parentUsers, total] = await Promise.all([
+    User.find(userFilter)
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    User.countDocuments(userFilter),
+  ]);
+
+  const userIds = parentUsers.map((u) => u._id);
+  const profiles = await ParentProfile.find({ user: { $in: userIds } })
+    .populate('children.student', 'fullName email phone profilePhoto')
+    .lean();
+
+  const profileMap = new Map(profiles.map((p) => [p.user.toString(), p]));
+
+  // Also populate student class and reg number for each child
+  const allChildStudentIds = [];
+  profiles.forEach((p) => {
+    (p.children || []).forEach((c) => {
+      if (c.student?._id) allChildStudentIds.push(c.student._id);
+    });
+  });
+
+  const [studentProfiles, enrollments] = await Promise.all([
+    StudentProfile.find({ user: { $in: allChildStudentIds } }).lean(),
+    Enrollment.find({ student: { $in: allChildStudentIds }, status: ENROLLMENT_STATUS.ACTIVE })
+      .populate('class', 'name code')
+      .lean(),
+  ]);
+
+  const spMap = new Map(studentProfiles.map((sp) => [sp.user.toString(), sp]));
+  const enMap = new Map(enrollments.map((en) => [en.student.toString(), en]));
+
+  const parents = parentUsers.map((u) => {
+    const profile = profileMap.get(u._id.toString());
+    const enrichedChildren = (profile?.children || []).map((c) => {
+      const studentObj = c.student || {};
+      const sIdStr = studentObj._id?.toString() || '';
+      const sp = spMap.get(sIdStr);
+      const en = enMap.get(sIdStr);
+      return {
+        _id: studentObj._id,
+        fullName: studentObj.fullName,
+        email: studentObj.email,
+        phone: studentObj.phone,
+        profilePhoto: studentObj.profilePhoto,
+        studentId: sp?.studentId || 'N/A',
+        class: en?.class || null,
+        relationship: c.relationship,
+        isPrimaryContact: c.isPrimaryContact,
+      };
+    });
+
+    return {
+      _id: u._id,
+      fullName: u.fullName,
+      email: u.email,
+      phone: u.phone,
+      isActive: u.isActive,
+      lastLogin: u.lastLogin,
+      createdAt: u.createdAt,
+      cnic: profile?.cnic || '',
+      occupation: profile?.occupation || '',
+      address: profile?.address || '',
+      emergencyContact: profile?.emergencyContact || '',
+      children: enrichedChildren,
+    };
+  });
+
+  return {
+    parents,
+    pagination: {
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit),
+    },
+  };
+};
+
+const getParentsByStudent = async (studentId) => {
+  if (!isValidObjectId(studentId)) throw ApiError.badRequest('Invalid student ID.');
+
+  const profiles = await ParentProfile.find({ 'children.student': studentId })
+    .populate('user', 'fullName email phone isActive lastLogin createdAt')
+    .lean();
+
+  return profiles.map((p) => {
+    const childEntry = (p.children || []).find((c) => c.student?.toString() === studentId.toString());
+    return {
+      _id: p.user?._id,
+      profileId: p._id,
+      fullName: p.user?.fullName,
+      email: p.user?.email,
+      phone: p.user?.phone,
+      isActive: p.user?.isActive,
+      relationship: childEntry?.relationship || 'guardian',
+      isPrimaryContact: childEntry?.isPrimaryContact || false,
+      cnic: p.cnic,
+      occupation: p.occupation,
+      address: p.address,
+      emergencyContact: p.emergencyContact,
+    };
+  });
+};
+
+const linkStudentToParent = async (parentId, data) => {
+  const { studentId, relationship = 'guardian', isPrimaryContact = false } = data;
+  if (!isValidObjectId(parentId)) throw ApiError.badRequest('Invalid parent ID.');
+  if (!isValidObjectId(studentId)) throw ApiError.badRequest('Invalid student ID.');
+
+  const [parentUser, studentUser] = await Promise.all([
+    User.findOne({ _id: parentId, role: ROLES.PARENT }),
+    User.findOne({ _id: studentId, role: ROLES.STUDENT }),
+  ]);
+
+  if (!parentUser) throw ApiError.notFound('Parent account not found.');
+  if (!studentUser) throw ApiError.notFound('Student account not found.');
+
+  let profile = await ParentProfile.findOne({ user: parentId });
+  if (!profile) {
+    profile = await ParentProfile.create({
+      user: parentId,
+      children: [],
+    });
+  }
+
+  const alreadyLinked = profile.children.some((c) => c.student.toString() === studentId.toString());
+  if (alreadyLinked) {
+    throw ApiError.badRequest('This student is already linked to this parent account.');
+  }
+
+  profile.children.push({
+    student: studentId,
+    relationship,
+    isPrimaryContact,
+  });
+
+  await profile.save();
+  return { message: 'Student successfully linked to parent.', parent: parentUser, student: studentUser };
+};
+
+const unlinkStudentFromParent = async (parentId, studentId) => {
+  if (!isValidObjectId(parentId)) throw ApiError.badRequest('Invalid parent ID.');
+  if (!isValidObjectId(studentId)) throw ApiError.badRequest('Invalid student ID.');
+
+  const profile = await ParentProfile.findOne({ user: parentId });
+  if (!profile) throw ApiError.notFound('Parent profile not found.');
+
+  profile.children = profile.children.filter((c) => c.student.toString() !== studentId.toString());
+  await profile.save();
+
+  return { message: 'Student unlinked from parent successfully.' };
+};
+
+const resetParentPassword = async (parentId, newPassword) => {
+  if (!isValidObjectId(parentId)) throw ApiError.badRequest('Invalid parent ID.');
+  if (!newPassword || newPassword.length < 6) throw ApiError.badRequest('Password must be at least 6 characters.');
+
+  const parentUser = await User.findOne({ _id: parentId, role: ROLES.PARENT });
+  if (!parentUser) throw ApiError.notFound('Parent account not found.');
+
+  parentUser.password = newPassword;
+  await parentUser.save();
+
+  return { message: `Password for ${parentUser.fullName} has been reset successfully.` };
+};
+
+const toggleParentStatus = async (parentId, isActive) => {
+  if (!isValidObjectId(parentId)) throw ApiError.badRequest('Invalid parent ID.');
+
+  const parentUser = await User.findOneAndUpdate(
+    { _id: parentId, role: ROLES.PARENT },
+    { isActive: Boolean(isActive) },
+    { new: true }
+  ).select('-password');
+
+  if (!parentUser) throw ApiError.notFound('Parent account not found.');
+  return { message: `Parent account is now ${parentUser.isActive ? 'active' : 'suspended'}.`, parentUser };
+};
+
 module.exports = {
   verifyParentChildAccess,
   getParentChildren,
@@ -417,4 +699,11 @@ module.exports = {
   getChildQuizzes,
   getChildExams,
   getChildTuitions,
+  createParentAccount,
+  getAllParents,
+  getParentsByStudent,
+  linkStudentToParent,
+  unlinkStudentFromParent,
+  resetParentPassword,
+  toggleParentStatus,
 };

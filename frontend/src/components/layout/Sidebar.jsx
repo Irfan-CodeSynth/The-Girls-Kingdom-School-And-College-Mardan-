@@ -27,6 +27,7 @@ import {
   Megaphone,
   Edit3,
   Video,
+  HeartHandshake,
 } from 'lucide-react';
 
 const iconMap = {
@@ -50,6 +51,7 @@ const iconMap = {
   Megaphone,
   Edit3,
   Video,
+  HeartHandshake,
 };
 
 export const Sidebar = ({ isOpen, onClose }) => {

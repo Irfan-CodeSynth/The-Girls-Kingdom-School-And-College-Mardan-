@@ -29,6 +29,7 @@ export const SIDEBAR_ITEMS = {
     { name: 'Dashboard', path: '/admin/dashboard', icon: 'LayoutDashboard' },
     { name: 'Online Tuitions', path: '/admin/tuitions', icon: 'Video' },
     { name: 'Students', path: '/admin/students', icon: 'Users' },
+    { name: 'Parents Portal', path: '/admin/parents', icon: 'HeartHandshake' },
     { name: 'Teachers', path: '/admin/teachers', icon: 'GraduationCap' },
     { name: 'Classes', path: '/admin/classes', icon: 'BookOpen' },
     { name: 'Attendance', path: '/admin/attendance', icon: 'CheckCircle' },
