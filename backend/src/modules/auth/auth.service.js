@@ -69,7 +69,7 @@ const registerTeacher = async (data) => {
   return { user, token };
 };
 
-const login = async (email, password) => {
+const login = async (email, password, requiredRole) => {
   const normalizedEmail = (email || '').trim().toLowerCase();
   const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
@@ -84,6 +84,21 @@ const login = async (email, password) => {
 
   if (!user.isActive) {
     throw ApiError.unauthorized('Account is deactivated');
+  }
+
+  // Strict role matching: prevent signing in with wrong portal role
+  if (requiredRole && user.role !== requiredRole) {
+    const roleLabels = {
+      admin: 'Admin',
+      teacher: 'Faculty',
+      student: 'Student',
+      parent: 'Parent Portal',
+    };
+    const expected = roleLabels[requiredRole] || requiredRole;
+    const actual = roleLabels[user.role] || user.role;
+    throw ApiError.forbidden(
+      `Access Denied: This account is registered as "${actual}", not "${expected}". Please click the "${actual}" tab above to sign in.`
+    );
   }
 
   // Update lastLogin without triggering full validation

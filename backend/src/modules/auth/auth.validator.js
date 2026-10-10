@@ -25,7 +25,8 @@ const registerTeacherSchema = {
 const loginSchema = {
   body: z.object({
     email: z.string().email(),
-    password: z.string().min(1)
+    password: z.string().min(1),
+    role: z.string().optional(),
   })
 };
 

@@ -39,13 +39,14 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [token]);
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  const login = async (email, password, role) => {
+    const res = await api.post('/auth/login', { email, password, role });
     const payload = res.data?.data || res.data;
     const { token: newToken, user: userData } = payload;
     localStorage.setItem('token', newToken);
     setToken(newToken);
     setUser(userData);
+    return userData;
   };
 
   const register = async (data, role) => {

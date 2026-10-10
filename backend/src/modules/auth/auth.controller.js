@@ -21,7 +21,7 @@ const registerTeacher = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { user, token } = await authService.login(req.body.email, req.body.password);
+    const { user, token } = await authService.login(req.body.email, req.body.password, req.body.role);
     return ApiResponse.success(res, { user, token }, 'Login successful');
   } catch (err) {
     next(err);

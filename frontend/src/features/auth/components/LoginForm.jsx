@@ -70,7 +70,7 @@ export const LoginForm = () => {
   };
 
   const onSubmit = (data) => {
-    login(data);
+    login({ ...data, role: selectedRole });
   };
 
   return (
@@ -78,7 +78,7 @@ export const LoginForm = () => {
       {/* ─── Portal Role Switcher Tabs ─── */}
       <div className="space-y-2">
         <label className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] block text-center">
-          Select Your Portal Role
+          Select Your Portal Role (Restricted Access)
         </label>
         <div className="grid grid-cols-4 gap-1 p-1 bg-[#FAF8F5] rounded-xl border border-[#EFE5E0]">
           {ROLES_INFO.map((r) => {

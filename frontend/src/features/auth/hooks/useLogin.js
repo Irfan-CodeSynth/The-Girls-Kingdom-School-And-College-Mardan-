@@ -9,8 +9,8 @@ export const useLogin = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async ({ email, password }) => {
-      return await login(email, password);
+    mutationFn: async ({ email, password, role }) => {
+      return await login(email, password, role);
     },
     onSuccess: (data, variables) => {
       toast.success('Welcome back!');
