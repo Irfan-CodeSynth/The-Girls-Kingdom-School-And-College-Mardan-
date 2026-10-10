@@ -16,7 +16,7 @@ const TuitionCourse = require('../tuitions/tuitionCourse.model');
 const TuitionLecture = require('../tuitions/tuitionLecture.model');
 const Notification = require('../notifications/notification.model');
 const ApiError = require('../../utils/ApiError');
-const { ENROLLMENT_STATUS, ATTENDANCE_STATUS, QUIZ_STATUS } = require('../../utils/constants');
+const { ROLES, ENROLLMENT_STATUS, ATTENDANCE_STATUS, QUIZ_STATUS } = require('../../utils/constants');
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
