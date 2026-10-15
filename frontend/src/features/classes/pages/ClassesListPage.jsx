@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import classApi from '../api/classApi';
 import ClassCard from '../components/ClassCard';
 import ClassModal from '../components/ClassModal';
-import { Button, Skeleton, EmptyState } from '../../../components/ui';
+import { Button, Skeleton, EmptyState, ConfirmDialog } from '../../../components/ui';
 import { Plus, Search, BookOpen, Layers, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -12,6 +12,7 @@ export const ClassesListPage = () => {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [classToDelete, setClassToDelete] = useState(null);
 
   const { data, isPending } = useQuery({
     queryKey: ['classes', search],
@@ -43,6 +44,18 @@ export const ClassesListPage = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => classApi.deleteClass(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      setClassToDelete(null);
+      toast.success('Class deleted successfully!');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to delete class.');
+    },
+  });
+
   const handleCreateOpen = () => {
     setSelectedClass(null);
     setIsModalOpen(true);
@@ -51,6 +64,16 @@ export const ClassesListPage = () => {
   const handleEditOpen = (cls) => {
     setSelectedClass(cls);
     setIsModalOpen(true);
+  };
+
+  const handleDeleteOpen = (cls) => {
+    setClassToDelete(cls);
+  };
+
+  const handleConfirmDelete = () => {
+    if (classToDelete) {
+      deleteMutation.mutate(classToDelete._id);
+    }
   };
 
   const handleModalSubmit = (formData) => {
@@ -174,6 +197,7 @@ export const ClassesListPage = () => {
               cls={cls}
               showAdminControls
               onEdit={handleEditOpen}
+              onDelete={handleDeleteOpen}
             />
           ))}
         </div>
@@ -186,6 +210,22 @@ export const ClassesListPage = () => {
         onSubmit={handleModalSubmit}
         initialData={selectedClass}
         loading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* ── Confirm Delete Dialog ── */}
+      <ConfirmDialog
+        isOpen={Boolean(classToDelete)}
+        onClose={() => setClassToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title={`Delete "${classToDelete?.name}"?`}
+        message={
+          classToDelete?.studentCount > 0
+            ? `Are you sure you want to delete "${classToDelete.name}" (${classToDelete.code})? It currently has ${classToDelete.studentCount} enrolled student(s). All associated student enrollments, faculty assignments, attendance records, and materials for this class will also be removed. This action cannot be undone.`
+            : `Are you sure you want to delete "${classToDelete?.name}" (${classToDelete?.code})? All associated records will be permanently removed. This action cannot be undone.`
+        }
+        confirmText="Delete Class"
+        variant="danger"
+        loading={deleteMutation.isPending}
       />
     </div>
   );

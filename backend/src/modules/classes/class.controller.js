@@ -21,6 +21,11 @@ const updateClass = async (req, res) => {
   return ApiResponse.success(res, { class: updatedClass }, 'Class updated successfully');
 };
 
+const deleteClass = async (req, res) => {
+  const result = await classService.deleteClass(req.params.id);
+  return ApiResponse.success(res, result, 'Class deleted successfully');
+};
+
 const enrollStudent = async (req, res) => {
   const enrollment = await classService.enrollStudent(req.body.studentId, req.body.classId);
   return ApiResponse.created(res, { enrollment }, 'Student enrolled into class successfully');
@@ -70,6 +75,7 @@ module.exports = {
   getClasses,
   getClassById,
   updateClass,
+  deleteClass,
   enrollStudent,
   removeStudentEnrollment,
   assignTeacher,

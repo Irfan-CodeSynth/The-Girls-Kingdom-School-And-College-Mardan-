@@ -30,6 +30,7 @@ router.get('/:id/teachers', authorize(ROLES.ADMIN, ROLES.TEACHER), classControll
 // Admin-only class management
 router.post('/', authorize(ROLES.ADMIN), validate(createClassSchema), classController.createClass);
 router.patch('/:id', authorize(ROLES.ADMIN), validate(updateClassSchema), classController.updateClass);
+router.delete('/:id', authorize(ROLES.ADMIN), classController.deleteClass);
 
 // Admin enrollment & assignment operations
 router.post('/enroll', authorize(ROLES.ADMIN), validate(enrollStudentSchema), classController.enrollStudent);

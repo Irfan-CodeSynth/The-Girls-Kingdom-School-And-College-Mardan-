@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useNavigate } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import classApi from '../api/classApi';
 import studentApi from '../../students/api/studentApi';
@@ -33,12 +33,14 @@ import { toast } from 'sonner';
 
 export const ClassDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('students');
 
   // Modals
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isDeleteClassModalOpen, setIsDeleteClassModalOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [selectedTeacherId, setSelectedTeacherId] = useState('');
   const [itemToRemove, setItemToRemove] = useState(null);
@@ -112,6 +114,18 @@ export const ClassDetailPage = () => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || 'Failed to remove assignment.');
+    },
+  });
+
+  const deleteClassMutation = useMutation({
+    mutationFn: () => classApi.deleteClass(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      toast.success('Class deleted successfully!');
+      navigate('/admin/classes');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to delete class.');
     },
   });
 
@@ -309,7 +323,7 @@ export const ClassDetailPage = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <Button
               variant="outline"
               size="sm"
@@ -325,6 +339,15 @@ export const ClassDetailPage = () => {
               onClick={() => setIsAssignModalOpen(true)}
             >
               Assign Faculty
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-rose-600 hover:bg-rose-50 border border-rose-200"
+              leftIcon={<Trash2 className="w-4 h-4 text-rose-600" />}
+              onClick={() => setIsDeleteClassModalOpen(true)}
+            >
+              Delete Class
             </Button>
           </div>
         </div>
@@ -517,6 +540,18 @@ export const ClassDetailPage = () => {
             removeAssignmentMutation.mutate(itemToRemove.id);
           }
         }}
+      />
+
+      {/* ── Delete Class Confirmation Dialog ── */}
+      <ConfirmDialog
+        isOpen={isDeleteClassModalOpen}
+        onClose={() => setIsDeleteClassModalOpen(false)}
+        title={`Delete "${cls?.name}"?`}
+        message={`Are you sure you want to permanently delete this class (${cls?.code})? All associated student enrollments, faculty assignments, attendance, and materials will also be deleted. This action cannot be undone.`}
+        confirmText="Delete Class"
+        variant="danger"
+        loading={deleteClassMutation.isPending}
+        onConfirm={() => deleteClassMutation.mutate()}
       />
     </div>
   );

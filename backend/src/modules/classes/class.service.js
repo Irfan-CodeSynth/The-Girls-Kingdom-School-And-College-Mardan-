@@ -107,6 +107,58 @@ const updateClass = async (id, data) => {
   return updated;
 };
 
+const deleteClass = async (id) => {
+  const cls = await Class.findById(id);
+  if (!cls) {
+    throw ApiError.notFound('Class not found.');
+  }
+
+  const cleanupTasks = [
+    Enrollment.deleteMany({ class: id }),
+    TeacherAssignment.deleteMany({ class: id }),
+  ];
+
+  try {
+    const Material = require('./material.model');
+    cleanupTasks.push(Material.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const Attendance = require('./attendance.model');
+    cleanupTasks.push(Attendance.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const Timetable = require('../schedule/timetable.model');
+    cleanupTasks.push(Timetable.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const ExamDatesheet = require('../schedule/datesheet.model');
+    cleanupTasks.push(ExamDatesheet.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const Quiz = require('../quizzes/quiz.model');
+    cleanupTasks.push(Quiz.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const FeeStructure = require('../fees/feeStructure.model');
+    cleanupTasks.push(FeeStructure.deleteMany({ class: id }));
+  } catch (_) {}
+
+  try {
+    const FeeChallan = require('../fees/feeChallan.model');
+    cleanupTasks.push(FeeChallan.deleteMany({ class: id }));
+  } catch (_) {}
+
+  await Promise.all(cleanupTasks);
+  await Class.findByIdAndDelete(id);
+
+  return { message: 'Class deleted successfully' };
+};
+
 // --- Student Enrollment ---
 const enrollStudent = async (studentId, classId) => {
   const [student, cls] = await Promise.all([
@@ -288,6 +340,7 @@ module.exports = {
   getClasses,
   getClassById,
   updateClass,
+  deleteClass,
   enrollStudent,
   removeStudentEnrollment,
   getClassStudents,

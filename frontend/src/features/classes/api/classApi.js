@@ -21,6 +21,11 @@ export const classApi = {
     return res.data?.data || res.data;
   },
 
+  deleteClass: async (id) => {
+    const res = await api.delete(`/classes/${id}`);
+    return res.data?.data || res.data;
+  },
+
   enrollStudent: async (studentId, classId) => {
     const res = await api.post('/classes/enroll', { studentId, classId });
     return res.data?.data || res.data;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Badge, Button } from '../../../components/ui';
-import { Users, GraduationCap, ArrowRight, Edit, Calendar, BookOpen } from 'lucide-react';
+import { Users, GraduationCap, ArrowRight, Edit, Trash2, Calendar, BookOpen } from 'lucide-react';
 import { Link } from 'react-router';
 
-export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
+export const ClassCard = ({ cls, onEdit, onDelete, showAdminControls = false }) => {
   return (
     <div className="bg-white rounded-2xl border border-[#EFE5E0] shadow-xs hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between h-full group font-sans">
       <div>
@@ -78,6 +78,17 @@ export const ClassCard = ({ cls, onEdit, showAdminControls = false }) => {
               title="Edit Class Cohort"
             >
               <Edit className="w-3.5 h-3.5" />
+            </Button>
+          )}
+          {showAdminControls && onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(cls)}
+              className="px-2.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50"
+              title="Delete Class Cohort"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
             </Button>
           )}
         </div>
